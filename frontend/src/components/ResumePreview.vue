@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Resume } from "@common/interfaces/resume"
+import type { Resume } from '../interfaces/resume.interfaces';
 
 defineProps<{
     resume: Resume

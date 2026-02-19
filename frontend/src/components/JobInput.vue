@@ -2,7 +2,7 @@
 import { ref } from "vue"
 import axios from "axios"
 import ResumePreview from "./ResumePreview.vue"
-import { Resume } from "../interfaces/resume.interfaces"
+import type { Resume } from "../interfaces/resume.interfaces"
 
 const jobText = ref("")
 const resume = ref<Resume | null>(null)
@@ -21,7 +21,7 @@ async function generate() {
         loading.value = true
         error.value = ""
 
-        const { data } = await axios.post("http://localhost:3001/generate", {
+        const { data } = await axios.post("http://localhost:3001/gemini/generate-curriculum", {
             jobDescription: jobText.value,
             options: {
                 language: language.value,

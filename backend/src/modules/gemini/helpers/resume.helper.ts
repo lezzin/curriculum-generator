@@ -1,11 +1,11 @@
-import { ResumeOptions } from "../interfaces/resume.interfaces";
+import { ResumeOptionsDto } from "../dto/prompt.dto";
 
 export function buildResumePrompt(
-  baseResume: any,
-  jobDescription: string,
-  options: ResumeOptions
+    baseResume: any,
+    jobDescription: string,
+    options: ResumeOptionsDto
 ): string {
-  return `
+    return `
 You are a senior technical resume strategist, ATS optimization expert, and hiring-market specialist.
 
 Your mission:
