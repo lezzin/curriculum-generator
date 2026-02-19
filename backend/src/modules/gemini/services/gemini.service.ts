@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
-import { buildResumePrompt } from "./helpers/resume.helper";
-import { ResumeOptionsDto } from "./dto/prompt.dto";
+import { buildResumePrompt } from "../helpers/resume.helper";
+import { ResumeOptionsDto } from "../dto/prompt.dto";
 import { GenerativeModel, GoogleGenerativeAI } from "@google/generative-ai";
 import { ConfigService } from "@nestjs/config";
 

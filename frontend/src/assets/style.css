@@ -5,31 +5,3 @@
 html {
     scroll-behavior: smooth;
 }
-
-@media print {
-    body * {
-        visibility: hidden;
-    }
-
-    .resume-print,
-    .resume-print * {
-        visibility: visible;
-    }
-
-    .resume-print {
-        position: absolute;
-        left: 0;
-        top: 0;
-        width: 210mm;
-    }
-
-    .break-inside-avoid-page {
-        break-inside: avoid;
-        page-break-inside: avoid;
-    }
-
-    @page {
-        size: A4;
-        margin: 0;
-    }
-}

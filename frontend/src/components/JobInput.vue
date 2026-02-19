@@ -3,10 +3,10 @@ import { ref } from "vue"
 import axios from "axios"
 import ResumePreview from "./ResumePreview.vue"
 import type { Resume } from "../interfaces/resume.interfaces"
+import { config } from "../config/variables.config"
 
 const jobText = ref("")
 const resume = ref<Resume | null>(null)
-const loading = ref(false)
 const error = ref("")
 
 const language = ref<"PT" | "EN">("EN")
@@ -14,79 +14,119 @@ const seniority = ref<"Junior" | "Mid-level">("Junior")
 const focusArea = ref<"Backend" | "Fullstack" | "Microservices" | "DevOps">("Backend")
 const market = ref<"Brazil" | "US" | "Europe">("US")
 
-async function generate() {
-    if (!jobText.value.trim()) return
+const isGeneratingResume = ref(false)
+const isGeneratingPdf = ref(false)
 
+const generateResume = async () => {
     try {
-        loading.value = true
-        error.value = ""
+        isGeneratingResume.value = true
 
-        const { data } = await axios.post("http://localhost:3001/gemini/generate-curriculum", {
-            jobDescription: jobText.value,
-            options: {
-                language: language.value,
-                targetSeniority: seniority.value,
-                focusArea: focusArea.value,
-                market: market.value
+        const { data } = await axios.post(
+            `${config.apiUrl}/gemini/generate-resume`,
+            {
+                jobDescription: jobText.value,
+                options: {
+                    language: language.value,
+                    targetSeniority: seniority.value,
+                    focusArea: focusArea.value,
+                    market: market.value
+                }
             }
-        })
+        )
 
         resume.value = data
-    } catch (err) {
-        error.value = "Erro ao gerar currículo."
+    } catch (error) {
+        console.error(error)
     } finally {
-        loading.value = false
+        isGeneratingResume.value = false
     }
 }
 
-function downloadPDF() {
-    window.print()
+const downloadPDF = async () => {
+    if (!resume.value) return
+
+    try {
+        isGeneratingPdf.value = true
+
+        const response = await axios.post(
+            `${config.apiUrl}/gemini/generate-pdf`,
+            resume.value,
+            { responseType: "blob" }
+        )
+
+        const url = window.URL.createObjectURL(new Blob([response.data]))
+        const link = document.createElement("a")
+        link.href = url
+        link.setAttribute("download", "resume.pdf")
+        document.body.appendChild(link)
+        link.click()
+    } catch (error) {
+        console.error(error)
+    } finally {
+        isGeneratingPdf.value = false
+    }
 }
 </script>
 
 <template>
-    <div class="max-w-5xl mx-auto p-8 space-y-8 print:hidden">
-
-        <!-- CONFIGURAÇÕES -->
+    <div class="max-w-5xl mx-auto p-8 space-y-8">
         <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <select v-model="language" class="p-2 border rounded-lg">
-                <option value="EN">English</option>
-                <option value="PT">Português</option>
-            </select>
 
-            <select v-model="seniority" class="p-2 border rounded-lg">
-                <option value="Junior">Junior</option>
-                <option value="Mid-level">Mid-level</option>
-            </select>
+            <div class="flex flex-col gap-1">
+                <label class="text-sm font-medium">Idioma</label>
+                <select v-model="language" class="p-2 border rounded-lg">
+                    <option value="EN">English</option>
+                    <option value="PT">Português</option>
+                </select>
+            </div>
 
-            <select v-model="focusArea" class="p-2 border rounded-lg">
-                <option value="Backend">Backend</option>
-                <option value="Fullstack">Fullstack</option>
-                <option value="Microservices">Microservices</option>
-                <option value="DevOps">DevOps</option>
-            </select>
+            <div class="flex flex-col gap-1">
+                <label class="text-sm font-medium">Senioridade</label>
+                <select v-model="seniority" class="p-2 border rounded-lg">
+                    <option value="Junior">Junior</option>
+                    <option value="Mid-level">Mid-level</option>
+                </select>
+            </div>
 
-            <select v-model="market" class="p-2 border rounded-lg">
-                <option value="US">US</option>
-                <option value="Europe">Europe</option>
-                <option value="Brazil">Brazil</option>
-            </select>
+            <div class="flex flex-col gap-1">
+                <label class="text-sm font-medium">Área de Foco</label>
+                <select v-model="focusArea" class="p-2 border rounded-lg">
+                    <option value="Backend">Backend</option>
+                    <option value="Fullstack">Fullstack</option>
+                    <option value="Microservices">Microservices</option>
+                    <option value="DevOps">DevOps</option>
+                </select>
+            </div>
+
+            <div class="flex flex-col gap-1">
+                <label class="text-sm font-medium">Mercado</label>
+                <select v-model="market" class="p-2 border rounded-lg">
+                    <option value="US">US</option>
+                    <option value="Europe">Europe</option>
+                    <option value="Brazil">Brazil</option>
+                </select>
+            </div>
+
         </div>
 
-        <!-- JOB DESCRIPTION -->
         <div class="space-y-4">
-            <textarea v-model="jobText" rows="10" placeholder="Cole a descrição da vaga..."
-                class="w-full p-4 border rounded-xl focus:outline-none focus:ring-2 focus:ring-black resize-none" />
+            <div class="flex flex-col gap-1">
+                <label class="text-sm font-medium">Descrição da vaga</label>
+                <textarea v-model="jobText" rows="10" placeholder="Cole a descrição da vaga..."
+                    class="w-full p-4 border rounded-xl focus:outline-none focus:ring-2 focus:ring-black resize-none" />
+            </div>
 
             <div class="flex gap-4">
-                <button @click="generate" :disabled="loading"
-                    class="px-6 py-2 bg-black text-white rounded-xl hover:opacity-80 disabled:opacity-50 transition">
-                    {{ loading ? "Gerando..." : "Gerar Currículo com IA" }}
+                <button @click="generateResume" :disabled="isGeneratingResume"
+                    class="px-4 py-2 bg-black text-white rounded flex items-center gap-2 disabled:opacity-50">
+                    <span v-if="isGeneratingResume" class="loader"></span>
+                    {{ isGeneratingResume ? "Gerando currículo..." : "Gerar Currículo" }}
                 </button>
 
-                <button v-if="resume" @click="downloadPDF"
-                    class="px-6 py-2 border border-black rounded-xl hover:bg-black hover:text-white transition">
-                    Baixar PDF
+                <button @click="downloadPDF" :disabled="isGeneratingPdf || !resume"
+                    class="px-4 py-2 bg-gray-800 text-white rounded flex items-center gap-2 disabled:opacity-50">
+                    <span v-if="isGeneratingPdf" class="loader"></span>
+                    {{ isGeneratingPdf ? "Gerando PDF..." : "Gerar PDF" }}
                 </button>
             </div>
 
@@ -94,7 +134,7 @@ function downloadPDF() {
                 {{ error }}
             </p>
         </div>
-    </div>
 
-    <ResumePreview v-if="resume" :resume="resume" />
+        <ResumePreview v-if="resume" :resume="resume" />
+    </div>
 </template>
