@@ -1,6 +1,4 @@
 import { Injectable } from "@nestjs/common";
-import { buildResumePrompt } from "../helpers/resume.helper";
-import { ResumeOptionsDto } from "../dto/prompt.dto";
 import { GenerativeModel, GoogleGenerativeAI } from "@google/generative-ai";
 import { ConfigService } from "@nestjs/config";
 
@@ -18,18 +16,20 @@ export class GeminiService {
         })
     }
 
-    async generateAIResume(baseResume: any, jobDescription: string, options: ResumeOptionsDto) {
-        const prompt = buildResumePrompt(baseResume, jobDescription, options)
-
+    async generateContent(prompt: string) {
         const result = await this.model.generateContent(prompt)
         const response = await result.response
-        const text = response.text()
+        return response.text()
+    }
 
-        const cleaned = text
-            .replace(/```json/g, "")
-            .replace(/```/g, "")
-            .trim()
+    async generateJsonResponse<T>(prompt: string): Promise<T> {
+        return this.generateContent(prompt).then(text => {
+            const cleaned = text
+                .replace(/```json/g, "")
+                .replace(/```/g, "")
+                .trim()
 
-        return JSON.parse(cleaned)
+            return JSON.parse(cleaned) as T
+        })
     }
 }

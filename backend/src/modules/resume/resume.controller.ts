@@ -1,29 +1,29 @@
 import { Body, Controller, Post, Res } from "@nestjs/common";
 import { GenerateDto, ResumePdfDto } from "./dto/prompt.dto";
-import { GeminiService } from "./services/gemini.service";
 import { baseResume } from "src/data/base-resume";
-import { PdfService } from "./services/pdf.service";
 import { type Response } from 'express';
+import { PdfService } from "./services/pdf.service";
+import { ResumeService } from "./services/resume.service";
 
-@Controller('/gemini')
-export class GeminiController {
+@Controller('/resume')
+export class ResumeController {
     constructor(
-        private readonly geminiService: GeminiService,
+        private readonly resumeService: ResumeService,
         private readonly pdfService: PdfService,
     ) { }
 
-    @Post('/generate-resume')
+    @Post('/generate')
     async generateResume(@Body() generateDto: GenerateDto) {
         const { jobDescription, options } = generateDto
 
-        return await this.geminiService.generateAIResume(
+        return await this.resumeService.generateAIResume(
             baseResume,
             jobDescription,
             options
         )
     }
 
-    @Post('/generate-pdf')
+    @Post('/pdf/generate')
     async generatePdf(
         @Body() resumePdfDto: ResumePdfDto,
         @Res() res: Response,

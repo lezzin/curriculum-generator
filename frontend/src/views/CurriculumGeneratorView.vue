@@ -104,7 +104,7 @@ async function generateResume() {
     if (!validateForm()) return
 
     const data = await handleRequest(async () => {
-        const response = await api.post("/gemini/generate-resume", {
+        const response = await api.post("/resume/generate", {
             jobDescription: state.jobText,
             options: {
                 language: state.language,
@@ -127,7 +127,7 @@ async function generatePdf() {
 
     const blob = await handleRequest(async () => {
         const response = await api.post(
-            "/gemini/generate-pdf",
+            "/resume/pdf/generate",
             state.resume,
             { responseType: "blob" }
         )
