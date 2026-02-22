@@ -1,14 +1,11 @@
 import { Module } from '@nestjs/common';
-import { GeminiController } from './modules/gemini/gemini.controller';
-import { GeminiService } from './modules/gemini/services/gemini.service';
 import { ConfigModule } from '@nestjs/config';
-import { PdfService } from './modules/gemini/services/pdf.service';
+import { GeminiModule } from './modules/gemini/gemini.module';
 
 @Module({
   imports: [
-    ConfigModule.forRoot()
+    ConfigModule.forRoot({ isGlobal: true }),
+    GeminiModule,
   ],
-  controllers: [GeminiController],
-  providers: [GeminiService, PdfService],
 })
 export class AppModule { }
