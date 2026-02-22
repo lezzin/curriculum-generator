@@ -32,82 +32,85 @@ export enum Market {
 }
 
 export class ResumeOptionsDto {
-    @IsEnum(Language)
+    @IsEnum(Language, { message: "Idioma inválido." })
     language: Language;
 
-    @IsEnum(TargetSeniority)
+    @IsEnum(TargetSeniority, { message: "Senioridade alvo inválida." })
     targetSeniority: TargetSeniority;
 
-    @IsEnum(FocusArea)
+    @IsEnum(FocusArea, { message: "Área de foco inválida." })
     focusArea: FocusArea;
 
-    @IsEnum(Market)
+    @IsEnum(Market, { message: "Mercado inválido." })
     market: Market;
 }
 
 export class GenerateDto {
-    @IsNotEmpty()
-    @IsString()
+    @IsNotEmpty({ message: "A descrição da vaga é obrigatória." })
+    @IsString({ message: "A descrição da vaga deve ser um texto." })
     jobDescription: string;
 
-    @IsNotEmpty()
-    @ValidateNested()
+    @IsNotEmpty({ message: "As opções do currículo são obrigatórias." })
+    @ValidateNested({ message: "As opções enviadas são inválidas." })
     @Type(() => ResumeOptionsDto)
     options: ResumeOptionsDto;
 }
+
 class ExperienceDto {
-    @IsString()
+    @IsString({ message: "O título da experiência deve ser um texto." })
     title: string;
 
-    @IsString()
+    @IsString({ message: "O nome da empresa deve ser um texto." })
     company: string;
 
-    @IsString()
+    @IsString({ message: "O período deve ser um texto." })
     period: string;
 
-    @IsArray()
-    @IsString({ each: true })
+    @IsArray({ message: "As responsabilidades devem ser uma lista." })
+    @IsString({ each: true, message: "Cada responsabilidade deve ser um texto." })
     responsibilities: string[];
 
-    @IsArray()
-    @IsString({ each: true })
+    @IsArray({ message: "As tecnologias devem ser uma lista." })
+    @IsString({ each: true, message: "Cada tecnologia deve ser um texto." })
     technologies: string[];
 }
 
 class ProjectDto {
-    @IsString()
+    @IsString({ message: "O nome do projeto deve ser um texto." })
     name: string;
 
-    @IsArray()
-    @IsString({ each: true })
+    @IsArray({ message: "Os destaques devem ser uma lista." })
+    @IsString({ each: true, message: "Cada destaque deve ser um texto." })
     highlights: string[];
 
-    @IsArray()
+    @IsArray({ message: "As tecnologias do projeto devem ser uma lista." })
+    @IsString({ each: true, message: "Cada tecnologia deve ser um texto." })
     technologies: string[];
 }
 
 export class ResumePdfDto {
-    @IsString()
+    @IsString({ message: "O nome deve ser um texto." })
     name: string;
 
-    @IsEnum(Language)
+    @IsEnum(Language, { message: "Idioma inválido." })
     language: Language;
 
-    @IsString()
+    @IsString({ message: "O cargo deve ser um texto." })
     role: string;
 
-    @IsString()
+    @IsString({ message: "O resumo deve ser um texto." })
     summary: string;
 
-    @IsArray()
+    @IsArray({ message: "As habilidades devem ser uma lista." })
+    @IsString({ each: true, message: "Cada habilidade deve ser um texto." })
     skills: string[];
 
-    @ValidateNested({ each: true })
+    @ValidateNested({ each: true, message: "Experiência inválida." })
     @Type(() => ExperienceDto)
     experiences: ExperienceDto[];
 
     @IsOptional()
-    @ValidateNested({ each: true })
+    @ValidateNested({ each: true, message: "Projeto inválido." })
     @Type(() => ProjectDto)
     projects?: ProjectDto[];
 }

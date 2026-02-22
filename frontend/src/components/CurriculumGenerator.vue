@@ -4,6 +4,7 @@ import axios from "axios"
 import type { FocusArea, Language, Market, Resume, Seniority } from "../interfaces/resume.interfaces"
 import { config } from "../config/variables.config"
 import SelectField from "./SelectField.vue"
+import { extractErrorMessage } from "../helper/error.helper"
 
 const state = reactive({
     jobText: "",
@@ -34,7 +35,7 @@ async function handleRequest<T>(
         return await request()
     } catch (err) {
         console.error(err)
-        state.error = "Ocorreu um erro. Tente novamente."
+        state.error = extractErrorMessage(err);
     } finally {
         state[loadingKey] = false
     }
