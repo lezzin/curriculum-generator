@@ -1,15 +1,18 @@
 <script setup lang="ts">
 import { computed } from "vue"
+import { RouterLink } from "vue-router";
 
 type Variant = "default" | "outline" | "ghost" | "destructive"
 type Size = "sm" | "md" | "lg" | "icon"
+type As = "button" | "a" | "router-link"
 
 const props = withDefaults(defineProps<{
     variant?: Variant
     size?: Size
     loading?: boolean
     disabled?: boolean
-    as?: "button" | "a"
+    as?: As
+    to?: string
     href?: string
     target?: string
 }>(), {
@@ -58,11 +61,34 @@ const disabledClasses = computed(() => {
 const classes = computed(() =>
     `${baseClasses} ${variantClasses.value} ${sizeClasses.value} ${disabledClasses.value}`
 )
+
+const component = computed(() => {
+    if (props.as === "router-link") return RouterLink
+    return props.as
+})
+
+const componentProps = computed(() => {
+    if (props.as === "a") {
+        return {
+            href: props.href,
+            target: props.target,
+        }
+    }
+
+    if (props.as === "router-link") {
+        return {
+            to: props.to,
+        }
+    }
+
+    return {
+        disabled: props.disabled || props.loading,
+    }
+})
 </script>
 
 <template>
-    <component :is="as" :href="as === 'a' ? href : undefined" :target="as === 'a' ? target : undefined"
-        :disabled="as === 'button' ? disabled || loading : undefined" :class="classes">
+    <component :is="component" v-bind="componentProps" :class="classes">
         <span v-if="loading" class="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
         <slot />
     </component>
