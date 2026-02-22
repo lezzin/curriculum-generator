@@ -1,136 +1,57 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, OnModuleInit, OnModuleDestroy } from '@nestjs/common';
 import * as puppeteer from 'puppeteer';
 import * as Handlebars from 'handlebars';
-import { ResumePdfDto } from '../dto/prompt.dto';
+import * as fs from 'fs';
+import * as path from 'path';
+import { Language, ResumePdfDto } from '../dto/prompt.dto';
+import { SECTION_LABELS } from '../constants/resume.constants';
 
 @Injectable()
-export class PdfService {
-    async generateResumePdf(resume: ResumePdfDto): Promise<Buffer> {
-        const template = `
-    <html>
-      <head>
-        <style>
-          body {
-            font-family: Arial, sans-serif;
-            width: 210mm;
-            min-height: 297mm;
-            padding: 22mm;
-            margin: 0;
-            color: #111;
-            font-size: 14px;
-            line-height: 1.6;
-          }
+export class PdfService implements OnModuleInit, OnModuleDestroy {
+  private browser: puppeteer.Browser;
+  private template: Handlebars.TemplateDelegate;
 
-          h1 {
-            font-size: 22px;
-            margin-bottom: 4px;
-          }
+  async onModuleInit() {
+    this.browser = await puppeteer.launch({
+      headless: 'shell',
+      args: ['--no-sandbox', '--disable-setuid-sandbox'],
+    });
 
-          .role {
-            color: #555;
-            margin-bottom: 12px;
-          }
+    const templatePath = path.join(
+      __dirname,
+      '../../../templates/resume.hbs',
+    );
 
-          .section {
-            margin-top: 28px;
-          }
+    const templateContent = fs.readFileSync(templatePath, 'utf-8');
+    this.template = Handlebars.compile(templateContent);
+  }
 
-          .section-title {
-            font-size: 11px;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            color: #777;
-            margin-bottom: 12px;
-          }
+  async generateResumePdf(resume: ResumePdfDto): Promise<Buffer> {
+    const labels = SECTION_LABELS[resume.language] || SECTION_LABELS[Language.PT];
 
-          .experience {
-            margin-bottom: 18px;
-            page-break-inside: avoid;
-          }
+    const html = this.template({
+      ...resume,
+      labels
+    });
 
-          .technologies {
-            font-size: 12px;
-            color: #666;
-            margin-top: 4px;
-          }
-        </style>
-      </head>
-      <body>
+    const page = await this.browser.newPage();
 
-        <h1>{{name}}</h1>
-        <div class="role">{{role}}</div>
-        <p>{{summary}}</p>
+    await page.setContent(html, {
+      waitUntil: 'networkidle0',
+    });
 
-        <div class="section">
-          <div class="section-title">Skills</div>
-          <p>{{skillsFormatted}}</p>
-        </div>
+    const pdf = await page.pdf({
+      format: 'A4',
+      printBackground: true,
+      preferCSSPageSize: true,
+    });
 
-        <div class="section">
-          <div class="section-title">Experience</div>
+    await page.close();
 
-          {{#each experiences}}
-            <div class="experience">
-              <strong>{{title}}</strong> — {{company}} ({{period}})
-              <p>{{description}}</p>
-              <div class="technologies">
-                {{technologiesFormatted}}
-              </div>
-            </div>
-          {{/each}}
-        </div>
+    return Buffer.from(pdf);
+  }
 
-        {{#if projects}}
-        <div class="section">
-          <div class="section-title">Projects</div>
-
-          {{#each projects}}
-            <div class="experience">
-              <strong>{{name}}</strong>
-              <p>{{description}}</p>
-              <div class="technologies">
-                {{technologiesFormatted}}
-              </div>
-            </div>
-          {{/each}}
-        </div>
-        {{/if}}
-
-      </body>
-    </html>
-    `;
-
-        const formattedData = {
-            ...resume,
-            skillsFormatted: resume.skills.join(' · '),
-            experiences: resume.experiences.map((exp) => ({
-                ...exp,
-                technologiesFormatted: exp.technologies.join(' · '),
-            })),
-            projects: resume.projects?.map((project) => ({
-                ...project,
-                technologiesFormatted: project.technologies.join(' · '),
-            })),
-        };
-
-        const compiled = Handlebars.compile(template);
-        const html = compiled(formattedData);
-
-        const browser = await puppeteer.launch({
-            headless: 'shell',
-            args: ['--no-sandbox', '--disable-setuid-sandbox'],
-        });
-
-        const page = await browser.newPage();
-        await page.setContent(html, { waitUntil: 'networkidle0' });
-
-        const pdfUint8 = await page.pdf({
-            format: 'A4',
-            printBackground: true,
-        });
-
-        await browser.close();
-
-        return Buffer.from(pdfUint8);
-    }
+  async onModuleDestroy() {
+    await this.browser.close();
+  }
 }

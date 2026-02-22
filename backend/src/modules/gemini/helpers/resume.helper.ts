@@ -1,15 +1,20 @@
 import { ResumeOptionsDto } from "../dto/prompt.dto";
 
 export function buildResumePrompt(
-    baseResume: any,
-    jobDescription: string,
-    options: ResumeOptionsDto
+  baseResume: any,
+  jobDescription: string,
+  options: ResumeOptionsDto
 ): string {
-    return `
-You are a senior technical resume strategist, ATS optimization expert, and hiring-market specialist.
+  return `
+You are a senior resume strategist, ATS optimization specialist, and technical hiring analyst.
 
-Your mission:
-Transform the BASE RESUME into a highly optimized, market-aligned, ATS-strong resume tailored to the JOB DESCRIPTION and CONFIGURATION.
+Your objective:
+Transform the BASE RESUME into a highly optimized, concise, ATS-aligned resume tailored precisely to the JOB DESCRIPTION and CONFIGURATION.
+
+The output must be strong for:
+- Applicant Tracking Systems (ATS parsing)
+- Technical recruiters (clarity + impact)
+- Hiring managers (results-driven narrative)
 
 ==============================
 CONFIGURATION
@@ -30,51 +35,103 @@ BASE RESUME
 ${JSON.stringify(baseResume, null, 2)}
 
 ==================================================
-CORE OPTIMIZATION DIRECTIVES
+STRATEGIC OPTIMIZATION DIRECTIVES
 ==================================================
 
-1. Extract required technologies, architecture keywords, and performance concepts.
-2. Maximize ATS alignment naturally.
-3. Rewrite summary (3–5 lines).
-4. Structure experiences clearly with line breaks.
-5. Integrate projects explicitly if they exist.
-6. Adapt tone based on seniority and market.
+1. Extract required:
+   - Technologies
+   - Frameworks
+   - Architecture terms
+   - Performance keywords
+   - Domain-specific vocabulary
+
+2. Naturally integrate those keywords into:
+   - Summary
+   - Responsibilities
+   - Technologies arrays
+
+3. Rewrite summary:
+   - 3–4 lines maximum
+   - Results-oriented
+   - Include measurable impact if available
+   - No generic phrases
+
+4. Rewrite experience responsibilities:
+   - Use bullet-style structure
+   - Each bullet must:
+     → Start with strong action verb
+     → Contain technical context
+     → Highlight impact
+   - Avoid repetition
+   - Avoid fluff
+
+5. Improve density:
+   - Keep bullets concise
+   - Avoid long paragraphs
+   - Remove unnecessary narrative
+
+6. Adapt tone based on:
+   - Seniority (without exaggeration)
+   - Market expectations (Brazil vs International)
 
 ==================================================
-PROJECT INTEGRATION (MANDATORY)
+PROJECT STRUCTURING (STRICT)
 ==================================================
 
 If projects exist:
-- Present each as separate initiative.
-- Format:
 
-Project Name — short positioning sentence
-• Technical implementation
-• Architecture/design decision
-• Tools used (if relevant)
-• Measurable outcome (only if metric exists)
+- Include only relevant projects aligned with the job description.
+- Each project must be structured as:
 
-Do NOT merge into one paragraph.
+{
+  "name": "",
+  "highlights": [],
+  "technologies": []
+}
+
+Rules:
+- highlights must be an ARRAY of concise bullet-style statements.
+- 3–5 bullets maximum per project.
+- Each bullet must describe:
+  → Implementation
+  → Architecture/design decision
+  → Technical stack usage
+  → Measurable result (only if metric exists)
+- Do NOT merge highlights into one paragraph.
+- Do NOT duplicate content already fully covered in experience.
+- Do NOT invent metrics or scope.
 
 ==================================================
-QUALITY RULES
+ATS OPTIMIZATION RULES
+==================================================
+
+- Use exact terminology from the job description when possible.
+- Keep technology names consistent (e.g., "Node.js", "NestJS", "PostgreSQL").
+- Avoid decorative separators (no "·").
+- Avoid excessive adjectives.
+- Avoid soft skills unless explicitly requested.
+- Ensure parsing-friendly formatting.
+- Keep everything linear and structured.
+
+==================================================
+DATA INTEGRITY RULES
 ==================================================
 
 - Do NOT invent experience.
 - Do NOT fabricate metrics.
-- Do NOT exaggerate seniority.
-- Avoid generic phrases.
-- Keep technical credibility.
-- Keep descriptions structured with \\n line breaks.
-- Remove unrelated tools.
-- Return ONLY valid JSON.
+- Do NOT upgrade seniority artificially.
+- Do NOT create fake companies or roles.
+- Do NOT invent projects.
+
+Only reorganize and optimize what exists.
 
 ==================================================
-OUTPUT FORMAT
+OUTPUT FORMAT (STRICT JSON ONLY)
 ==================================================
 
 {
   "name": "",
+  "language": "",
   "role": "",
   "summary": "",
   "skills": [],
@@ -83,29 +140,25 @@ OUTPUT FORMAT
       "title": "",
       "company": "",
       "period": "",
-      "description": "",
+      "responsibilities": [],
       "technologies": []
     }
   ],
   "projects": [
     {
       "name": "",
-      "description": "",
+      "highlights": [],
       "technologies": []
     }
   ]
 }
 
-RULES FOR PROJECTS SECTION:
-- Include only relevant projects aligned with the job description.
-- Each project must be concise but structured.
-- Description must use line breaks (\\n) and bullet-style formatting.
-- Do NOT duplicate content already fully described inside experiences.
-- Do NOT invent projects.
-
-Return ONLY valid JSON.
-No markdown.
-No explanations.
-Only JSON.
+FINAL RULES:
+- Return ONLY valid JSON.
+- No markdown.
+- No explanations.
+- No comments.
+- No trailing commas.
+- Output must be parseable JSON.
 `
 }

@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+
+  <style>
+    @page {
+      size: A4;
+      margin: 18mm;
+    }
+
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 12px;
+      line-height: 1.5;
+      color: #000;
+      margin: 0;
+    }
+
+    h1 {
+      font-size: 22px;
+      margin: 0 0 4px 0;
+    }
+
+    h2 {
+      font-size: 13px;
+      margin: 18px 0 6px 0;
+      text-transform: uppercase;
+    }
+
+    p {
+      margin: 0 0 8px 0;
+    }
+
+    ul {
+      margin: 4px 0 8px 18px;
+      padding: 0;
+    }
+
+    li {
+      margin-bottom: 3px;
+    }
+
+    .section {
+      margin-bottom: 12px;
+    }
+
+    .job-title {
+      font-weight: bold;
+    }
+
+    .company-period {
+      font-style: italic;
+      margin-bottom: 4px;
+    }
+
+    .contact {
+      margin-bottom: 8px;
+    }
+  </style>
+</head>
+
+<body>
+  <header class="section">
+    <h1>{{name}}</h1>
+
+    <p><strong>{{role}}</strong></p>
+
+    <p class="contact">
+      <a href="mailto:leandrinsilva22@gmail.com">leandrinsilva22@gmail.com</a> |
+      <a href="tel:+5535997242338">(35) 99724-2338</a>
+      
+      <br>
+
+      <a href="https://www.linkedin.com/in/leandro-adrian/">LinkedIn</a> |
+      <a href="https://github.com/lezzin">GitHub</a> | 
+      <a href="https://lezzin.github.io">Portfólio</a>
+    </p>
+
+    <p>
+      {{summary}}
+    </p>
+  </header>
+
+  <section class="section">
+    <h2>{{@root.labels.skills}}</h2>
+
+    <p>
+      {{#each skills}}
+        {{this}}{{#unless @last}}, {{/unless}}
+      {{/each}}
+    </p>
+  </section>
+
+  <section class="section">
+    <h2>{{@root.labels.experience}}</h2>
+
+    {{#each experiences}}
+      <div class="section">
+        <p class="job-title">
+          {{title}}
+        </p>
+
+        <p class="company-period">
+          {{company}} | {{period}}
+        </p>
+
+        <ul>
+          {{#each responsibilities}}
+            <li>{{this}}</li>
+          {{/each}}
+        </ul>
+
+        <p>
+          <strong>{{@root.labels.technologies}}:</strong>
+          {{#each technologies}}
+            {{this}}{{#unless @last}}, {{/unless}}
+          {{/each}}
+        </p>
+      </div>
+    {{/each}}
+  </section>
+
+  {{#if projects}}
+  <section class="section">
+    <h2>{{@root.labels.projects}}</h2>
+
+    {{#each projects}}
+      <div class="section">
+        <p class="job-title">
+          {{name}}
+        </p>
+
+        <ul>
+          {{#each highlights}}
+            <li>{{this}}</li>
+          {{/each}}
+        </ul>
+
+        <p>
+          <strong>{{@root.labels.technologies}}:</strong>
+          {{#each technologies}}
+            {{this}}{{#unless @last}}, {{/unless}}
+          {{/each}}
+        </p>
+      </div>
+    {{/each}}
+  </section>
+  {{/if}}
+</body>
+</html>

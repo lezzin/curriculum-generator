@@ -65,10 +65,12 @@ class ExperienceDto {
     @IsString()
     period: string;
 
-    @IsString()
-    description: string;
+    @IsArray()
+    @IsString({ each: true })
+    responsibilities: string[];
 
     @IsArray()
+    @IsString({ each: true })
     technologies: string[];
 }
 
@@ -76,8 +78,9 @@ class ProjectDto {
     @IsString()
     name: string;
 
-    @IsString()
-    description: string;
+    @IsArray()
+    @IsString({ each: true })
+    highlights: string[];
 
     @IsArray()
     technologies: string[];
@@ -86,6 +89,9 @@ class ProjectDto {
 export class ResumePdfDto {
     @IsString()
     name: string;
+
+    @IsEnum(Language)
+    language: Language;
 
     @IsString()
     role: string;

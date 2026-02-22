@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import JobInput from "./components/JobInput.vue"
+import CurriculumGenerator from "./components/CurriculumGenerator.vue"
 </script>
 
 <template>
-  <JobInput />
+  <CurriculumGenerator />
 </template>
