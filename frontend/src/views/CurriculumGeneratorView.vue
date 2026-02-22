@@ -4,10 +4,10 @@ import axios from "axios"
 import type { FocusArea, Language, Market, Resume, Seniority } from "../interfaces/resume.interfaces"
 import { config } from "../config/variables.config"
 import { extractErrorMessage } from "../helper/error.helper"
-import SelectField from "../components/ui/SelectField.vue"
+import SelectField from "../components/ui/form/SelectField.vue"
 import BaseButton from "../components/ui/BaseButton.vue"
 import AppTitle from "../components/layout/AppTitle.vue"
-import TextAreaField from "../components/ui/TextAreaField.vue"
+import TextAreaField from "../components/ui/form/TextAreaField.vue"
 
 const state = reactive({
     jobText: "",
