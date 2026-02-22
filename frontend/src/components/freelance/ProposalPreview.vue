@@ -22,7 +22,6 @@ Portfólio:
 https://leandroadrian.vercel.app`
 })
 
-// Sempre que gerar nova proposta, atualiza textarea
 watch(formattedProposal, (value) => {
     editableText.value = value
 }, { immediate: true })
