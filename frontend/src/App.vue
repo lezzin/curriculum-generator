@@ -1,7 +1,13 @@
 <script setup lang="ts">
-import CurriculumGenerator from "./components/CurriculumGenerator.vue"
+import AppContainer from './components/layout/AppContainer.vue';
+import AppHeader from './components/layout/AppHeader.vue';
+
 </script>
 
 <template>
-  <CurriculumGenerator />
+  <AppHeader />
+
+  <AppContainer class="p-8 space-y-8">
+    <router-view></router-view>
+  </AppContainer>
 </template>

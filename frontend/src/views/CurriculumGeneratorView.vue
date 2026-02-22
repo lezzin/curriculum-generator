@@ -3,9 +3,10 @@ import { reactive, computed, watch, onMounted } from "vue"
 import axios from "axios"
 import type { FocusArea, Language, Market, Resume, Seniority } from "../interfaces/resume.interfaces"
 import { config } from "../config/variables.config"
-import SelectField from "./SelectField.vue"
 import { extractErrorMessage } from "../helper/error.helper"
-import BaseButton from "./BaseButton.vue"
+import SelectField from "../components/ui/SelectField.vue"
+import BaseButton from "../components/ui/BaseButton.vue"
+import AppTitle from "../components/layout/AppTitle.vue"
 
 const state = reactive({
     jobText: "",
@@ -92,55 +93,56 @@ watch(
 
 onMounted(() => generatePdf())
 </script>
+
 <template>
-    <div class="max-w-5xl mx-auto p-8 space-y-8">
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <SelectField label="Idioma" v-model="state.language">
-                <option value="EN">English</option>
-                <option value="PT">Português</option>
-            </SelectField>
+    <AppTitle title="Gerar currículo" />
 
-            <SelectField label="Senioridade" v-model="state.seniority">
-                <option value="Junior">Junior</option>
-                <option value="Mid-level">Mid-level</option>
-            </SelectField>
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <SelectField label="Idioma" v-model="state.language">
+            <option value="EN">English</option>
+            <option value="PT">Português</option>
+        </SelectField>
 
-            <SelectField label="Área de Foco" v-model="state.focusArea">
-                <option value="Backend">Backend</option>
-                <option value="Fullstack">Fullstack</option>
-                <option value="Microservices">Microservices</option>
-                <option value="DevOps">DevOps</option>
-            </SelectField>
+        <SelectField label="Senioridade" v-model="state.seniority">
+            <option value="Junior">Junior</option>
+            <option value="Mid-level">Mid-level</option>
+        </SelectField>
 
-            <SelectField label="Mercado" v-model="state.market">
-                <option value="US">US</option>
-                <option value="Europe">Europe</option>
-                <option value="Brazil">Brazil</option>
-            </SelectField>
+        <SelectField label="Área de Foco" v-model="state.focusArea">
+            <option value="Backend">Backend</option>
+            <option value="Fullstack">Fullstack</option>
+            <option value="Microservices">Microservices</option>
+            <option value="DevOps">DevOps</option>
+        </SelectField>
+
+        <SelectField label="Mercado" v-model="state.market">
+            <option value="US">US</option>
+            <option value="Europe">Europe</option>
+            <option value="Brazil">Brazil</option>
+        </SelectField>
+    </div>
+
+    <div class="space-y-4">
+        <div class="flex flex-col gap-1">
+            <label class="text-sm font-medium">Descrição da vaga</label>
+            <textarea v-model="state.jobText" rows="10" placeholder="Cole a descrição da vaga..."
+                class="w-full p-4 border rounded-xl focus:outline-none focus:ring-2 focus:ring-black resize-none" />
         </div>
 
-        <div class="space-y-4">
-            <div class="flex flex-col gap-1">
-                <label class="text-sm font-medium">Descrição da vaga</label>
-                <textarea v-model="state.jobText" rows="10" placeholder="Cole a descrição da vaga..."
-                    class="w-full p-4 border rounded-xl focus:outline-none focus:ring-2 focus:ring-black resize-none" />
-            </div>
+        <div class="flex gap-4">
+            <BaseButton @click="generateResume" :disabled="state.isGeneratingResume"
+                :loading="state.isGeneratingResume">
+                {{ state.isGeneratingResume ? "Gerando currículo..." : "Gerar Currículo" }}
+            </BaseButton>
 
-            <div class="flex gap-4">
-                <BaseButton @click="generateResume" :disabled="state.isGeneratingResume"
-                    :loading="state.isGeneratingResume">
-                    {{ state.isGeneratingResume ? "Gerando currículo..." : "Gerar Currículo" }}
-                </BaseButton>
-
-                <BaseButton as="a" :href="canViewPdf ? state.pdfUrl : undefined" target="_blank" variant="outline"
-                    :disabled="!canViewPdf" :loading="state.isGeneratingPdf">
-                    {{ state.isGeneratingPdf ? "Gerando PDF..." : "Visualizar PDF" }}
-                </BaseButton>
-            </div>
-
-            <p v-if="state.error" class="text-red-500 text-sm">
-                {{ state.error }}
-            </p>
+            <BaseButton as="a" :href="canViewPdf ? state.pdfUrl : undefined" target="_blank" variant="outline"
+                :disabled="!canViewPdf" :loading="state.isGeneratingPdf">
+                {{ state.isGeneratingPdf ? "Gerando PDF..." : "Visualizar PDF" }}
+            </BaseButton>
         </div>
+
+        <p v-if="state.error" class="text-red-500 text-sm">
+            {{ state.error }}
+        </p>
     </div>
 </template>
