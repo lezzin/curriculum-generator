@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { useRouter } from "vue-router"
 import BaseButton from "../components/ui/BaseButton.vue"
-import AppTitle from "../components/layout/AppTitle.vue"
 
 const router = useRouter()
 
