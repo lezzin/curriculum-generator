@@ -5,6 +5,7 @@ import type { FocusArea, Language, Market, Resume, Seniority } from "../interfac
 import { config } from "../config/variables.config"
 import SelectField from "./SelectField.vue"
 import { extractErrorMessage } from "../helper/error.helper"
+import BaseButton from "./BaseButton.vue"
 
 const state = reactive({
     jobText: "",
@@ -19,7 +20,7 @@ const state = reactive({
     pdfUrl: ""
 })
 
-const canGeneratePdf = computed(() => !!state.resume && !!state.pdfUrl)
+const canViewPdf = computed(() => !!state.resume && !!state.pdfUrl && !state.isGeneratingPdf)
 
 const api = axios.create({
     baseURL: config.apiUrl
@@ -126,17 +127,15 @@ onMounted(() => generatePdf())
             </div>
 
             <div class="flex gap-4">
-                <button @click="generateResume" :disabled="state.isGeneratingResume"
-                    class="px-4 py-2 bg-black text-white rounded flex items-center gap-2 disabled:opacity-50">
-                    <span v-if="state.isGeneratingResume" class="loader"></span>
+                <BaseButton @click="generateResume" :disabled="state.isGeneratingResume"
+                    :loading="state.isGeneratingResume">
                     {{ state.isGeneratingResume ? "Gerando currículo..." : "Gerar Currículo" }}
-                </button>
+                </BaseButton>
 
-                <a v-if="canGeneratePdf" :href="state.pdfUrl" target="_blank"
-                    class="px-4 py-2 bg-gray-800 text-white rounded flex items-center gap-2">
-                    <span v-if="state.isGeneratingPdf" class="loader"></span>
+                <BaseButton as="a" :href="canViewPdf ? state.pdfUrl : undefined" target="_blank" variant="outline"
+                    :disabled="!canViewPdf" :loading="state.isGeneratingPdf">
                     {{ state.isGeneratingPdf ? "Gerando PDF..." : "Visualizar PDF" }}
-                </a>
+                </BaseButton>
             </div>
 
             <p v-if="state.error" class="text-red-500 text-sm">
