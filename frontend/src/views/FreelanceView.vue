@@ -71,7 +71,7 @@ async function generateProposal() {
     if (!validateForm()) return
 
     const data = await handleRequest(async () => {
-        const response = await api.post("/freelance/generate-proposal", {
+        const response = await api.post("/freelance/proposal/generate", {
             solicitation: state.solicitationText,
         })
 

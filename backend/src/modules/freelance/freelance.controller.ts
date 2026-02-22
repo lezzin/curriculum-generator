@@ -9,7 +9,7 @@ export class FreelanceController {
         private readonly freelanceService: FreelanceService,
     ) { }
 
-    @Post('/generate-proposal')
+    @Post('/proposal/generate')
     async generateProposal(@Body() solicitationDto: SolicitationDto) {
         const { solicitation } = solicitationDto
 
