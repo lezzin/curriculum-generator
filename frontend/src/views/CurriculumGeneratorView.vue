@@ -8,6 +8,7 @@ import SelectField from "../components/ui/form/SelectField.vue"
 import BaseButton from "../components/ui/BaseButton.vue"
 import AppTitle from "../components/layout/AppTitle.vue"
 import TextAreaField from "../components/ui/form/TextAreaField.vue"
+import { DESCRIPTION_LENGTH } from "../constants/app.constants"
 
 const state = reactive({
     jobText: "",
@@ -36,13 +37,13 @@ function validateJobText() {
         return false
     }
 
-    if (state.jobText.trim().length < 30) {
-        errors.jobText = "A descrição precisa ter pelo menos 30 caracteres."
+    if (state.jobText.trim().length < DESCRIPTION_LENGTH.min) {
+        errors.jobText = `A descrição precisa ter pelo menos ${DESCRIPTION_LENGTH.min} caracteres.`
         return false
     }
 
-    if (state.jobText.trim().length > 500) {
-        errors.jobText = "A descrição precisa ter até no máximo 500 caracteres."
+    if (state.jobText.trim().length > DESCRIPTION_LENGTH.max) {
+        errors.jobText = `A descrição precisa ter até no máximo ${DESCRIPTION_LENGTH.max} caracteres.`
         return false
     }
 
@@ -72,8 +73,8 @@ function validateForm() {
 }
 
 const isFormValid = computed(() =>
-    state.jobText.trim().length >= 30 &&
-    state.jobText.trim().length <= 500 &&
+    state.jobText.trim().length >= DESCRIPTION_LENGTH.min &&
+    state.jobText.trim().length <= DESCRIPTION_LENGTH.max &&
     state.language &&
     state.seniority &&
     state.focusArea &&

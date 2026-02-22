@@ -8,6 +8,7 @@ import AppTitle from "../components/layout/AppTitle.vue"
 import TextAreaField from "../components/ui/form/TextAreaField.vue"
 import type { MarketplaceProposal } from "../interfaces/freelance.interfaces"
 import ProposalPreview from "../components/freelance/ProposalPreview.vue"
+import { DESCRIPTION_LENGTH } from "../constants/app.constants"
 
 const state = reactive({
     solicitationText: "",
@@ -26,13 +27,13 @@ function validateSolicitationText() {
         return false
     }
 
-    if (state.solicitationText.trim().length < 30) {
-        errors.solicitationText = "A descrição precisa ter pelo menos 30 caracteres."
+    if (state.solicitationText.trim().length < DESCRIPTION_LENGTH.min) {
+        errors.solicitationText = `A descrição precisa ter pelo menos ${DESCRIPTION_LENGTH.min} caracteres.`
         return false
     }
 
-    if (state.solicitationText.trim().length > 500) {
-        errors.solicitationText = "A descrição precisa ter até no máximo 500 caracteres."
+    if (state.solicitationText.trim().length > DESCRIPTION_LENGTH.max) {
+        errors.solicitationText = `A descrição precisa ter até no máximo ${DESCRIPTION_LENGTH.max} caracteres.`
         return false
     }
 
@@ -46,8 +47,8 @@ function validateForm() {
 }
 
 const isFormValid = computed(() =>
-    state.solicitationText.trim().length >= 30 &&
-    state.solicitationText.trim().length <= 500
+    state.solicitationText.trim().length >= DESCRIPTION_LENGTH.min &&
+    state.solicitationText.trim().length <= DESCRIPTION_LENGTH.max
 )
 
 const api = axios.create({
