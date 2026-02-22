@@ -9,18 +9,17 @@ import AppContainer from './AppContainer.vue'
                 AI Resume
             </router-link>
 
-            <nav class="flex items-center gap-8 text-sm font-medium">
+            <nav class="flex items-center gap-4 text-sm font-medium">
                 <router-link to="/" class="text-gray-600 hover:text-black transition">
                     Início
                 </router-link>
 
                 <router-link to="/curriculum" class="text-gray-600 hover:text-black transition">
-                    Gerar Currículo
+                    Currículo
                 </router-link>
 
-                <router-link to="/curriculum"
-                    class="bg-black text-white px-4 py-2 rounded-xl hover:opacity-90 transition">
-                    Começar
+                <router-link to="/frelance" class="text-gray-600 hover:text-black transition">
+                    Freelance
                 </router-link>
             </nav>
         </AppContainer>
