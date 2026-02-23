@@ -23,7 +23,7 @@ const shortSummary = computed(() => {
 <template>
     <div class="group border rounded-2xl p-5 bg-white shadow-sm hover:shadow-md transition-all duration-200">
         <div class="flex justify-between items-start cursor-pointer gap-4" @click="isOpen = !isOpen">
-            <small class="text-gray-500">Data de criação: {{ toHumanReadableDate(resume.createdAt ?? "") }}</small>
+            <small class="text-gray-500">Criado em: {{ toHumanReadableDate(resume.createdAt ?? "") }}</small>
 
             <div class="flex items-center gap-3">
                 <svg class="w-4 h-4 text-gray-400 transition-transform duration-200" :class="{ 'rotate-180': isOpen }"
