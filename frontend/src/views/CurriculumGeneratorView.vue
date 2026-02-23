@@ -113,7 +113,7 @@ onMounted(() => {
                 Gerar Currículo
             </BaseButton>
 
-            <BaseButton as="a" :href="canViewPdf ? pdfUrl : undefined" target="_blank" variant="outline"
+            <BaseButton as="a" :href="canViewPdf ? pdfUrl ?? '#' : '#'" target="_blank" variant="outline"
                 :disabled="!canViewPdf" :loading="isGeneratingPdf">
                 {{ isGeneratingPdf ? "Gerando PDF..." : "Visualizar PDF" }}
             </BaseButton>
