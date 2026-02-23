@@ -5,11 +5,19 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { Language, ResumePdfDto } from '../dto/prompt.dto';
 import { SECTION_LABELS } from '../constants/resume.constants';
+import { InjectRepository } from '@nestjs/typeorm';
+import { ResumeEntity } from '../entities/resume.entity';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class PdfService implements OnModuleInit, OnModuleDestroy {
   private browser: puppeteer.Browser;
   private template: Handlebars.TemplateDelegate;
+
+  constructor(
+    @InjectRepository(ResumeEntity)
+    private resumeRepository: Repository<ResumeEntity>,
+  ) { }
 
   async onModuleInit() {
     this.browser = await puppeteer.launch({
@@ -49,6 +57,16 @@ export class PdfService implements OnModuleInit, OnModuleDestroy {
     await page.close();
 
     return Buffer.from(pdf);
+  }
+
+  async generateResumePdfById(id: string): Promise<Buffer> {
+    const resumeEntity = await this.resumeRepository.findOne({ where: { id } });
+
+    if (!resumeEntity) {
+      throw new Error('Resume not found');
+    }
+
+    return this.generateResumePdf(resumeEntity as ResumePdfDto);
   }
 
   async onModuleDestroy() {

@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Res } from "@nestjs/common";
+import { Body, Controller, Get, Param, Post, Res } from "@nestjs/common";
 import { GenerateDto, ResumePdfDto } from "./dto/prompt.dto";
 import { baseResume } from "src/data/base-resume";
 import { type Response } from 'express';
@@ -21,6 +21,22 @@ export class ResumeController {
             jobDescription,
             options
         )
+    }
+
+    @Get('/pdf/:id')
+    async generatePdfByUuid(
+        @Param('id') id: string,
+        @Res() res: Response,
+    ) {
+        const pdfBuffer = await this.pdfService.generateResumePdfById(id);
+
+        res.set({
+            'Content-Type': 'application/pdf',
+            'Content-Disposition': 'inline; filename="resume.pdf"',
+            'Content-Length': pdfBuffer.length,
+        });
+
+        res.end(pdfBuffer);
     }
 
     @Post('/pdf/generate')
