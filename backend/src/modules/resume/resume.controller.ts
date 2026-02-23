@@ -16,7 +16,7 @@ export class ResumeController {
     async generateResume(@Body() generateDto: GenerateDto) {
         const { jobDescription, options } = generateDto
 
-        return await this.resumeService.generateAIResume(
+        return await this.resumeService.sendResumeToQueue(
             baseResume,
             jobDescription,
             options

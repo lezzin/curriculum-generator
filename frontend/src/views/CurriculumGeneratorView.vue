@@ -1,8 +1,7 @@
 <script setup lang="ts">
-import { reactive, computed, watch, ref, onMounted } from "vue"
+import { reactive, watch, ref, onMounted } from "vue"
 import type { Resume } from "../interfaces/resume.interfaces"
 import { useApi } from "../composables/useApi"
-import { usePdf } from "../composables/usePdf"
 import { useResumeValidation } from "../composables/useResumeValidation"
 import BaseButton from "../components/ui/BaseButton.vue"
 import TextAreaField from "../components/ui/form/TextAreaField.vue"
@@ -10,9 +9,10 @@ import SelectField from "../components/ui/form/SelectField.vue"
 import ResumePreview from "../components/resume/ResumePreview.vue"
 import AppTitle from "../components/layout/AppTitle.vue"
 
+const alertMessage = ref<string | null>(null)
+
 const state = reactive({
     jobText: "",
-    resume: null as Resume | null,
     language: "EN",
     seniority: "Junior",
     focusArea: "Backend",
@@ -22,16 +22,13 @@ const state = reactive({
 const resumesList = ref([] as Resume[])
 
 const { api, error, loading: isGeneratingResume, request } = useApi()
-const { pdfUrl, isGenerating: isGeneratingPdf, generatePdf } = usePdf(api)
 const { errors, validateJobText, validateRequired, isFormValid } = useResumeValidation(state)
-
-const canViewPdf = computed(() => !!state.resume && !!pdfUrl.value && !isGeneratingPdf.value)
 
 async function generateResume() {
     if (!validateJobText()) return
 
-    const data = await request(async () => {
-        const response = await api.post("/resume/generate", {
+    await request(async () => {
+        await api.post("/resume/generate", {
             jobDescription: state.jobText,
             options: {
                 language: state.language,
@@ -39,16 +36,22 @@ async function generateResume() {
                 focusArea: state.focusArea,
                 market: state.market
             }
+        }).then(response => {
+            const newResume = response.data as Resume
+            resumesList.value.unshift(newResume)
+            showAlert("Currículo enviado para a fila de geração com sucesso!")
+        }).catch(() => {
+            showAlert("Erro ao gerar currículo. Tente novamente.")
         })
-
-        return response.data as Resume
     })
+}
 
-    if (!data) return
+function showAlert(message: string) {
+    alertMessage.value = message
 
-    state.resume = data
-    await generatePdf(state.resume)
-    await getResumes()
+    setTimeout(() => {
+        alertMessage.value = null
+    }, 5000)
 }
 
 async function getResumes() {
@@ -57,7 +60,11 @@ async function getResumes() {
         return response.data as Resume[]
     })
 
-    if (!data) return
+    if (!data) {
+        resumesList.value = []
+        return
+    }
+
     resumesList.value = data
 }
 
@@ -74,6 +81,10 @@ onMounted(() => {
 
 <template>
     <AppTitle title="Gerar currículo" />
+
+    <div v-if="alertMessage" class="bg-green-100 text-green-800 p-4 rounded mb-6">
+        {{ alertMessage }}
+    </div>
 
     <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
         <SelectField label="Idioma" v-model="state.language" :error="errors.language">
@@ -108,17 +119,10 @@ onMounted(() => {
         <TextAreaField label="Descrição da vaga" v-model="state.jobText" :rows="10"
             placeholder="Cole a descrição da vaga..." :error="errors.jobText" />
 
-        <div class="flex gap-4">
-            <BaseButton @click="generateResume" :disabled="!isFormValid || isGeneratingResume"
-                :loading="isGeneratingResume">
-                Gerar Currículo
-            </BaseButton>
-
-            <BaseButton as="a" :href="canViewPdf ? pdfUrl ?? '#' : '#'" target="_blank" variant="outline"
-                :disabled="!canViewPdf" :loading="isGeneratingPdf">
-                {{ isGeneratingPdf ? "Gerando PDF..." : "Visualizar PDF" }}
-            </BaseButton>
-        </div>
+        <BaseButton @click="generateResume" :disabled="!isFormValid || isGeneratingResume"
+            :loading="isGeneratingResume">
+            Gerar Currículo
+        </BaseButton>
 
         <p v-if="error" class="text-red-500 text-sm">
             {{ error }}
