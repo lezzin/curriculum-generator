@@ -1,42 +1,40 @@
 <script setup lang="ts">
+import { onUnmounted } from 'vue';
 import AppContainer from './components/layout/AppContainer.vue';
 import AppHeader from './components/layout/AppHeader.vue';
 import BaseToast from './components/ui/BaseToast.vue';
 import { useApi } from './composables/useApi';
-import { useSSE } from './composables/useSSE';
 import { useToast } from './composables/useToast';
-import type { MarketplaceProposal } from './interfaces/freelance.interfaces';
+import { sseService } from './services/sse.service';
 import type { Resume } from './interfaces/resume.interfaces';
+import type { MarketplaceProposal } from './interfaces/freelance.interfaces';
+import { useRoute } from 'vue-router';
 
 const { api } = useApi()
 const { show } = useToast()
+const route = useRoute()
 
-useSSE<Resume>({
-  api,
-  eventName: "resume-generated",
-  onEvent: () => {
-    show("Currículo gerado com sucesso! Acesse a seção de histórico para visualizar.")
-  },
-  onError: () => {
-    show("Erro na conexão SSE", "error")
+sseService.init(api)
+
+sseService.on<Resume>("resume-generated", () => {
+  if (route.name !== 'ResumeHistory') {
+    show("Currículo gerado com sucesso!")
   }
 })
 
-useSSE<MarketplaceProposal>({
-  api,
-  eventName: "proposal-generated",
-  onEvent: () => {
-    show("Proposta gerada com sucesso! Acesse a seção de histórico para visualizar.")
-  },
-  onError: () => {
-    show("Erro na conexão SSE", "error")
+sseService.on<MarketplaceProposal>("proposal-generated", () => {
+  if (route.name !== 'FreelanceProposalHistory') {
+    show("Proposta gerada com sucesso!")
   }
+})
+
+onUnmounted(() => {
+  sseService.close()
 })
 </script>
 
 <template>
   <AppHeader />
-
   <AppContainer class="p-8 space-y-8">
     <router-view></router-view>
     <BaseToast />

@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import { onMounted, reactive } from 'vue'
 import { useApi } from '../composables/useApi'
-import AppTitle from '../components/layout/AppTitle.vue'
-import ProposalPreview from '../components/freelance/ProposalPreview.vue'
+import { sseService } from '../services/sse.service'
 import type { MarketplaceProposal } from '../interfaces/freelance.interfaces'
+import ProposalPreview from '../components/freelance/ProposalPreview.vue'
+import AppTitle from '../components/layout/AppTitle.vue'
 
 const { api, request } = useApi()
 const proposalList = reactive<MarketplaceProposal[]>([])
@@ -14,18 +15,13 @@ async function getProposals() {
         return response.data as MarketplaceProposal[]
     })
 
-    if (!data) {
-        proposalList.length = 0
-        return
-    }
-
     proposalList.length = 0
-    proposalList.push(...data)
+    if (data) proposalList.push(...data)
 }
 
-onMounted(() => {
-    getProposals()
-})
+sseService.on<MarketplaceProposal>("proposal-generated", (data) => proposalList.unshift(data))
+
+onMounted(getProposals)
 </script>
 
 <template>

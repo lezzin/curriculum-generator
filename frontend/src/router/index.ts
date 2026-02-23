@@ -6,11 +6,11 @@ import ResumeHistoryView from '../views/ResumeHistoryView.vue'
 import FreelanceHistoryView from '../views/FreelanceHistoryView.vue'
 
 const routes = [
-    { path: '/', component: HomeView },
-    { path: '/resume', component: ResumeGeneratorView },
-    { path: '/resume/history', component: ResumeHistoryView },
-    { path: '/freelance', component: FreelanceView },
-    { path: '/freelance/history', component: FreelanceHistoryView },
+    { path: '/', name: 'Home', component: HomeView },
+    { path: '/resume', name: 'ResumeGenerator', component: ResumeGeneratorView },
+    { path: '/resume/history', name: 'ResumeHistory', component: ResumeHistoryView },
+    { path: '/freelance', name: 'Freelance', component: FreelanceView },
+    { path: '/freelance/history', name: 'FreelanceProposalHistory', component: FreelanceHistoryView },
 ]
 
 export const router = createRouter({

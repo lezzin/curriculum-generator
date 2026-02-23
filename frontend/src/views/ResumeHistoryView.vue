@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { onMounted, reactive } from 'vue'
 import { useApi } from '../composables/useApi'
+import { sseService } from '../services/sse.service'
 import type { Resume } from '../interfaces/resume.interfaces'
 import ResumePreview from '../components/resume/ResumePreview.vue'
 import AppTitle from '../components/layout/AppTitle.vue'
@@ -14,18 +15,13 @@ async function getResumes() {
         return response.data as Resume[]
     })
 
-    if (!data) {
-        resumesList.length = 0
-        return
-    }
-
     resumesList.length = 0
-    resumesList.push(...data)
+    if (data) resumesList.push(...data)
 }
 
-onMounted(() => {
-    getResumes()
-})
+sseService.on<Resume>("resume-generated", (data) => resumesList.unshift(data))
+
+onMounted(getResumes)
 </script>
 
 <template>
