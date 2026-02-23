@@ -1,6 +1,4 @@
 export interface MarketplaceProposal {
-    id?: string
-    createdAt?: string
     message: string
     bidAmount: number
     deliveryDays: number

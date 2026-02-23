@@ -1,16 +1,17 @@
 <script setup lang="ts">
-import { reactive, watch } from "vue"
+import { onMounted, onUnmounted, reactive, watch } from "vue"
 import BaseButton from "../components/ui/BaseButton.vue"
 import AppTitle from "../components/layout/AppTitle.vue"
 import TextAreaField from "../components/ui/form/TextAreaField.vue"
 import type { MarketplaceProposal } from "../interfaces/freelance.interfaces"
-import ProposalPreview from "../components/freelance/ProposalPreview.vue"
 import { useFreelanceValidation } from "../composables/useFreelanceValidation"
 import { useApi } from "../composables/useApi"
+import { useToast } from "../composables/useToast"
+
+const { show } = useToast()
 
 const state = reactive({
     solicitationText: "",
-    proposal: null as MarketplaceProposal | null,
     error: "",
 })
 
@@ -20,24 +21,53 @@ const { errors, validateSolicitationText, validateForm, isFormValid } = useFreel
 async function generateProposal() {
     if (!validateForm()) return
 
-    const data = await request(async () => {
-        const response = await api.post("/freelance/proposal/generate", {
+    await request(async () => {
+        await api.post("/freelance/proposal/generate", {
             solicitation: state.solicitationText,
+        }).then(response => {
+            show(response.data.message ?? "Solicitação enviada com sucesso!")
+        }).catch(() => {
+            show("Erro ao gerar proposta. Tente novamente.", "error")
         })
-
-        return response.data as MarketplaceProposal
     })
-
-    if (!data) return
-
-    state.proposal = data
 }
 
 watch(() => state.solicitationText, validateSolicitationText)
+
+
+let eventSource: EventSource | null = null
+
+onMounted(() => {
+    eventSource = new EventSource(`${api.defaults.baseURL}/events`)
+
+    eventSource.onmessage = (event) => {
+        try {
+            const data: {
+                event: string
+                data: MarketplaceProposal
+            } = JSON.parse(event.data)
+
+            if (data.event === "proposal-generated") {
+                show("Proposta gerada com sucesso! Acesse a seção de histórico para visualizar.")
+            }
+        } catch (err) {
+            console.error("Erro ao processar evento SSE", err)
+        }
+    }
+
+    eventSource.onerror = () => {
+        show("Erro na conexão SSE", "error")
+    }
+})
+
+onUnmounted(() => {
+    eventSource?.close()
+    eventSource = null
+})
 </script>
 
 <template>
-    <AppTitle title="Freelance" />
+    <AppTitle title="Gerar Proposta" />
 
     <div class="space-y-4 mt-6">
         <TextAreaField label="Descrição da solicitação" v-model="state.solicitationText" :rows="10"
@@ -52,6 +82,4 @@ watch(() => state.solicitationText, validateSolicitationText)
             {{ state.error }}
         </p>
     </div>
-
-    <ProposalPreview v-if="state.proposal" :proposal="state.proposal" />
 </template>

@@ -3,12 +3,14 @@ import ResumeGeneratorView from '../views/ResumeGeneratorView.vue'
 import HomeView from '../views/HomeView.vue'
 import FreelanceView from '../views/FreelanceView.vue'
 import ResumeHistoryView from '../views/ResumeHistoryView.vue'
+import FreelanceHistoryView from '../views/FreelanceHistoryView.vue'
 
 const routes = [
     { path: '/', component: HomeView },
     { path: '/resume', component: ResumeGeneratorView },
     { path: '/resume/history', component: ResumeHistoryView },
-    { path: '/frelance', component: FreelanceView },
+    { path: '/freelance', component: FreelanceView },
+    { path: '/freelance/history', component: FreelanceHistoryView },
 ]
 
 export const router = createRouter({

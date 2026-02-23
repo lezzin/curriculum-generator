@@ -1,4 +1,4 @@
-import { Body, Controller, Post } from "@nestjs/common";
+import { Body, Controller, Get, Post } from "@nestjs/common";
 import { FreelanceService } from "./services/freelance.service";
 import { SolicitationDto } from "./dto/freelance.dto";
 import { baseFreelance } from "src/data/base-freelance";
@@ -13,9 +13,14 @@ export class FreelanceController {
     async generateProposal(@Body() solicitationDto: SolicitationDto) {
         const { solicitation } = solicitationDto
 
-        return await this.freelanceService.generateAIProposal(
+        return await this.freelanceService.sendProposalToQueue(
             baseFreelance,
             solicitation
         )
+    }
+
+    @Get('/proposal/all')
+    async getAllProposals() {
+        return await this.freelanceService.getAllProposals()
     }
 }

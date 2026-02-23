@@ -2,6 +2,7 @@
 import { computed, ref, watch } from "vue"
 import type { MarketplaceProposal } from "../../interfaces/freelance.interfaces"
 import BaseButton from "../ui/BaseButton.vue"
+import { toHumanReadableDate } from "../../helper/string.helper";
 
 const props = defineProps<{
     proposal: MarketplaceProposal
@@ -43,9 +44,7 @@ async function copyProposal() {
            transition-colors duration-300
            bg-white border border-zinc-200">
         <div class="flex items-center justify-between">
-            <h3 class="text-lg font-semibold text-zinc-800">
-                Proposta Gerada
-            </h3>
+            <small class="text-gray-500">Criado em: {{ toHumanReadableDate(proposal.createdAt ?? "") }}</small>
 
             <BaseButton @click="copyProposal" variant="outline" size="sm">
                 {{ copied ? 'Copiado!' : 'Copiar proposta' }}
