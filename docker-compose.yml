@@ -32,6 +32,22 @@ services:
       - app_network
     restart: unless-stopped
 
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    restart: unless-stopped
+    ports:
+      - "5672:5672"     
+      - "15672:15672"   
+    environment:
+      RABBITMQ_DEFAULT_USER: admin
+      RABBITMQ_DEFAULT_PASS: admin123
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+
 networks:
   app_network:
     driver: bridge
+
+volumes:
+  rabbitmq_data:
