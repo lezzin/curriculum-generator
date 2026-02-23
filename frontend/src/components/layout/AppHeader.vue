@@ -26,7 +26,6 @@ function close() {
                     Início
                 </router-link>
 
-                <!-- CURRÍCULOS -->
                 <div class="relative">
                     <button @click="toggle('resume')"
                         class="flex items-center gap-1 text-gray-600 hover:text-black transition">
@@ -53,7 +52,6 @@ function close() {
                     </transition>
                 </div>
 
-                <!-- FREELANCE -->
                 <div class="relative">
                     <button @click="toggle('freelance')"
                         class="flex items-center gap-1 text-gray-600 hover:text-black transition">
