@@ -16,11 +16,7 @@ function close() {
 
 <template>
     <header class="bg-white/80 backdrop-blur-md border-b sticky top-0 z-50">
-        <AppContainer class="px-8 py-4 flex items-center justify-between">
-            <router-link to="/" class="text-xl font-bold tracking-tight hover:opacity-80 transition">
-                AI Resume
-            </router-link>
-
+        <AppContainer class="px-8 py-4 flex items-center justify-center">
             <nav class="flex items-center gap-6 text-sm font-medium">
                 <router-link to="/" class="text-gray-600 hover:text-black transition">
                     Início
