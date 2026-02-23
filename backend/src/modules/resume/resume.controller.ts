@@ -1,4 +1,4 @@
-import { Body, Controller, Post, Res } from "@nestjs/common";
+import { Body, Controller, Get, Post, Res } from "@nestjs/common";
 import { GenerateDto, ResumePdfDto } from "./dto/prompt.dto";
 import { baseResume } from "src/data/base-resume";
 import { type Response } from 'express';
@@ -37,5 +37,10 @@ export class ResumeController {
         });
 
         res.end(pdfBuffer);
+    }
+
+    @Get('/all')
+    async getAllResumes() {
+        return await this.resumeService.getResumes();
     }
 }

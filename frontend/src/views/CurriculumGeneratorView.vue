@@ -9,6 +9,8 @@ import BaseButton from "../components/ui/BaseButton.vue"
 import AppTitle from "../components/layout/AppTitle.vue"
 import TextAreaField from "../components/ui/form/TextAreaField.vue"
 import { DESCRIPTION_LENGTH } from "../constants/app.constants"
+import { onMounted } from "vue"
+import ResumePreview from "../components/resume/ResumePreview.vue"
 
 const state = reactive({
     jobText: "",
@@ -87,17 +89,17 @@ const api = axios.create({
 
 async function handleRequest<T>(
     request: () => Promise<T>,
-    loadingKey: "isGeneratingResume" | "isGeneratingPdf"
+    loadingKey: "isGeneratingResume" | "isGeneratingPdf" | null = null
 ) {
     try {
-        state[loadingKey] = true
+        if (loadingKey) state[loadingKey] = true
         state.error = ""
         return await request()
     } catch (err) {
         console.error(err)
         state.error = extractErrorMessage(err)
     } finally {
-        state[loadingKey] = false
+        if (loadingKey) state[loadingKey] = false
     }
 }
 
@@ -141,6 +143,15 @@ async function generatePdf() {
     state.pdfUrl = URL.createObjectURL(blob)
 }
 
+const resumes = reactive([] as Resume[])
+
+async function getResumes() {
+    await handleRequest(async () => {
+        const response = await api.get("/resume/all")
+        resumes.splice(0, resumes.length, ...response.data as Resume[])
+    })
+}
+
 const canViewPdf = computed(() => !!state.resume && !!state.pdfUrl && !state.isGeneratingPdf)
 
 watch(() => state.jobText, validateJobText)
@@ -158,6 +169,10 @@ watch(
         }
     }
 )
+
+onMounted(() => {
+    getResumes()
+})
 </script>
 
 <template>
@@ -211,5 +226,10 @@ watch(
         <p v-if="state.error" class="text-red-500 text-sm">
             {{ state.error }}
         </p>
+    </div>
+
+    <div>
+        <h2 class="text-xl font-semibold mt-10 mb-4">Currículos Gerados</h2>
+        <ResumePreview v-for="resume in resumes" :key="resume.name" :resume="resume" />
     </div>
 </template>
