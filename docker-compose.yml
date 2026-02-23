@@ -1,8 +1,10 @@
+networks:
+  app_network:
+    driver: bridge
+
 services:
   backend:
-    build:
-      context: ./backend
-      dockerfile: Dockerfile
+    build: ./backend
     container_name: app_backend
     ports:
       - '3000:3000'
@@ -13,6 +15,9 @@ services:
       - NODE_ENV=production
       - PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
       - PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium
+      - DATABASE_HOST=host.docker.internal
+      - RABBITMQ_URL=rabbitmq:5672
+      - REDIS_HOST=redis
     depends_on:
       - rabbitmq
       - redis
@@ -31,7 +36,6 @@ services:
       - '80:80'
     depends_on:
       - backend
-      - redis
     networks:
       - app_network
     restart: unless-stopped
@@ -48,6 +52,9 @@ services:
       RABBITMQ_DEFAULT_PASS: admin123
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq
+    networks:
+      - app_network
+
   redis:
     image: redis:latest
     container_name: redis
@@ -56,10 +63,6 @@ services:
       - "6379:6379"
     networks:
       - app_network
-
-networks:
-  app_network:
-    driver: bridge
 
 volumes:
   rabbitmq_data:
