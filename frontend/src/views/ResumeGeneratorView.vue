@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import { reactive, watch, onMounted, onUnmounted } from "vue"
-import type { Resume } from "../interfaces/resume.interfaces"
+import { reactive, watch } from "vue"
 import { useApi } from "../composables/useApi"
 import { useResumeValidation } from "../composables/useResumeValidation"
 import BaseButton from "../components/ui/BaseButton.vue"
@@ -47,36 +46,6 @@ watch(() => state.language, v => validateRequired("language", v))
 watch(() => state.seniority, v => validateRequired("seniority", v))
 watch(() => state.focusArea, v => validateRequired("focusArea", v))
 watch(() => state.market, v => validateRequired("market", v))
-
-let eventSource: EventSource | null = null
-
-onMounted(() => {
-    eventSource = new EventSource(`${api.defaults.baseURL}/events`)
-
-    eventSource.onmessage = (event) => {
-        try {
-            const data: {
-                event: string
-                data: Resume
-            } = JSON.parse(event.data)
-
-            if (data.event === "resume-generated") {
-                show("Novo currículo gerado! Acesse a seção de histórico para visualizar.")
-            }
-        } catch (err) {
-            console.error("Erro ao processar evento SSE", err)
-        }
-    }
-
-    eventSource.onerror = () => {
-        show("Erro na conexão SSE", "error")
-    }
-})
-
-onUnmounted(() => {
-    eventSource?.close()
-    eventSource = null
-})
 </script>
 
 <template>

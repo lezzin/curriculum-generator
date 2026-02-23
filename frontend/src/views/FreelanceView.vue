@@ -1,9 +1,8 @@
 <script setup lang="ts">
-import { onMounted, onUnmounted, reactive, watch } from "vue"
+import { reactive, watch } from "vue"
 import BaseButton from "../components/ui/BaseButton.vue"
 import AppTitle from "../components/layout/AppTitle.vue"
 import TextAreaField from "../components/ui/form/TextAreaField.vue"
-import type { MarketplaceProposal } from "../interfaces/freelance.interfaces"
 import { useFreelanceValidation } from "../composables/useFreelanceValidation"
 import { useApi } from "../composables/useApi"
 import { useToast } from "../composables/useToast"
@@ -33,37 +32,6 @@ async function generateProposal() {
 }
 
 watch(() => state.solicitationText, validateSolicitationText)
-
-
-let eventSource: EventSource | null = null
-
-onMounted(() => {
-    eventSource = new EventSource(`${api.defaults.baseURL}/events`)
-
-    eventSource.onmessage = (event) => {
-        try {
-            const data: {
-                event: string
-                data: MarketplaceProposal
-            } = JSON.parse(event.data)
-
-            if (data.event === "proposal-generated") {
-                show("Proposta gerada com sucesso! Acesse a seção de histórico para visualizar.")
-            }
-        } catch (err) {
-            console.error("Erro ao processar evento SSE", err)
-        }
-    }
-
-    eventSource.onerror = () => {
-        show("Erro na conexão SSE", "error")
-    }
-})
-
-onUnmounted(() => {
-    eventSource?.close()
-    eventSource = null
-})
 </script>
 
 <template>
