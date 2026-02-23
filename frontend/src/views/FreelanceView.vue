@@ -1,77 +1,26 @@
 <script setup lang="ts">
-import { reactive, computed, watch } from "vue"
-import axios from "axios"
-import { config } from "../config/variables.config"
-import { extractErrorMessage } from "../helper/error.helper"
+import { reactive, watch } from "vue"
 import BaseButton from "../components/ui/BaseButton.vue"
 import AppTitle from "../components/layout/AppTitle.vue"
 import TextAreaField from "../components/ui/form/TextAreaField.vue"
 import type { MarketplaceProposal } from "../interfaces/freelance.interfaces"
 import ProposalPreview from "../components/freelance/ProposalPreview.vue"
-import { DESCRIPTION_LENGTH } from "../constants/app.constants"
+import { useFreelanceValidation } from "../composables/useFreelanceValidation"
+import { useApi } from "../composables/useApi"
 
 const state = reactive({
     solicitationText: "",
     proposal: null as MarketplaceProposal | null,
-    isGeneratingProposal: false,
     error: "",
 })
 
-const errors = reactive({
-    solicitationText: "",
-})
-
-function validateSolicitationText() {
-    if (!state.solicitationText.trim()) {
-        errors.solicitationText = "A descrição da solicitação é obrigatória."
-        return false
-    }
-
-    if (state.solicitationText.trim().length < DESCRIPTION_LENGTH.min) {
-        errors.solicitationText = `A descrição precisa ter pelo menos ${DESCRIPTION_LENGTH.min} caracteres.`
-        return false
-    }
-
-    if (state.solicitationText.trim().length > DESCRIPTION_LENGTH.max) {
-        errors.solicitationText = `A descrição precisa ter até no máximo ${DESCRIPTION_LENGTH.max} caracteres.`
-        return false
-    }
-
-    errors.solicitationText = ""
-    return true
-}
-
-function validateForm() {
-    const isValid = validateSolicitationText()
-    return isValid
-}
-
-const isFormValid = computed(() =>
-    state.solicitationText.trim().length >= DESCRIPTION_LENGTH.min &&
-    state.solicitationText.trim().length <= DESCRIPTION_LENGTH.max
-)
-
-const api = axios.create({
-    baseURL: config.apiUrl
-})
-
-async function handleRequest<T>(request: () => Promise<T>,) {
-    try {
-        state.isGeneratingProposal = true
-        state.error = ""
-        return await request()
-    } catch (err) {
-        console.error(err)
-        state.error = extractErrorMessage(err)
-    } finally {
-        state.isGeneratingProposal = false
-    }
-}
+const { api, loading: isGeneratingProposal, request } = useApi()
+const { errors, validateSolicitationText, validateForm, isFormValid } = useFreelanceValidation(state)
 
 async function generateProposal() {
     if (!validateForm()) return
 
-    const data = await handleRequest(async () => {
+    const data = await request(async () => {
         const response = await api.post("/freelance/proposal/generate", {
             solicitation: state.solicitationText,
         })
@@ -94,8 +43,8 @@ watch(() => state.solicitationText, validateSolicitationText)
         <TextAreaField label="Descrição da solicitação" v-model="state.solicitationText" :rows="10"
             placeholder="Cole a descrição da solicitação..." :error="errors.solicitationText" />
 
-        <BaseButton @click="generateProposal" :disabled="!isFormValid || state.isGeneratingProposal"
-            :loading="state.isGeneratingProposal">
+        <BaseButton @click="generateProposal" :disabled="!isFormValid || isGeneratingProposal"
+            :loading="isGeneratingProposal">
             Gerar Proposta
         </BaseButton>
 

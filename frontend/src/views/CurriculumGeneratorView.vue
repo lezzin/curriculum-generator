@@ -48,6 +48,7 @@ async function generateResume() {
 
     state.resume = data
     await generatePdf(state.resume)
+    await getResumes()
 }
 
 async function getResumes() {
