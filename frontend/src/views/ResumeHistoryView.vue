@@ -27,7 +27,8 @@ onMounted(getResumes)
 <template>
     <AppTitle title="Currículos Gerados" />
 
-    <div class="grid gap-4">
+    <div class="grid gap-4" v-if="resumesList.length > 0">
         <ResumePreview v-for="resume in resumesList" :key="resume.id" :resume="resume" />
     </div>
+    <p v-else class="text-center text-gray-500">Nenhum currículo gerado ainda.</p>
 </template>

@@ -27,7 +27,8 @@ onMounted(getProposals)
 <template>
     <AppTitle title="Propostas Geradas" />
 
-    <div class="grid gap-4">
+    <div class="grid gap-4" v-if="proposalList.length > 0">
         <ProposalPreview v-for="proposal in proposalList" :key="proposal.id" :proposal="proposal" />
     </div>
+    <p v-else class="text-center text-gray-500">Nenhuma proposta gerada ainda.</p>
 </template>
