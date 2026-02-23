@@ -8,7 +8,7 @@ defineProps<{
 <template>
     <div class="mb-12">
         <div class="border-b pb-6">
-            <h1 class="text-3xl md:text-4xl font-bold tracking-tight text-gray-900">
+            <h1 class="text-3xl font-bold tracking-tight text-gray-900">
                 {{ title }}
             </h1>
 

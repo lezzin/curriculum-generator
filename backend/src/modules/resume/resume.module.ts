@@ -7,11 +7,13 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ResumeEntity } from './entities/resume.entity';
 import { RabbitMQPublisherService } from './messaging/rabbimq-publisher';
 import { RabbitMQConsumerService } from './messaging/rabbitmq-consumer';
+import { SseModule } from '../sse/sse.module';
 
 @Module({
     imports: [
         TypeOrmModule.forFeature([ResumeEntity]),
         GeminiModule,
+        SseModule,
     ],
     controllers: [ResumeController],
     providers: [

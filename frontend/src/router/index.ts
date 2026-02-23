@@ -1,11 +1,13 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import CurriculumGeneratorView from '../views/CurriculumGeneratorView.vue'
+import ResumeGeneratorView from '../views/ResumeGeneratorView.vue'
 import HomeView from '../views/HomeView.vue'
 import FreelanceView from '../views/FreelanceView.vue'
+import ResumeHistoryView from '../views/ResumeHistoryView.vue'
 
 const routes = [
     { path: '/', component: HomeView },
-    { path: '/curriculum', component: CurriculumGeneratorView },
+    { path: '/resume', component: ResumeGeneratorView },
+    { path: '/resume/history', component: ResumeHistoryView },
     { path: '/frelance', component: FreelanceView },
 ]
 

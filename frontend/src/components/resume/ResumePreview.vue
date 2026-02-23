@@ -4,6 +4,7 @@ import { useApi } from "../../composables/useApi"
 import { usePdf } from "../../composables/usePdf"
 import type { Resume } from "../../interfaces/resume.interfaces"
 import BaseButton from "../ui/BaseButton.vue"
+import { toHumanReadableDate } from "../../helper/string.helper"
 
 const props = defineProps<{ resume: Resume }>()
 
@@ -22,21 +23,7 @@ const shortSummary = computed(() => {
 <template>
     <div class="group border rounded-2xl p-5 bg-white shadow-sm hover:shadow-md transition-all duration-200">
         <div class="flex justify-between items-start cursor-pointer gap-4" @click="isOpen = !isOpen">
-            <div class="space-y-1">
-                <h3 class="text-lg font-semibold text-gray-900">
-                    {{ resume.name }}
-                </h3>
-
-                <div class="flex items-center gap-2 text-sm text-gray-500">
-                    <span>{{ resume.role }}</span>
-
-                    <span class="text-gray-300">•</span>
-
-                    <span class="px-2 py-0.5 text-xs rounded-full bg-gray-100 text-gray-600">
-                        {{ resume.language }}
-                    </span>
-                </div>
-            </div>
+            <small class="text-gray-500">Data de criação: {{ toHumanReadableDate(resume.createdAt ?? "") }}</small>
 
             <div class="flex items-center gap-3">
                 <svg class="w-4 h-4 text-gray-400 transition-transform duration-200" :class="{ 'rotate-180': isOpen }"
@@ -48,6 +35,22 @@ const shortSummary = computed(() => {
                     variant="outline" @click.stop>
                     PDF
                 </BaseButton>
+            </div>
+        </div>
+
+        <div class="space-y-1 cursor-pointer" @click="isOpen = !isOpen">
+            <h3 class="text-lg font-semibold text-gray-900">
+                {{ resume.name }}
+            </h3>
+
+            <div class="flex items-center gap-2 text-sm text-gray-500">
+                <span>{{ resume.role }}</span>
+
+                <span class="text-gray-300">•</span>
+
+                <span class="px-2 py-0.5 text-xs rounded-full bg-gray-100 text-gray-600">
+                    {{ resume.language }}
+                </span>
             </div>
         </div>
 

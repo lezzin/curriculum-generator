@@ -1,15 +1,15 @@
 <script setup lang="ts">
-import { reactive, watch, ref, onMounted } from "vue"
+import { reactive, watch, onMounted, onUnmounted } from "vue"
 import type { Resume } from "../interfaces/resume.interfaces"
 import { useApi } from "../composables/useApi"
 import { useResumeValidation } from "../composables/useResumeValidation"
 import BaseButton from "../components/ui/BaseButton.vue"
 import TextAreaField from "../components/ui/form/TextAreaField.vue"
 import SelectField from "../components/ui/form/SelectField.vue"
-import ResumePreview from "../components/resume/ResumePreview.vue"
 import AppTitle from "../components/layout/AppTitle.vue"
+import { useToast } from "../composables/useToast"
 
-const alertMessage = ref<string | null>(null)
+const { show } = useToast()
 
 const state = reactive({
     jobText: "",
@@ -18,8 +18,6 @@ const state = reactive({
     focusArea: "Backend",
     market: "US"
 })
-
-const resumesList = ref([] as Resume[])
 
 const { api, error, loading: isGeneratingResume, request } = useApi()
 const { errors, validateJobText, validateRequired, isFormValid } = useResumeValidation(state)
@@ -37,35 +35,11 @@ async function generateResume() {
                 market: state.market
             }
         }).then(response => {
-            const newResume = response.data as Resume
-            resumesList.value.unshift(newResume)
-            showAlert("Currículo enviado para a fila de geração com sucesso!")
+            show(response.data.message ?? "Solicitação enviada com sucesso!")
         }).catch(() => {
-            showAlert("Erro ao gerar currículo. Tente novamente.")
+            show("Erro ao gerar currículo. Tente novamente.", "error")
         })
     })
-}
-
-function showAlert(message: string) {
-    alertMessage.value = message
-
-    setTimeout(() => {
-        alertMessage.value = null
-    }, 5000)
-}
-
-async function getResumes() {
-    const data = await request(async () => {
-        const response = await api.get("/resume/all")
-        return response.data as Resume[]
-    })
-
-    if (!data) {
-        resumesList.value = []
-        return
-    }
-
-    resumesList.value = data
 }
 
 watch(() => state.jobText, validateJobText)
@@ -74,17 +48,39 @@ watch(() => state.seniority, v => validateRequired("seniority", v))
 watch(() => state.focusArea, v => validateRequired("focusArea", v))
 watch(() => state.market, v => validateRequired("market", v))
 
+let eventSource: EventSource | null = null
+
 onMounted(() => {
-    getResumes()
+    eventSource = new EventSource(`${api.defaults.baseURL}/events`)
+
+    eventSource.onmessage = (event) => {
+        try {
+            const data: {
+                event: string
+                data: Resume
+            } = JSON.parse(event.data)
+
+            if (data.event === "resume-generated") {
+                show("Novo currículo gerado! Acesse a seção de histórico para visualizar.")
+            }
+        } catch (err) {
+            console.error("Erro ao processar evento SSE", err)
+        }
+    }
+
+    eventSource.onerror = () => {
+        show("Erro na conexão SSE", "error")
+    }
+})
+
+onUnmounted(() => {
+    eventSource?.close()
+    eventSource = null
 })
 </script>
 
 <template>
     <AppTitle title="Gerar currículo" />
-
-    <div v-if="alertMessage" class="bg-green-100 text-green-800 p-4 rounded mb-6">
-        {{ alertMessage }}
-    </div>
 
     <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
         <SelectField label="Idioma" v-model="state.language" :error="errors.language">
@@ -127,13 +123,5 @@ onMounted(() => {
         <p v-if="error" class="text-red-500 text-sm">
             {{ error }}
         </p>
-    </div>
-
-    <div v-if="resumesList.length" class="mt-10">
-        <h2 class="text-xl font-semibold mb-4">Currículos Gerados</h2>
-
-        <div class="grid gap-4">
-            <ResumePreview v-for="resume in resumesList" :key="resume.id" :resume="resume" />
-        </div>
     </div>
 </template>
