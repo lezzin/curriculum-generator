@@ -1,4 +1,4 @@
-import { Injectable, OnModuleInit, OnModuleDestroy } from '@nestjs/common';
+import { Injectable, OnModuleInit, OnModuleDestroy, Inject } from '@nestjs/common';
 import * as puppeteer from 'puppeteer';
 import * as Handlebars from 'handlebars';
 import * as fs from 'fs';
@@ -8,6 +8,8 @@ import { SECTION_LABELS } from '../constants/resume.constants';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ResumeEntity } from '../entities/resume.entity';
 import { Repository } from 'typeorm';
+import { type Cache } from 'cache-manager';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
 
 @Injectable()
 export class PdfService implements OnModuleInit, OnModuleDestroy {
@@ -17,6 +19,8 @@ export class PdfService implements OnModuleInit, OnModuleDestroy {
   constructor(
     @InjectRepository(ResumeEntity)
     private resumeRepository: Repository<ResumeEntity>,
+
+    @Inject(CACHE_MANAGER) private cacheManager: Cache
   ) { }
 
   async onModuleInit() {
@@ -60,16 +64,31 @@ export class PdfService implements OnModuleInit, OnModuleDestroy {
   }
 
   async generateResumePdfById(id: string): Promise<Buffer> {
+    const cacheKey = this.getCacheKey(id);
+    const ttl = 300000; // 5 minutes 
+
+    const cached = await this.cacheManager.get<Buffer>(cacheKey);
+
+    if (cached) {
+      return cached;
+    }
+
     const resumeEntity = await this.resumeRepository.findOne({ where: { id } });
 
     if (!resumeEntity) {
       throw new Error('Resume not found');
     }
 
-    return this.generateResumePdf(resumeEntity as ResumePdfDto);
+    const pdfBuffer = await this.generateResumePdf(resumeEntity as ResumePdfDto);
+    await this.cacheManager.set(cacheKey, pdfBuffer, ttl);
+    return pdfBuffer;
   }
 
   async onModuleDestroy() {
     await this.browser.close();
+  }
+
+  getCacheKey(id: string): string {
+    return `resume_pdf_${id}`;
   }
 }
