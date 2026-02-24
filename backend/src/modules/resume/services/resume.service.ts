@@ -6,9 +6,9 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { ResumeEntity } from "../entities/resume.entity";
 import { Repository } from "typeorm";
 import { Resume } from "../interfaces/resume.interfaces";
-import { RabbitMQPublisherService } from "../messaging/rabbimq-publisher";
 import { SseService } from "src/modules/sse/sse.service";
 import { CacheService } from "src/modules/cache/cache.service";
+import { ResumePublisher } from "../messaging/rabbimq-publisher";
 
 @Injectable()
 export class ResumeService {
@@ -20,14 +20,14 @@ export class ResumeService {
         @InjectRepository(ResumeEntity)
         private readonly resumeRepository: Repository<ResumeEntity>,
 
-        private readonly rabbitMQPublisherService: RabbitMQPublisherService,
+        private readonly resumePublisher: ResumePublisher,
         private readonly geminiService: GeminiService,
         private readonly sseService: SseService,
         private readonly cacheService: CacheService,
     ) { }
 
     async sendResumeToQueue(baseResume: any, jobDescription: string, options: ResumeOptionsDto) {
-        await this.rabbitMQPublisherService.publish({ baseResume, jobDescription, options }).catch(err => {
+        await this.resumePublisher.publish({ baseResume, jobDescription, options }).catch(err => {
             this.logger.error("Failed to publish message to RabbitMQ", err)
         })
 
@@ -53,7 +53,10 @@ export class ResumeService {
         return await this.cacheService.getOrSet<ResumeEntity[]>(
             this.CACHE_KEY,
             async () => {
-                const resumes = await this.resumeRepository.find();
+                const resumes = await this.resumeRepository.find({
+                    order: { createdAt: "DESC" },
+                });
+
                 return resumes;
             },
             1800,

@@ -5,10 +5,11 @@ import { PdfService } from './services/pdf.service';
 import { GeminiModule } from '../gemini/gemini.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ResumeEntity } from './entities/resume.entity';
-import { RabbitMQPublisherService } from './messaging/rabbimq-publisher';
-import { RabbitMQConsumerService } from './messaging/rabbitmq-consumer';
 import { SseModule } from '../sse/sse.module';
 import { CacheModule } from '../cache/cache.module';
+import { ResumePublisher } from './messaging/rabbimq-publisher';
+import { ResumeConsumer } from './messaging/rabbitmq-consumer';
+import { RabbitMQModule } from '../../common/rabbitmq/rabbitmq.module';
 
 @Module({
     imports: [
@@ -16,13 +17,14 @@ import { CacheModule } from '../cache/cache.module';
         GeminiModule,
         SseModule,
         CacheModule,
+        RabbitMQModule,
     ],
     controllers: [ResumeController],
     providers: [
         ResumeService,
         PdfService,
-        RabbitMQPublisherService,
-        RabbitMQConsumerService,
+        ResumePublisher,
+        ResumeConsumer,
     ],
 })
 export class ResumeModule { }

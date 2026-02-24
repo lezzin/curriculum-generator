@@ -6,22 +6,26 @@ import { FreelanceProposalEntity } from "../entities/freelance-proposal.entity";
 import { Repository } from "typeorm";
 import { InjectRepository } from "@nestjs/typeorm";
 import { MarketplaceProposal } from "../interfaces/freelance.interfaces";
-import { RabbitMQPublisherService } from "../messaging/rabbimq-publisher";
+import { FreelancePublisher } from "../messaging/rabbimq-publisher";
+import { CacheService } from "src/modules/cache/cache.service";
 
 @Injectable()
 export class FreelanceService {
     private readonly logger = new Logger(FreelanceService.name);
 
+    private readonly CACHE_KEY = "freelance:proposals:all";
+
     constructor(
         @InjectRepository(FreelanceProposalEntity)
-        private readonly resumeRepository: Repository<FreelanceProposalEntity>,
-        private readonly rabbitMQPublisherService: RabbitMQPublisherService,
+        private readonly freelanceProposalRepository: Repository<FreelanceProposalEntity>,
+        private readonly freelancePublisher: FreelancePublisher,
         private readonly geminiService: GeminiService,
         private readonly sseService: SseService,
+        private readonly cacheService: CacheService,
     ) { }
 
     async sendProposalToQueue(baseData: any, solicitation: string) {
-        await this.rabbitMQPublisherService.publish({ baseData, solicitation }).catch(err => {
+        await this.freelancePublisher.publish({ baseData, solicitation }).catch(err => {
             this.logger.error("Failed to publish message to RabbitMQ", err)
         })
 
@@ -32,16 +36,31 @@ export class FreelanceService {
         const prompt = build99FreelasProposalPrompt(baseData, solicitation)
         const proposal = await this.geminiService.generateJsonResponse(prompt) as MarketplaceProposal
 
-        const savedProposal = await this.resumeRepository.save({ ...proposal }).catch(err => {
+        const savedProposal = await this.freelanceProposalRepository.save({ ...proposal }).catch(err => {
             this.logger.error("Failed to save proposal to database", err)
+        })
+
+        this.cacheService.del(this.CACHE_KEY).catch(err => {
+            this.logger.error("Failed to invalidate proposals cache", err)
         })
 
         this.sseService.sendEvent({ event: "proposal-generated", data: savedProposal })
     }
 
     async getAllProposals() {
-        return await this.resumeRepository.find({
-            order: { createdAt: "DESC" }
-        })
+        return await this.cacheService.getOrSet<FreelanceProposalEntity[]>(
+            this.CACHE_KEY,
+            async () => {
+                const proposals = await this.freelanceProposalRepository.find({
+                    order: { createdAt: "DESC" },
+                });
+
+                return proposals;
+            },
+            1800,
+        ).catch(err => {
+            this.logger.error("Failed to fetch proposals", err);
+            return [];
+        });
     }
 }

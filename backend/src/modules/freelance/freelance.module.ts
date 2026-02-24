@@ -5,20 +5,24 @@ import { GeminiModule } from '../gemini/gemini.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { FreelanceProposalEntity } from './entities/freelance-proposal.entity';
 import { SseModule } from '../sse/sse.module';
-import { RabbitMQPublisherService } from './messaging/rabbimq-publisher';
-import { RabbitMQConsumerService } from './messaging/rabbitmq-consumer';
+import { FreelancePublisher } from './messaging/rabbimq-publisher';
+import { FreelanceConsumer } from './messaging/rabbitmq-consumer';
+import { RabbitMQModule } from '../../common/rabbitmq/rabbitmq.module';
+import { CacheModule } from '../cache/cache.module';
 
 @Module({
     imports: [
         GeminiModule,
         TypeOrmModule.forFeature([FreelanceProposalEntity]),
         SseModule,
+        RabbitMQModule,
+        CacheModule,
     ],
     controllers: [FreelanceController],
     providers: [
         FreelanceService,
-        RabbitMQPublisherService,
-        RabbitMQConsumerService
+        FreelancePublisher,
+        FreelanceConsumer,
     ],
 })
 export class FreelanceModule { }
