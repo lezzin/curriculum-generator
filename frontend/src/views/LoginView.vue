@@ -33,7 +33,7 @@ const login = async () => {
             })
         );
 
-        setToken(response.data.token);
+        setToken(response.data.token, response.data.user.id);
         show('Logado com sucesso!');
         router.push('/');
     } catch (err: any) {

@@ -15,7 +15,7 @@ import { PdfService } from './pdf.service';
 export class ResumeService {
   private readonly logger = new Logger(ResumeService.name);
 
-  private readonly CACHE_KEY = 'resume:all';
+  private readonly CACHE_KEY_PREFIX = 'resume:all';
 
   constructor(
     @InjectRepository(ResumeEntity)
@@ -30,11 +30,12 @@ export class ResumeService {
 
   async sendResumeToQueue(
     baseResume: any,
+    userId: string,
     jobDescription: string,
     options: ResumeOptionsDto,
   ) {
     await this.resumePublisher
-      .publish({ baseResume, jobDescription, options })
+      .publish({ baseResume, userId, jobDescription, options })
       .catch((err) => {
         this.logger.error('Failed to publish message to RabbitMQ', err);
       });
@@ -44,6 +45,7 @@ export class ResumeService {
 
   async generateAIResume(
     baseResume: any,
+    userId: string,
     jobDescription: string,
     options: ResumeOptionsDto,
   ) {
@@ -51,12 +53,15 @@ export class ResumeService {
       const prompt = buildResumePrompt(baseResume, jobDescription, options);
       const resume = await this.geminiService.generateJsonResponse<Resume>(prompt);
 
+      this.logger.debug(JSON.stringify(resume));
+
       const savedResume = await this.resumeRepository.save({
         ...resume,
         prompt: jobDescription,
+        userId: userId,
       });
 
-      await this.cacheService.del(this.CACHE_KEY);
+      await this.cacheService.del(`${this.CACHE_KEY_PREFIX}:${userId}`);
       await this.pdfService.generateResumePdfById(savedResume.id);
 
       this.sseService.sendEvent({
@@ -71,13 +76,14 @@ export class ResumeService {
     }
   }
 
-  async getResumes(): Promise<ResumeEntity[] | undefined> {
+  async getResumes(userId: string): Promise<ResumeEntity[] | undefined> {
     return await this.cacheService
       .getOrSet<ResumeEntity[]>(
-        this.CACHE_KEY,
+        `${this.CACHE_KEY_PREFIX}:${userId}`,
         async () => {
           const resumes = await this.resumeRepository.find({
             order: { createdAt: 'DESC' },
+            where: { userId },
           });
 
           return resumes;

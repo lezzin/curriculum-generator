@@ -7,8 +7,10 @@ import ProposalPreview from '../components/freelance/ProposalPreview.vue'
 import AppTitle from '../components/layout/AppTitle.vue'
 import LoadContainer from '../components/ui/LoadContainer.vue'
 import { useToast } from '../composables/useToast'
+import { useAuth } from '../composables/useAuth'
 
 const { api, request } = useApi()
+const { userId } = useAuth()
 const { show } = useToast()
 
 const proposalList = reactive<MarketplaceProposal[]>([])
@@ -33,7 +35,10 @@ async function getProposals() {
     }
 }
 
-sseService.on<MarketplaceProposal>("proposal-generated", (data) => proposalList.unshift(data))
+sseService.on<MarketplaceProposal>("proposal-generated", (data) => {
+    if (data.userId !== userId.value) return
+    proposalList.unshift(data)
+})
 
 onMounted(getProposals)
 </script>

@@ -7,8 +7,10 @@ import ResumePreview from '../components/resume/ResumePreview.vue'
 import AppTitle from '../components/layout/AppTitle.vue'
 import LoadContainer from '../components/ui/LoadContainer.vue'
 import { useToast } from '../composables/useToast'
+import { useAuth } from '../composables/useAuth'
 
 const { api, request } = useApi()
+const { userId } = useAuth()
 const { show } = useToast()
 
 const resumesList = reactive<Resume[]>([])
@@ -33,7 +35,10 @@ async function getResumes() {
     }
 }
 
-sseService.on<Resume>("resume-generated", (data) => resumesList.unshift(data))
+sseService.on<Resume>("resume-generated", (data) => {
+    if (data.userId !== userId.value) return
+    resumesList.unshift(data)
+})
 
 onMounted(getResumes)
 </script>

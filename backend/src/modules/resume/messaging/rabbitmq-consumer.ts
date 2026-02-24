@@ -18,9 +18,10 @@ export class ResumeConsumer extends BaseConsumer {
     super(rmq);
   }
 
-  protected async handleMessage(message: GenerateDto) {
+  protected async handleMessage(message: GenerateDto & { userId: string }) {
     await this.resumeService.generateAIResume(
       baseResume,
+      message.userId,
       message.jobDescription,
       message.options,
     );

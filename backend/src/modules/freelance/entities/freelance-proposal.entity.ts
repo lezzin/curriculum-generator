@@ -1,8 +1,10 @@
+import { UserEntity } from 'src/modules/auth/entities/user.entity';
 import {
   PrimaryGeneratedColumn,
   Column,
   CreateDateColumn,
   Entity,
+  ManyToOne,
 } from 'typeorm';
 
 @Entity('freelance_proposal')
@@ -21,6 +23,9 @@ export class FreelanceProposalEntity {
 
   @Column('int', { name: 'delivery_days' })
   deliveryDays: number;
+
+  @Column({ name: 'user_id' })
+  userId: string;
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;

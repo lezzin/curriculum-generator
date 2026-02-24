@@ -35,7 +35,7 @@ const signup = async () => {
             })
         );
 
-        setToken(response.data.token);
+        setToken(response.data.token, response.data.user.id);
         show('Conta criada com sucesso!');
         router.push('/');
     } catch (err: any) {

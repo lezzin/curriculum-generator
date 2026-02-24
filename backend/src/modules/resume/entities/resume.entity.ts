@@ -34,6 +34,9 @@ export class ResumeEntity {
   @Column('jsonb', { nullable: true })
   projects: any;
 
+  @Column({ name: 'user_id' })
+  userId: string;
+
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
 }

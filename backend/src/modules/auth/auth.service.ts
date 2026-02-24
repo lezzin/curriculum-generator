@@ -42,6 +42,11 @@ export class AuthService {
 
         return {
             token,
+            user: {
+                id: user.id,
+                name: user.name,
+                email: user.email,
+            },
         };
     }
 
@@ -68,6 +73,13 @@ export class AuthService {
             },
         );
 
-        return { token };
+        return {
+            token,
+            user: {
+                id: user.id,
+                name: user.name,
+                email: user.email,
+            },
+        }
     }
 }

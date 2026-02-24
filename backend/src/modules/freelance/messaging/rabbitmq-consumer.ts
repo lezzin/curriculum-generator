@@ -18,10 +18,11 @@ export class FreelanceConsumer extends BaseConsumer {
     super(rmq);
   }
 
-  protected async handleMessage(message: SolicitationDto) {
+  protected async handleMessage(message: SolicitationDto & { userId: string }): Promise<void> {
     await this.freelanceService.generateAIProposal(
       baseFreelance,
       message.solicitation,
+      message.userId,
     );
   }
 }

@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Req, UseGuards } from '@nestjs/common';
 import { GenerateDto } from './dto/prompt.dto';
 import { baseResume } from 'src/data/base-resume';
 import { PdfService } from './services/pdf.service';
@@ -14,11 +14,13 @@ export class ResumeController {
 
   @UseGuards(JwtAuthGuard)
   @Post('/generate')
-  async generateResume(@Body() generateDto: GenerateDto) {
+  async generateResume(@Body() generateDto: GenerateDto, @Req() req) {
     const { jobDescription, options } = generateDto;
+    const userId = req.user?.id;
 
     return await this.resumeService.sendResumeToQueue(
       baseResume,
+      userId,
       jobDescription,
       options,
     );
@@ -31,7 +33,8 @@ export class ResumeController {
 
   @UseGuards(JwtAuthGuard)
   @Get('/all')
-  async getAllResumes() {
-    return await this.resumeService.getResumes();
+  async getAllResumes(@Req() req) {
+    const userId = req.user?.id;
+    return await this.resumeService.getResumes(userId);
   }
 }

@@ -13,7 +13,7 @@ import { CacheService } from 'src/modules/cache/cache.service';
 export class FreelanceService {
   private readonly logger = new Logger(FreelanceService.name);
 
-  private readonly CACHE_KEY = 'freelance:proposals:all';
+  private readonly CACHE_KEY_PREFIX = 'freelance:proposals:all';
 
   constructor(
     @InjectRepository(FreelanceProposalEntity)
@@ -24,9 +24,9 @@ export class FreelanceService {
     private readonly cacheService: CacheService,
   ) { }
 
-  async sendProposalToQueue(baseData: any, solicitation: string) {
+  async sendProposalToQueue(baseData: any, solicitation: string, userId: string) {
     await this.freelancePublisher
-      .publish({ baseData, solicitation })
+      .publish({ baseData, solicitation, userId })
       .catch((err) => {
         this.logger.error('Failed to publish message to RabbitMQ', err);
       });
@@ -34,7 +34,7 @@ export class FreelanceService {
     return { message: 'Solicitação enviada com sucesso!' };
   }
 
-  async generateAIProposal(baseData: any, solicitation: string) {
+  async generateAIProposal(baseData: any, solicitation: string, userId: string) {
     try {
       const prompt = build99FreelasProposalPrompt(baseData, solicitation);
       const proposal = await this.geminiService.generateJsonResponse<MarketplaceProposal>(prompt);
@@ -42,9 +42,10 @@ export class FreelanceService {
       const savedProposal = await this.freelanceProposalRepository.save({
         ...proposal,
         prompt: solicitation,
+        userId: userId,
       });
 
-      await this.cacheService.del(this.CACHE_KEY);
+      await this.cacheService.del(`${this.CACHE_KEY_PREFIX}:${userId}`);
 
       this.sseService.sendEvent({
         event: 'proposal-generated',
@@ -58,13 +59,14 @@ export class FreelanceService {
     }
   }
 
-  async getAllProposals() {
+  async getAllProposals(userId: string) {
     return await this.cacheService
       .getOrSet<FreelanceProposalEntity[]>(
-        this.CACHE_KEY,
+        `${this.CACHE_KEY_PREFIX}:${userId}`,
         async () => {
           const proposals = await this.freelanceProposalRepository.find({
             order: { createdAt: 'DESC' },
+            where: { userId },
           });
 
           return proposals;

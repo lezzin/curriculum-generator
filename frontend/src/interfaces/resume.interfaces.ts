@@ -18,6 +18,7 @@ export interface ResumeProject {
 
 export interface Resume {
     id?: string
+    userId?: string
     createdAt?: string
     prompt?: string
     name: string
