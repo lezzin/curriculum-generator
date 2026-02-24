@@ -1,12 +1,13 @@
 import { Module } from '@nestjs/common';
 import { PassportModule } from '@nestjs/passport';
-import { JwtModule } from '@nestjs/jwt';
+import { JwtModule, JwtService } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import type { StringValue } from "ms";
 import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserEntity } from './entities/user.entity';
+import { JwtAuthGuard } from './guards/jwt-auth.guard';
 
 @Module({
     imports: [
@@ -24,6 +25,7 @@ import { UserEntity } from './entities/user.entity';
         }),
     ],
     controllers: [AuthController],
-    providers: [AuthService],
+    providers: [AuthService, JwtAuthGuard],
+    exports: [JwtAuthGuard, JwtModule],
 })
 export class AuthModule { }

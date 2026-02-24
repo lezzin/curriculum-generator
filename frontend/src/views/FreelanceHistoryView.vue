@@ -6,19 +6,31 @@ import type { MarketplaceProposal } from '../interfaces/freelance.interfaces'
 import ProposalPreview from '../components/freelance/ProposalPreview.vue'
 import AppTitle from '../components/layout/AppTitle.vue'
 import LoadContainer from '../components/ui/LoadContainer.vue'
+import { useToast } from '../composables/useToast'
 
 const { api, request } = useApi()
+const { show } = useToast()
+
 const proposalList = reactive<MarketplaceProposal[]>([])
 const isLoading = ref(true)
 
 async function getProposals() {
-    const data = await request(async () => {
-        const response = await api.get("/freelance/proposal/all")
-        return response.data as MarketplaceProposal[]
-    }).finally(() => isLoading.value = false)
+    try {
+        const data = await request(async () => {
+            const response = await api.get("/freelance/proposal/all")
+            return response.data as MarketplaceProposal[]
+        })
 
-    proposalList.length = 0
-    if (data) proposalList.push(...data)
+        proposalList.length = 0
+        if (data) proposalList.push(...data)
+    } catch (error: any) {
+        show({
+            message: error.message || "Erro ao carregar propostas.",
+            type: "error",
+        })
+    } finally {
+        isLoading.value = false
+    }
 }
 
 sseService.on<MarketplaceProposal>("proposal-generated", (data) => proposalList.unshift(data))

@@ -10,6 +10,7 @@ import { CacheModule } from '../cache/cache.module';
 import { ResumePublisher } from './messaging/rabbimq-publisher';
 import { ResumeConsumer } from './messaging/rabbitmq-consumer';
 import { RabbitMQModule } from '../../common/rabbitmq/rabbitmq.module';
+import { AuthModule } from '../auth/auth.module';
 
 @Module({
   imports: [
@@ -18,8 +19,9 @@ import { RabbitMQModule } from '../../common/rabbitmq/rabbitmq.module';
     SseModule,
     CacheModule,
     RabbitMQModule,
+    AuthModule,
   ],
   controllers: [ResumeController],
   providers: [ResumeService, PdfService, ResumePublisher, ResumeConsumer],
 })
-export class ResumeModule {}
+export class ResumeModule { }

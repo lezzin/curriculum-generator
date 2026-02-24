@@ -2,6 +2,9 @@ import axios, { type AxiosInstance } from "axios"
 import { ref } from "vue"
 import { config } from "../config/variables.config"
 import { extractErrorMessage } from "../helper/error.helper"
+import { useAuth } from "./useAuth"
+
+const { authToken } = useAuth()
 
 export function useApi() {
     const error = ref<string | null>(null)
@@ -10,7 +13,8 @@ export function useApi() {
     const api: AxiosInstance = axios.create({
         baseURL: config.apiUrl,
         headers: {
-            "Content-Type": "application/json"
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${authToken.value || ""}`
         }
     })
 

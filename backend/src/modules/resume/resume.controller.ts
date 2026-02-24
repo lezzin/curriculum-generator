@@ -1,17 +1,19 @@
-import { Body, Controller, Get, Param, Post, Res } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Res, UseGuards } from '@nestjs/common';
 import { GenerateDto, ResumePdfDto } from './dto/prompt.dto';
 import { baseResume } from 'src/data/base-resume';
 import { type Response } from 'express';
 import { PdfService } from './services/pdf.service';
 import { ResumeService } from './services/resume.service';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 
 @Controller('/resume')
 export class ResumeController {
   constructor(
     private readonly resumeService: ResumeService,
     private readonly pdfService: PdfService,
-  ) {}
+  ) { }
 
+  @UseGuards(JwtAuthGuard)
   @Post('/generate')
   async generateResume(@Body() generateDto: GenerateDto) {
     const { jobDescription, options } = generateDto;
@@ -36,6 +38,7 @@ export class ResumeController {
     res.end(pdfBuffer);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Post('/pdf/generate')
   async generatePdf(@Body() resumePdfDto: ResumePdfDto, @Res() res: Response) {
     const pdfBuffer = await this.pdfService.generateResumePdf(resumePdfDto);
@@ -49,6 +52,7 @@ export class ResumeController {
     res.end(pdfBuffer);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Get('/all')
   async getAllResumes() {
     return await this.resumeService.getResumes();

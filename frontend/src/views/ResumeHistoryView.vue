@@ -6,19 +6,31 @@ import type { Resume } from '../interfaces/resume.interfaces'
 import ResumePreview from '../components/resume/ResumePreview.vue'
 import AppTitle from '../components/layout/AppTitle.vue'
 import LoadContainer from '../components/ui/LoadContainer.vue'
+import { useToast } from '../composables/useToast'
 
 const { api, request } = useApi()
+const { show } = useToast()
+
 const resumesList = reactive<Resume[]>([])
 const isLoading = ref(true)
 
 async function getResumes() {
-    const data = await request(async () => {
-        const response = await api.get("/resume/all")
-        return response.data as Resume[]
-    }).finally(() => isLoading.value = false)
+    try {
+        const data = await request(async () => {
+            const response = await api.get("/resume/all")
+            return response.data as Resume[]
+        })
 
-    resumesList.length = 0
-    if (data) resumesList.push(...data)
+        resumesList.length = 0
+        if (data) resumesList.push(...data)
+    } catch (error: any) {
+        show({
+            message: error.message || "Erro ao carregar currículos.",
+            type: "error",
+        })
+    } finally {
+        isLoading.value = false
+    }
 }
 
 sseService.on<Resume>("resume-generated", (data) => resumesList.unshift(data))
