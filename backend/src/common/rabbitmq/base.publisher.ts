@@ -10,10 +10,10 @@ export abstract class BasePublisher implements OnModuleInit {
   protected channel: Channel;
   protected readonly logger = new Logger(this.constructor.name);
 
-  constructor(protected readonly rmq: RabbitMQConnection) {}
+  constructor(protected readonly rmq: RabbitMQConnection) { }
 
   async onModuleInit() {
-    this.channel = await this.rmq.getChannel();
+    this.channel = await this.rmq.createChannel();
     await this.setupInfrastructure();
   }
 
@@ -39,7 +39,7 @@ export abstract class BasePublisher implements OnModuleInit {
       const payload = Buffer.from(JSON.stringify(message));
 
       if (!this.channel) {
-        this.channel = await this.rmq.getChannel();
+        this.channel = await this.rmq.createChannel();
       }
 
       this.channel.publish(this.exchange, this.routingKey, payload, {

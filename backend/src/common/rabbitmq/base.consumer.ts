@@ -12,10 +12,10 @@ export abstract class BaseConsumer implements OnModuleInit {
 
   protected readonly logger = new Logger(this.constructor.name);
 
-  constructor(protected readonly rmq: RabbitMQConnection) {}
+  constructor(protected readonly rmq: RabbitMQConnection) { }
 
   async onModuleInit() {
-    const channel = await this.rmq.getChannel();
+    const channel = await this.rmq.createChannel();
 
     if (!channel) {
       this.logger.error('Failed to establish RabbitMQ channel');
@@ -41,7 +41,7 @@ export abstract class BaseConsumer implements OnModuleInit {
   private async consume(msg: ConsumeMessage | null) {
     if (!msg) return;
 
-    const channel = await this.rmq.getChannel();
+    const channel = await this.rmq.createChannel();
 
     if (!channel) {
       this.logger.error('Failed to establish RabbitMQ channel');
