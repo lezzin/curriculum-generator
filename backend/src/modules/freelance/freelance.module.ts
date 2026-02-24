@@ -11,18 +11,14 @@ import { RabbitMQModule } from '../../common/rabbitmq/rabbitmq.module';
 import { CacheModule } from '../cache/cache.module';
 
 @Module({
-    imports: [
-        GeminiModule,
-        TypeOrmModule.forFeature([FreelanceProposalEntity]),
-        SseModule,
-        RabbitMQModule,
-        CacheModule,
-    ],
-    controllers: [FreelanceController],
-    providers: [
-        FreelanceService,
-        FreelancePublisher,
-        FreelanceConsumer,
-    ],
+  imports: [
+    GeminiModule,
+    TypeOrmModule.forFeature([FreelanceProposalEntity]),
+    SseModule,
+    RabbitMQModule,
+    CacheModule,
+  ],
+  controllers: [FreelanceController],
+  providers: [FreelanceService, FreelancePublisher, FreelanceConsumer],
 })
-export class FreelanceModule { }
+export class FreelanceModule {}

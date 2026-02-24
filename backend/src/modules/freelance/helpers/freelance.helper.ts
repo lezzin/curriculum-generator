@@ -115,5 +115,5 @@ FINAL RULES:
 - No comments.
 - No trailing commas.
 - Output must be parseable JSON.
-`
+`;
 }

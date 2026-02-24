@@ -7,22 +7,22 @@ import { RabbitMQConnection } from 'src/common/rabbitmq/rabbitmq.connection';
 
 @Injectable()
 export class ResumeConsumer extends BaseConsumer {
-    protected exchange = 'resume.exchange';
-    protected routingKey = 'resume.generate';
-    protected queue = 'resume.queue';
+  protected exchange = 'resume.exchange';
+  protected routingKey = 'resume.generate';
+  protected queue = 'resume.queue';
 
-    constructor(
-        rmq: RabbitMQConnection,
-        private readonly resumeService: ResumeService,
-    ) {
-        super(rmq);
-    }
+  constructor(
+    rmq: RabbitMQConnection,
+    private readonly resumeService: ResumeService,
+  ) {
+    super(rmq);
+  }
 
-    protected async handleMessage(message: GenerateDto) {
-        await this.resumeService.generateAIResume(
-            baseResume,
-            message.jobDescription,
-            message.options,
-        );
-    }
+  protected async handleMessage(message: GenerateDto) {
+    await this.resumeService.generateAIResume(
+      baseResume,
+      message.jobDescription,
+      message.options,
+    );
+  }
 }

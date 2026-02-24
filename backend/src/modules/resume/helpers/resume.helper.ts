@@ -1,9 +1,9 @@
-import { ResumeOptionsDto } from "../dto/prompt.dto";
+import { ResumeOptionsDto } from '../dto/prompt.dto';
 
 export function buildResumePrompt(
   baseResume: any,
   jobDescription: string,
-  options: ResumeOptionsDto
+  options: ResumeOptionsDto,
 ): string {
   return `
 You are a senior resume strategist, ATS optimization specialist, and technical hiring analyst.
@@ -160,5 +160,5 @@ FINAL RULES:
 - No comments.
 - No trailing commas.
 - Output must be parseable JSON.
-`
+`;
 }

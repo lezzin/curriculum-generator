@@ -12,19 +12,14 @@ import { ResumeConsumer } from './messaging/rabbitmq-consumer';
 import { RabbitMQModule } from '../../common/rabbitmq/rabbitmq.module';
 
 @Module({
-    imports: [
-        TypeOrmModule.forFeature([ResumeEntity]),
-        GeminiModule,
-        SseModule,
-        CacheModule,
-        RabbitMQModule,
-    ],
-    controllers: [ResumeController],
-    providers: [
-        ResumeService,
-        PdfService,
-        ResumePublisher,
-        ResumeConsumer,
-    ],
+  imports: [
+    TypeOrmModule.forFeature([ResumeEntity]),
+    GeminiModule,
+    SseModule,
+    CacheModule,
+    RabbitMQModule,
+  ],
+  controllers: [ResumeController],
+  providers: [ResumeService, PdfService, ResumePublisher, ResumeConsumer],
 })
-export class ResumeModule { }
+export class ResumeModule {}

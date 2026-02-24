@@ -1,5 +1,5 @@
 export interface MarketplaceProposal {
-    message: string
-    bidAmount: number
-    deliveryDays: number
+  message: string;
+  bidAmount: number;
+  deliveryDays: number;
 }

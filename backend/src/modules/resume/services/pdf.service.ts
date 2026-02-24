@@ -1,4 +1,9 @@
-import { Injectable, OnModuleInit, OnModuleDestroy, Logger } from '@nestjs/common';
+import {
+  Injectable,
+  OnModuleInit,
+  OnModuleDestroy,
+  Logger,
+} from '@nestjs/common';
 import * as puppeteer from 'puppeteer';
 import * as Handlebars from 'handlebars';
 import * as fs from 'fs';
@@ -22,7 +27,7 @@ export class PdfService implements OnModuleInit, OnModuleDestroy {
     private resumeRepository: Repository<ResumeEntity>,
 
     private readonly cacheService: CacheService,
-  ) { }
+  ) {}
 
   async onModuleInit() {
     this.browser = await puppeteer.launch({
@@ -30,21 +35,19 @@ export class PdfService implements OnModuleInit, OnModuleDestroy {
       args: ['--no-sandbox', '--disable-setuid-sandbox'],
     });
 
-    const templatePath = path.join(
-      __dirname,
-      '../../../templates/resume.hbs',
-    );
+    const templatePath = path.join(__dirname, '../../../templates/resume.hbs');
 
     const templateContent = fs.readFileSync(templatePath, 'utf-8');
     this.template = Handlebars.compile(templateContent);
   }
 
   async generateResumePdf(resume: ResumePdfDto): Promise<Buffer> {
-    const labels = SECTION_LABELS[resume.language] || SECTION_LABELS[Language.PT];
+    const labels =
+      SECTION_LABELS[resume.language] || SECTION_LABELS[Language.PT];
 
     const html = this.template({
       ...resume,
-      labels
+      labels,
     });
 
     const page = await this.browser.newPage();
@@ -65,26 +68,26 @@ export class PdfService implements OnModuleInit, OnModuleDestroy {
   }
 
   async generateResumePdfById(id: string): Promise<Buffer> {
-    return await this.cacheService.getOrSet<Buffer>(
-      `resume:${id}:pdf`,
-      async () => {
-        const resumeEntity = await this.resumeRepository.findOne({
-          where: { id },
-        });
+    return await this.cacheService
+      .getOrSet<Buffer>(
+        `resume:${id}:pdf`,
+        async () => {
+          const resumeEntity = await this.resumeRepository.findOne({
+            where: { id },
+          });
 
-        if (!resumeEntity) {
-          throw new Error('Resume not found');
-        }
+          if (!resumeEntity) {
+            throw new Error('Resume not found');
+          }
 
-        return await this.generateResumePdf(
-          resumeEntity as ResumePdfDto,
-        );
-      },
-      3600,
-    ).catch(err => {
-      this.logger.error(`Failed to generate PDF for resume ${id}`, err);
-      return Buffer.from([]);
-    });
+          return await this.generateResumePdf(resumeEntity as ResumePdfDto);
+        },
+        3600,
+      )
+      .catch((err) => {
+        this.logger.error(`Failed to generate PDF for resume ${id}`, err);
+        return Buffer.from([]);
+      });
   }
 
   async onModuleDestroy() {

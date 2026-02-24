@@ -4,70 +4,70 @@ import { Channel, ChannelModel, connect } from 'amqplib';
 
 @Injectable()
 export class RabbitMQConnection implements OnModuleDestroy {
-    private readonly logger = new Logger(RabbitMQConnection.name);
+  private readonly logger = new Logger(RabbitMQConnection.name);
 
-    private connection: ChannelModel;
-    private channel: Channel | null = null;
+  private connection: ChannelModel;
+  private channel: Channel | null = null;
 
-    private reconnectAttempts = 0;
-    private readonly MAX_RECONNECT_DELAY = 30000;
+  private reconnectAttempts = 0;
+  private readonly MAX_RECONNECT_DELAY = 30000;
 
-    constructor(private readonly configService: ConfigService) { }
+  constructor(private readonly configService: ConfigService) {}
 
-    async getChannel(): Promise<Channel> {
-        if (this.channel) return this.channel;
+  async getChannel(): Promise<Channel> {
+    if (this.channel) return this.channel;
 
-        await this.connect();
+    await this.connect();
 
-        if (!this.channel) {
-            throw new Error('Failed to establish RabbitMQ channel');
-        }
-
-        return this.channel;
+    if (!this.channel) {
+      throw new Error('Failed to establish RabbitMQ channel');
     }
 
-    private async connect() {
-        const user = this.configService.get<string>('RABBITMQ_USER');
-        const password = this.configService.get<string>('RABBITMQ_PASSWORD');
-        const url = this.configService.get<string>('RABBITMQ_URL');
+    return this.channel;
+  }
 
-        try {
-            this.connection = await connect(`amqp://${user}:${password}@${url}`);
-            this.channel = await this.connection.createChannel();
+  private async connect() {
+    const user = this.configService.get<string>('RABBITMQ_USER');
+    const password = this.configService.get<string>('RABBITMQ_PASSWORD');
+    const url = this.configService.get<string>('RABBITMQ_URL');
 
-            this.connection.on('error', (err) => {
-                this.logger.error('RabbitMQ connection error', err);
-            });
+    try {
+      this.connection = await connect(`amqp://${user}:${password}@${url}`);
+      this.channel = await this.connection.createChannel();
 
-            this.connection.on('close', () => {
-                this.logger.warn('RabbitMQ connection closed. Reconnecting...');
-                this.channel = null;
-                this.retryReconnect();
-            });
+      this.connection.on('error', (err) => {
+        this.logger.error('RabbitMQ connection error', err);
+      });
 
-            this.reconnectAttempts = 0;
-            this.logger.log('✅ RabbitMQ connected');
-        } catch (error) {
-            this.logger.error('❌ Initial connection failed');
-            await this.retryReconnect();
-        }
+      this.connection.on('close', () => {
+        this.logger.warn('RabbitMQ connection closed. Reconnecting...');
+        this.channel = null;
+        this.retryReconnect();
+      });
+
+      this.reconnectAttempts = 0;
+      this.logger.log('✅ RabbitMQ connected');
+    } catch (error) {
+      this.logger.error('❌ Initial connection failed');
+      await this.retryReconnect();
     }
+  }
 
-    private async retryReconnect() {
-        this.reconnectAttempts++;
+  private async retryReconnect() {
+    this.reconnectAttempts++;
 
-        const delay = Math.min(
-            1000 * 2 ** this.reconnectAttempts,
-            this.MAX_RECONNECT_DELAY,
-        );
+    const delay = Math.min(
+      1000 * 2 ** this.reconnectAttempts,
+      this.MAX_RECONNECT_DELAY,
+    );
 
-        this.logger.warn(`Reconnecting in ${delay}ms...`);
+    this.logger.warn(`Reconnecting in ${delay}ms...`);
 
-        setTimeout(() => this.connect(), delay);
-    }
+    setTimeout(() => this.connect(), delay);
+  }
 
-    async onModuleDestroy() {
-        await this.channel?.close();
-        await this.connection?.close();
-    }
+  async onModuleDestroy() {
+    await this.channel?.close();
+    await this.connection?.close();
+  }
 }

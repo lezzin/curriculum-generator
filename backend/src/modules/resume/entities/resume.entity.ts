@@ -1,34 +1,39 @@
-import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 
 @Entity('resume', { synchronize: false })
 export class ResumeEntity {
-    @PrimaryGeneratedColumn('uuid')
-    id: string;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
-    @Column()
-    prompt: string;
+  @Column()
+  prompt: string;
 
-    @Column()
-    name: string;
+  @Column()
+  name: string;
 
-    @Column()
-    language: string;
+  @Column()
+  language: string;
 
-    @Column()
-    role: string;
+  @Column()
+  role: string;
 
-    @Column()
-    summary: string;
+  @Column()
+  summary: string;
 
-    @Column('text', { array: true })
-    skills: string[];
+  @Column('text', { array: true })
+  skills: string[];
 
-    @Column('jsonb')
-    experiences: any;
+  @Column('jsonb')
+  experiences: any;
 
-    @Column('jsonb', { nullable: true })
-    projects: any;
+  @Column('jsonb', { nullable: true })
+  projects: any;
 
-    @CreateDateColumn({ name: 'created_at' })
-    createdAt: Date;
+  @CreateDateColumn({ name: 'created_at' })
+  createdAt: Date;
 }
