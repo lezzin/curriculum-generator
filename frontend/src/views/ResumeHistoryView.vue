@@ -10,7 +10,7 @@ import { useToast } from '../composables/useToast'
 import { useAuth } from '../composables/useAuth'
 
 const { api, request } = useApi()
-const { userId } = useAuth()
+const { user } = useAuth()
 const { show } = useToast()
 
 const resumesList = reactive<Resume[]>([])
@@ -36,7 +36,7 @@ async function getResumes() {
 }
 
 sseService.on<Resume>("resume-generated", (data) => {
-    if (data.userId !== userId.value) return
+    if (data.userId !== user.value?.id) return
     resumesList.unshift(data)
 })
 

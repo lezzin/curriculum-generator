@@ -8,7 +8,7 @@ import { useAuth } from '../composables/useAuth'
 import LoginView from '../views/LoginView.vue'
 import SignupView from '../views/SignupView.vue'
 
-const { authToken } = useAuth();
+const { checkAuth, user } = useAuth();
 
 const routes = [
     { path: '/', name: 'Home', component: HomeView },
@@ -27,7 +27,7 @@ export const router = createRouter({
     routes,
 })
 
-router.beforeEach((to, _, next) => {
+router.beforeEach(async (to, _, next) => {
     const publicPages = [
         '/auth/login',
         '/auth/signup',
@@ -36,9 +36,15 @@ router.beforeEach((to, _, next) => {
 
     const authRequired = !publicPages.includes(to.path);
 
-    if (authRequired && !authToken.value) {
-        next('/auth/login');
-    } else {
-        next();
+    if (authRequired) {
+        if (!user.value) {
+            await checkAuth();
+        }
+
+        if (!user.value) {
+            return next("/auth/login");
+        }
     }
+
+    next();
 });

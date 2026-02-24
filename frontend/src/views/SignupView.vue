@@ -18,7 +18,7 @@ const state = reactive({
 const router = useRouter();
 
 const { errors, validateRequired, isFormValid } = useAuthValidation(state);
-const { setToken, isAuthenticated } = useAuth();
+const { user, checkAuth } = useAuth();
 
 const { request, api, loading: isLoading } = useApi();
 const { show } = useToast();
@@ -27,7 +27,7 @@ const signup = async () => {
     if (!isFormValid.value) return;
 
     try {
-        const response = await request(() =>
+        await request(() =>
             api.post('/auth/signup', {
                 name: state.username,
                 email: state.email,
@@ -35,8 +35,8 @@ const signup = async () => {
             })
         );
 
-        setToken(response.data.token, response.data.user.id);
         show('Conta criada com sucesso!');
+        checkAuth();
         router.push('/');
     } catch (err: any) {
         show({
@@ -51,7 +51,7 @@ watch(() => state.password, v => validateRequired('password', v));
 watch(() => state.username, v => validateRequired('username', v));
 
 onMounted(() => {
-    if (isAuthenticated.value) {
+    if (user.value) {
         router.push('/');
     }
 })

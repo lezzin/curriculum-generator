@@ -1,13 +1,12 @@
 <script setup lang="ts">
 import { ref } from "vue"
 import AppContainer from "./AppContainer.vue"
-import { useAuth } from "../../composables/useAuth"
 import BaseButton from "../ui/BaseButton.vue"
+import { useAuth } from "../../composables/useAuth"
 import { useRouter } from "vue-router"
 
 const router = useRouter()
-const { isAuthenticated, clearToken } = useAuth()
-
+const { user, logout } = useAuth()
 const activeDropdown = ref<string | null>(null)
 
 function toggle(menu: string) {
@@ -19,8 +18,10 @@ function close() {
     activeDropdown.value = null
 }
 
-function logout() {
-    clearToken()
+function handleLogout() {
+    logout()
+    close()
+
     router.push("/auth/login")
 }
 </script>
@@ -33,7 +34,7 @@ function logout() {
                     Início
                 </router-link>
 
-                <div v-if="isAuthenticated" class="flex items-center gap-6">
+                <div v-if="user?.id" class="flex items-center gap-6">
                     <div class="relative">
                         <button @click="toggle('resume')"
                             class="flex items-center gap-1 text-gray-600 hover:text-black transition">
@@ -91,10 +92,10 @@ function logout() {
                     </div>
                 </div>
 
-                <BaseButton v-if="!isAuthenticated" as="router-link" to="/auth/login" class="ml-auto">
+                <BaseButton v-if="!user?.id" as="router-link" to="/auth/login" class="ml-auto">
                     Login
                 </BaseButton>
-                <BaseButton v-else @click="logout" class="ml-auto">
+                <BaseButton v-else @click="handleLogout" class="ml-auto">
                     Logout
                 </BaseButton>
             </nav>

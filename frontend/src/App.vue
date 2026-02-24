@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onUnmounted } from 'vue';
+import { onMounted, onUnmounted } from 'vue';
 import AppContainer from './components/layout/AppContainer.vue';
 import AppHeader from './components/layout/AppHeader.vue';
 import BaseToast from './components/ui/BaseToast.vue';
@@ -9,9 +9,11 @@ import { sseService } from './services/sse.service';
 import type { Resume } from './interfaces/resume.interfaces';
 import type { MarketplaceProposal } from './interfaces/freelance.interfaces';
 import { useRoute } from 'vue-router';
+import { useAuth } from './composables/useAuth';
 
 const { api } = useApi()
 const { show } = useToast()
+const { checkAuth } = useAuth()
 const route = useRoute()
 
 sseService.init(api)
@@ -40,6 +42,10 @@ sseService.on<MarketplaceProposal>("proposal-generated", () => {
       duration: 0
     })
   }
+})
+
+onMounted(() => {
+  checkAuth()
 })
 
 onUnmounted(() => {

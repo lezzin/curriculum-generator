@@ -1,31 +1,39 @@
-import { computed, ref } from "vue"
+import { ref } from "vue"
+import { useApi } from "./useApi";
 
-const authToken = ref<string | null>(localStorage.getItem('authToken'));
-const userId = ref<string | null>(localStorage.getItem('userId'));
+type User = {
+    id: number;
+    name: string;
+    email: string;
+}
+
+const { request, api } = useApi()
+const user = ref<User | null>(null);
+const isAuthLoading = ref(true);
 
 export function useAuth() {
-    const isAuthenticated = computed(() => !!authToken.value);
+    const checkAuth = async () => {
+        isAuthLoading.value = true;
 
-    function setToken(token: string, userIdValue: string) {
-        authToken.value = token;
-        userId.value = userIdValue;
+        try {
+            const response = await request(() => api.get("/auth/me"));
+            user.value = response.data;
+        } catch (err: any) {
+            user.value = null;
+        } finally {
+            isAuthLoading.value = false;
+        }
+    };
 
-        localStorage.setItem('authToken', token);
-        localStorage.setItem('userId', userIdValue);
-    }
-
-    function clearToken() {
-        authToken.value = null;
-        userId.value = null;
-        localStorage.removeItem('authToken');
-        localStorage.removeItem('userId');
+    const logout = async () => {
+        await api.post("/auth/logout");
+        user.value = null;
     }
 
     return {
-        setToken,
-        clearToken,
-        isAuthenticated,
-        userId: computed(() => userId.value),
-        authToken: computed(() => authToken.value)
+        checkAuth,
+        logout,
+        user,
+        isAuthLoading,
     }
 }

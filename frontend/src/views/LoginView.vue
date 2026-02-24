@@ -17,7 +17,7 @@ const state = reactive({
 const router = useRouter();
 
 const { errors, validateRequired, isFormValid } = useAuthValidation(state);
-const { setToken, isAuthenticated } = useAuth();
+const { user, checkAuth } = useAuth();
 
 const { request, api, loading: isLoading } = useApi();
 const { show } = useToast();
@@ -26,15 +26,15 @@ const login = async () => {
     if (!isFormValid.value) return;
 
     try {
-        const response = await request(() =>
+        await request(() =>
             api.post('/auth/login', {
                 email: state.email,
                 password: state.password,
             })
         );
 
-        setToken(response.data.token, response.data.user.id);
         show('Logado com sucesso!');
+        checkAuth();
         router.push('/');
     } catch (err: any) {
         show({
@@ -48,7 +48,7 @@ watch(() => state.email, v => validateRequired('email', v));
 watch(() => state.password, v => validateRequired('password', v));
 
 onMounted(() => {
-    if (isAuthenticated.value) {
+    if (user.value) {
         router.push('/');
     }
 })
