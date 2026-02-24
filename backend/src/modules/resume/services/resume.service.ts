@@ -24,7 +24,7 @@ export class ResumeService {
     private readonly geminiService: GeminiService,
     private readonly sseService: SseService,
     private readonly cacheService: CacheService,
-  ) {}
+  ) { }
 
   async sendResumeToQueue(
     baseResume: any,
@@ -46,7 +46,7 @@ export class ResumeService {
     options: ResumeOptionsDto,
   ) {
     const prompt = buildResumePrompt(baseResume, jobDescription, options);
-    const resume = await this.geminiService.generateJsonResponse(prompt);
+    const resume = await this.geminiService.generateJsonResponse(prompt) as Resume;
 
     const savedResume = await this.resumeRepository
       .save({ ...resume, prompt: jobDescription })

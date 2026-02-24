@@ -22,7 +22,7 @@ export class FreelanceService {
     private readonly geminiService: GeminiService,
     private readonly sseService: SseService,
     private readonly cacheService: CacheService,
-  ) {}
+  ) { }
 
   async sendProposalToQueue(baseData: any, solicitation: string) {
     await this.freelancePublisher
@@ -36,7 +36,7 @@ export class FreelanceService {
 
   async generateAIProposal(baseData: any, solicitation: string) {
     const prompt = build99FreelasProposalPrompt(baseData, solicitation);
-    const proposal = await this.geminiService.generateJsonResponse(prompt);
+    const proposal = await this.geminiService.generateJsonResponse(prompt) as MarketplaceProposal;
 
     const savedProposal = await this.freelanceProposalRepository
       .save({ ...proposal, prompt: solicitation })
