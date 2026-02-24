@@ -1,4 +1,4 @@
-import { ref } from "vue"
+import { ref, readonly } from "vue"
 
 export type ToastType = "success" | "error" | "warning" | "info"
 
@@ -7,42 +7,68 @@ export interface Toast {
     message: string
     type: ToastType
     duration: number
+    link?: {
+        label: string
+        to: string
+        external?: boolean
+    }
 }
 
-const toasts = ref<Toast[]>([])
+type ToastOptions = Omit<Toast, "id" | "type" | "duration"> & {
+    message: string
+    type?: ToastType
+    duration?: number
+}
+
+type ToastInput = string | ToastOptions
+
+const state = ref<Toast[]>([])
 let idCounter = 0
 
-export function useToast() {
-    function show(
-        message: string,
-        type: ToastType = "success",
-        duration = 4000
-    ) {
-        const id = idCounter++
+const DEFAULTS: Pick<Toast, "type" | "duration"> = {
+    type: "success",
+    duration: 4000,
+}
 
-        const toast: Toast = {
-            id,
-            message,
-            type,
-            duration
+function normalizeToast(input: ToastInput): Toast {
+    if (typeof input === "string") {
+        return {
+            id: idCounter++,
+            message: input,
+            ...DEFAULTS,
         }
+    }
 
-        toasts.value.push(toast)
+    return {
+        id: idCounter++,
+        ...DEFAULTS,
+        ...input,
+    }
+}
 
-        if (duration > 0) {
-            setTimeout(() => {
-                remove(id)
-            }, duration)
+export function useToast() {
+    function show(input: ToastInput) {
+        const toast = normalizeToast(input)
+
+        state.value.push(toast)
+
+        if (toast.duration > 0) {
+            setTimeout(() => remove(toast.id), toast.duration)
         }
     }
 
     function remove(id: number) {
-        toasts.value = toasts.value.filter(t => t.id !== id)
+        state.value = state.value.filter(t => t.id !== id)
+    }
+
+    function clear() {
+        state.value = []
     }
 
     return {
-        toasts,
+        toasts: readonly(state),
         show,
-        remove
+        remove,
+        clear,
     }
 }

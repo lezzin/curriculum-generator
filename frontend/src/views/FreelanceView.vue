@@ -26,7 +26,10 @@ async function generateProposal() {
         }).then(response => {
             show(response.data.message ?? "Solicitação enviada com sucesso!")
         }).catch(() => {
-            show("Erro ao gerar proposta. Tente novamente.", "error")
+            show({
+                message: "Ocorreu um erro ao enviar a solicitação. Tente novamente mais tarde.",
+                type: "error",
+            })
         })
     })
 }

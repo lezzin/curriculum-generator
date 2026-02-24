@@ -36,7 +36,10 @@ async function generateResume() {
         }).then(response => {
             show(response.data.message ?? "Solicitação enviada com sucesso!")
         }).catch(() => {
-            show("Erro ao gerar currículo. Tente novamente.", "error")
+            show({
+                message: "Ocorreu um erro ao enviar a solicitação. Tente novamente mais tarde.",
+                type: "error",
+            })
         })
     })
 }
