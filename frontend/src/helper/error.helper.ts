@@ -1,11 +1,21 @@
-export function extractErrorMessage(err: any): string {
-    const data = err?.response?.data
+import { AxiosError } from "axios"
 
-    if (!data) return "Erro inesperado."
+export function extractErrorMessage(err: unknown): string {
+    if (err instanceof AxiosError) {
+        const data = err.response?.data
 
-    if (Array.isArray(data.message)) {
-        return data.message.join(", ")
+        if (!data) return "Erro inesperado."
+
+        if (Array.isArray(data.message)) {
+            return data.message.join(", ")
+        }
+
+        return data.message || "Erro inesperado."
     }
 
-    return data.message || "Erro inesperado."
+    if (err instanceof Error) {
+        return err.message
+    }
+
+    return "Erro inesperado."
 }

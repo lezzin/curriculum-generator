@@ -1,4 +1,4 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { ConflictException, Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcryptjs';
 import { ConfigService } from '@nestjs/config';
@@ -20,6 +20,11 @@ export class AuthService {
     async signUp(signupDto: SignUpDto) {
         const { name, email, password } = signupDto;
         const hashedPassword = await bcrypt.hash(password, 10);
+
+        const existingUser = await this.userRepository.findOneBy({ email });
+        if (existingUser) {
+            throw new ConflictException('Email já está em uso');
+        }
 
         const user = await this.userRepository.save({
             name,
@@ -46,13 +51,13 @@ export class AuthService {
         const user = await this.userRepository.findOneBy({ email });
 
         if (!user) {
-            throw new UnauthorizedException('invalid email or password');
+            throw new UnauthorizedException('Email ou senha inválidos');
         }
 
         const passwordMatch = await bcrypt.compare(password, user.password);
 
         if (!passwordMatch) {
-            throw new UnauthorizedException('invalid email or password');
+            throw new UnauthorizedException('Email ou senha inválidos');
         }
 
         const token = this.jwtService.sign(
