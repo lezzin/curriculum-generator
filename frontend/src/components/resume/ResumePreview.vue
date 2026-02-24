@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { ref, computed } from "vue"
-import { useApi } from "../../composables/useApi"
 import { usePdf } from "../../composables/usePdf"
 import type { Resume } from "../../interfaces/resume.interfaces"
 import BaseButton from "../ui/BaseButton.vue"
@@ -11,8 +10,7 @@ const props = defineProps<{ resume: Resume }>()
 const isOpen = ref(false)
 const resume = computed(() => props.resume)
 
-const { api } = useApi()
-const { getPublicPdfUrl } = usePdf(api)
+const { getPublicPdfUrl } = usePdf()
 
 function togglePrompt() {
     isOpen.value = !isOpen.value
@@ -22,6 +20,11 @@ const shortPrompt = computed(() => {
     const prompt = resume.value.prompt ?? ""
     return prompt.length > 120 ? prompt.slice(0, 120) + "..." : prompt
 })
+
+const goToPdfUrl = async () => {
+    const url = await getPublicPdfUrl(resume.value.id!)
+    window.open(url, "_blank")
+}
 </script>
 
 <template>
@@ -37,8 +40,7 @@ const shortPrompt = computed(() => {
                     <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
                 </svg>
 
-                <BaseButton v-if="resume.id" :href="getPublicPdfUrl(resume.id)" as="a" target="_blank" size="sm"
-                    variant="outline" @click.stop>
+                <BaseButton v-if="resume.id" @click.stop="goToPdfUrl" size="sm" variant="outline">
                     PDF
                 </BaseButton>
             </div>

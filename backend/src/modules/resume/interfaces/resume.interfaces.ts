@@ -17,6 +17,7 @@ export interface ResumeProject {
 }
 
 export interface Resume {
+  id?: string;
   name: string;
   language: string;
   role: string;

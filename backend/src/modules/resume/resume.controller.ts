@@ -1,7 +1,6 @@
-import { Body, Controller, Get, Param, Post, Res, UseGuards } from '@nestjs/common';
-import { GenerateDto, ResumePdfDto } from './dto/prompt.dto';
+import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
+import { GenerateDto } from './dto/prompt.dto';
 import { baseResume } from 'src/data/base-resume';
-import { type Response } from 'express';
 import { PdfService } from './services/pdf.service';
 import { ResumeService } from './services/resume.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
@@ -26,30 +25,8 @@ export class ResumeController {
   }
 
   @Get('/pdf/:id')
-  async generatePdfByUuid(@Param('id') id: string, @Res() res: Response) {
-    const pdfBuffer = await this.pdfService.generateResumePdfById(id);
-
-    res.set({
-      'Content-Type': 'application/pdf',
-      'Content-Disposition': 'inline; filename="resume.pdf"',
-      'Content-Length': pdfBuffer.length,
-    });
-
-    res.end(pdfBuffer);
-  }
-
-  @UseGuards(JwtAuthGuard)
-  @Post('/pdf/generate')
-  async generatePdf(@Body() resumePdfDto: ResumePdfDto, @Res() res: Response) {
-    const pdfBuffer = await this.pdfService.generateResumePdf(resumePdfDto);
-
-    res.set({
-      'Content-Type': 'application/pdf',
-      'Content-Disposition': 'attachment; filename=resume.pdf',
-      'Content-Length': pdfBuffer.length,
-    });
-
-    res.end(pdfBuffer);
+  async generatePdfByUuid(@Param('id') id: string) {
+    return await this.pdfService.generateResumePdfById(id);
   }
 
   @UseGuards(JwtAuthGuard)

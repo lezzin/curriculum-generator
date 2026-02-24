@@ -2,7 +2,6 @@ import {
   Injectable,
   OnModuleInit,
   OnModuleDestroy,
-  Logger,
 } from '@nestjs/common';
 import * as puppeteer from 'puppeteer';
 import * as Handlebars from 'handlebars';
@@ -13,21 +12,18 @@ import { SECTION_LABELS } from '../constants/resume.constants';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ResumeEntity } from '../entities/resume.entity';
 import { Repository } from 'typeorm';
-import { CacheService } from 'src/modules/cache/cache.service';
+import { MinioService } from 'src/modules/minio/minio.service';
 
 @Injectable()
 export class PdfService implements OnModuleInit, OnModuleDestroy {
-  private readonly logger = new Logger(PdfService.name);
-
   private browser: puppeteer.Browser;
   private template: Handlebars.TemplateDelegate;
 
   constructor(
     @InjectRepository(ResumeEntity)
     private resumeRepository: Repository<ResumeEntity>,
-
-    private readonly cacheService: CacheService,
-  ) {}
+    private readonly minioService: MinioService,
+  ) { }
 
   async onModuleInit() {
     this.browser = await puppeteer.launch({
@@ -67,27 +63,21 @@ export class PdfService implements OnModuleInit, OnModuleDestroy {
     return Buffer.from(pdf);
   }
 
-  async generateResumePdfById(id: string): Promise<Buffer> {
-    return await this.cacheService
-      .getOrSet<Buffer>(
-        `resume:${id}:pdf`,
-        async () => {
-          const resumeEntity = await this.resumeRepository.findOne({
-            where: { id },
-          });
+  async generateResumePdfById(id: string): Promise<string> {
+    const bucket = 'resumes';
+    const fileName = `${id}.pdf`;
 
-          if (!resumeEntity) {
-            throw new Error('Resume not found');
-          }
+    const resume = await this.resumeRepository.findOne({ where: { id } });
+    if (!resume) throw new Error('Resume not found');
 
-          return await this.generateResumePdf(resumeEntity as ResumePdfDto);
-        },
-        3600,
-      )
-      .catch((err) => {
-        this.logger.error(`Failed to generate PDF for resume ${id}`, err);
-        return Buffer.from([]);
-      });
+    await this.minioService.createBucket(bucket);
+
+    if (!(await this.minioService.hasFile(bucket, fileName))) {
+      const pdf = await this.generateResumePdf(resume as ResumePdfDto);
+      await this.minioService.uploadFile(bucket, fileName, pdf, 'application/pdf');
+    }
+
+    return this.minioService.getPresignedUrl(bucket, fileName);
   }
 
   async onModuleDestroy() {

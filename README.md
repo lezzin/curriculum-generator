@@ -13,6 +13,7 @@ Uma plataforma para geração inteligente de propostas e currículos utilizando 
   * TOAST para informar quando o processo foi concluído.
   * Atualização automática do histórico sem necessidade de recarregar a página.
 * **Cache eficiente com Redis:** armazenamento de dados frequentemente acessados para melhorar a performance.
+* **SAlvamento dos currículos no MinIO:** armazenamento dos PDFs dos currículos no MinIO.
 
 ## Próximas Tarefas
 

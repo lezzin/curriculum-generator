@@ -1,13 +1,18 @@
 import { ref, onUnmounted } from "vue"
-import type { AxiosInstance } from "axios"
+import { useApi } from "./useApi"
 
-export function usePdf(api: AxiosInstance) {
+const { api, request } = useApi()
+
+export function usePdf() {
     const pdfUrl = ref<string | null>(null)
     const isGenerating = ref(false)
 
-    function getPublicPdfUrl(id: string): string {
-        const base = api.defaults.baseURL ?? ""
-        return `${base}/resume/pdf/${id}`
+    async function getPublicPdfUrl(id: string): Promise<string> {
+        const response = await request(async () => {
+            return await api.get(`/resume/pdf/${id}`)
+        })
+
+        return response.data;
     }
 
     function revoke() {

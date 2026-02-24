@@ -9,6 +9,7 @@ import { Resume } from '../interfaces/resume.interfaces';
 import { SseService } from 'src/modules/sse/sse.service';
 import { CacheService } from 'src/modules/cache/cache.service';
 import { ResumePublisher } from '../messaging/rabbimq-publisher';
+import { PdfService } from './pdf.service';
 
 @Injectable()
 export class ResumeService {
@@ -24,6 +25,7 @@ export class ResumeService {
     private readonly geminiService: GeminiService,
     private readonly sseService: SseService,
     private readonly cacheService: CacheService,
+    private readonly pdfService: PdfService,
   ) { }
 
   async sendResumeToQueue(
@@ -45,20 +47,28 @@ export class ResumeService {
     jobDescription: string,
     options: ResumeOptionsDto,
   ) {
-    const prompt = buildResumePrompt(baseResume, jobDescription, options);
-    const resume = await this.geminiService.generateJsonResponse(prompt) as Resume;
+    try {
+      const prompt = buildResumePrompt(baseResume, jobDescription, options);
+      const resume = await this.geminiService.generateJsonResponse<Resume>(prompt);
 
-    const savedResume = await this.resumeRepository
-      .save({ ...resume, prompt: jobDescription })
-      .catch((err) => {
-        this.logger.error('Failed to save resume to database', err);
+      const savedResume = await this.resumeRepository.save({
+        ...resume,
+        prompt: jobDescription,
       });
 
-    this.cacheService.del(this.CACHE_KEY).catch((err) => {
-      this.logger.error('Failed to invalidate resumes cache', err);
-    });
+      await this.cacheService.del(this.CACHE_KEY);
+      await this.pdfService.generateResumePdfById(savedResume.id);
 
-    this.sseService.sendEvent({ event: 'resume-generated', data: savedResume });
+      this.sseService.sendEvent({
+        event: 'resume-generated',
+        data: savedResume,
+      });
+
+      return savedResume;
+    } catch (err) {
+      this.logger.error('Failed to generate AI resume flow', err);
+      throw err;
+    }
   }
 
   async getResumes(): Promise<ResumeEntity[] | undefined> {

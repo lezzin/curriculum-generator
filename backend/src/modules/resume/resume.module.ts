@@ -11,6 +11,7 @@ import { ResumePublisher } from './messaging/rabbimq-publisher';
 import { ResumeConsumer } from './messaging/rabbitmq-consumer';
 import { RabbitMQModule } from '../../common/rabbitmq/rabbitmq.module';
 import { AuthModule } from '../auth/auth.module';
+import { MinioModule } from '../minio/minio.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { AuthModule } from '../auth/auth.module';
     CacheModule,
     RabbitMQModule,
     AuthModule,
+    MinioModule,
   ],
   controllers: [ResumeController],
   providers: [ResumeService, PdfService, ResumePublisher, ResumeConsumer],

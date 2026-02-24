@@ -35,23 +35,27 @@ export class FreelanceService {
   }
 
   async generateAIProposal(baseData: any, solicitation: string) {
-    const prompt = build99FreelasProposalPrompt(baseData, solicitation);
-    const proposal = await this.geminiService.generateJsonResponse(prompt) as MarketplaceProposal;
+    try {
+      const prompt = build99FreelasProposalPrompt(baseData, solicitation);
+      const proposal = await this.geminiService.generateJsonResponse<MarketplaceProposal>(prompt);
 
-    const savedProposal = await this.freelanceProposalRepository
-      .save({ ...proposal, prompt: solicitation })
-      .catch((err) => {
-        this.logger.error('Failed to save proposal to database', err);
+      const savedProposal = await this.freelanceProposalRepository.save({
+        ...proposal,
+        prompt: solicitation,
       });
 
-    this.cacheService.del(this.CACHE_KEY).catch((err) => {
-      this.logger.error('Failed to invalidate proposals cache', err);
-    });
+      await this.cacheService.del(this.CACHE_KEY);
 
-    this.sseService.sendEvent({
-      event: 'proposal-generated',
-      data: savedProposal,
-    });
+      this.sseService.sendEvent({
+        event: 'proposal-generated',
+        data: savedProposal,
+      });
+
+      return savedProposal;
+    } catch (err) {
+      this.logger.error('Failed to generate AI proposal flow', err);
+      throw err;
+    }
   }
 
   async getAllProposals() {
