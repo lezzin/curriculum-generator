@@ -1,4 +1,4 @@
-import { Injectable, OnModuleInit, OnModuleDestroy, Inject } from '@nestjs/common';
+import { Injectable, OnModuleInit, OnModuleDestroy, Logger } from '@nestjs/common';
 import * as puppeteer from 'puppeteer';
 import * as Handlebars from 'handlebars';
 import * as fs from 'fs';
@@ -8,11 +8,12 @@ import { SECTION_LABELS } from '../constants/resume.constants';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ResumeEntity } from '../entities/resume.entity';
 import { Repository } from 'typeorm';
-import { type Cache } from 'cache-manager';
-import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import { CacheService } from 'src/modules/cache/cache.service';
 
 @Injectable()
 export class PdfService implements OnModuleInit, OnModuleDestroy {
+  private readonly logger = new Logger(PdfService.name);
+
   private browser: puppeteer.Browser;
   private template: Handlebars.TemplateDelegate;
 
@@ -20,7 +21,7 @@ export class PdfService implements OnModuleInit, OnModuleDestroy {
     @InjectRepository(ResumeEntity)
     private resumeRepository: Repository<ResumeEntity>,
 
-    @Inject(CACHE_MANAGER) private cacheManager: Cache
+    private readonly cacheService: CacheService,
   ) { }
 
   async onModuleInit() {
@@ -64,31 +65,29 @@ export class PdfService implements OnModuleInit, OnModuleDestroy {
   }
 
   async generateResumePdfById(id: string): Promise<Buffer> {
-    const cacheKey = this.getCacheKey(id);
-    const ttl = 300000; // 5 minutes 
+    return await this.cacheService.getOrSet<Buffer>(
+      `resume:${id}:pdf`,
+      async () => {
+        const resumeEntity = await this.resumeRepository.findOne({
+          where: { id },
+        });
 
-    const cached = await this.cacheManager.get<Buffer>(cacheKey);
+        if (!resumeEntity) {
+          throw new Error('Resume not found');
+        }
 
-    if (cached) {
-      return cached;
-    }
-
-    const resumeEntity = await this.resumeRepository.findOne({ where: { id } });
-
-    if (!resumeEntity) {
-      throw new Error('Resume not found');
-    }
-
-    const pdfBuffer = await this.generateResumePdf(resumeEntity as ResumePdfDto);
-    await this.cacheManager.set(cacheKey, pdfBuffer, ttl);
-    return pdfBuffer;
+        return await this.generateResumePdf(
+          resumeEntity as ResumePdfDto,
+        );
+      },
+      3600,
+    ).catch(err => {
+      this.logger.error(`Failed to generate PDF for resume ${id}`, err);
+      return Buffer.from([]);
+    });
   }
 
   async onModuleDestroy() {
     await this.browser.close();
-  }
-
-  getCacheKey(id: string): string {
-    return `resume_pdf_${id}`;
   }
 }

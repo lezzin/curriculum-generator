@@ -8,17 +8,22 @@ import { Repository } from "typeorm";
 import { Resume } from "../interfaces/resume.interfaces";
 import { RabbitMQPublisherService } from "../messaging/rabbimq-publisher";
 import { SseService } from "src/modules/sse/sse.service";
+import { CacheService } from "src/modules/cache/cache.service";
 
 @Injectable()
 export class ResumeService {
     private readonly logger = new Logger(ResumeService.name);
 
+    private readonly CACHE_KEY = "resume:all";
+
     constructor(
         @InjectRepository(ResumeEntity)
         private readonly resumeRepository: Repository<ResumeEntity>,
+
         private readonly rabbitMQPublisherService: RabbitMQPublisherService,
         private readonly geminiService: GeminiService,
         private readonly sseService: SseService,
+        private readonly cacheService: CacheService,
     ) { }
 
     async sendResumeToQueue(baseResume: any, jobDescription: string, options: ResumeOptionsDto) {
@@ -37,12 +42,24 @@ export class ResumeService {
             this.logger.error("Failed to save resume to database", err)
         })
 
+        this.cacheService.del(this.CACHE_KEY).catch(err => {
+            this.logger.error("Failed to invalidate resumes cache", err)
+        })
+
         this.sseService.sendEvent({ event: "resume-generated", data: savedResume })
     }
 
-    async getResumes(): Promise<ResumeEntity[]> {
-        return this.resumeRepository.find({
-            order: { createdAt: "DESC" }
+    async getResumes(): Promise<ResumeEntity[] | undefined> {
+        return await this.cacheService.getOrSet<ResumeEntity[]>(
+            this.CACHE_KEY,
+            async () => {
+                const resumes = await this.resumeRepository.find();
+                return resumes;
+            },
+            1800,
+        ).catch(err => {
+            this.logger.error("Failed to fetch resumes", err);
+            return [];
         });
     }
 }

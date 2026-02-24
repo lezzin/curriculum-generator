@@ -26,7 +26,6 @@ import { redisStore } from 'cache-manager-redis-store';
         store: redisStore,
         host: configService.get('REDIS_HOST') || 'localhost',
         port: configService.get<number>('REDIS_PORT') || 6379,
-        ttl: 60,
       }),
     }),
   ],

@@ -8,12 +8,14 @@ import { ResumeEntity } from './entities/resume.entity';
 import { RabbitMQPublisherService } from './messaging/rabbimq-publisher';
 import { RabbitMQConsumerService } from './messaging/rabbitmq-consumer';
 import { SseModule } from '../sse/sse.module';
+import { CacheModule } from '../cache/cache.module';
 
 @Module({
     imports: [
         TypeOrmModule.forFeature([ResumeEntity]),
         GeminiModule,
         SseModule,
+        CacheModule,
     ],
     controllers: [ResumeController],
     providers: [
