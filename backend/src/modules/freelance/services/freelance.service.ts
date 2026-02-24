@@ -36,7 +36,7 @@ export class FreelanceService {
         const prompt = build99FreelasProposalPrompt(baseData, solicitation)
         const proposal = await this.geminiService.generateJsonResponse(prompt) as MarketplaceProposal
 
-        const savedProposal = await this.freelanceProposalRepository.save({ ...proposal }).catch(err => {
+        const savedProposal = await this.freelanceProposalRepository.save({ ...proposal, prompt: solicitation }).catch(err => {
             this.logger.error("Failed to save proposal to database", err)
         })
 

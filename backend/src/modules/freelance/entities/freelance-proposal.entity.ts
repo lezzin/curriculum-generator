@@ -5,6 +5,9 @@ export class FreelanceProposalEntity {
     @PrimaryGeneratedColumn('uuid')
     id: string;
 
+    @Column()
+    prompt: string;
+
     @Column('text')
     message: string;
 

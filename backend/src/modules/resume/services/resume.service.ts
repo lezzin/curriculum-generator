@@ -38,7 +38,7 @@ export class ResumeService {
         const prompt = buildResumePrompt(baseResume, jobDescription, options)
         const resume = await this.geminiService.generateJsonResponse(prompt) as Resume
 
-        const savedResume = await this.resumeRepository.save({ ...resume }).catch(err => {
+        const savedResume = await this.resumeRepository.save({ ...resume, prompt: jobDescription }).catch(err => {
             this.logger.error("Failed to save resume to database", err)
         })
 

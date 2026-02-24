@@ -6,6 +6,9 @@ export class ResumeEntity {
     id: string;
 
     @Column()
+    prompt: string;
+
+    @Column()
     name: string;
 
     @Column()
