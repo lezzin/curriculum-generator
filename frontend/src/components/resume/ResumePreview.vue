@@ -4,6 +4,7 @@ import { usePdf } from "../../composables/usePdf"
 import type { Resume } from "../../interfaces/resume.interfaces"
 import BaseButton from "../ui/BaseButton.vue"
 import { toHumanReadableDate } from "../../helper/string.helper"
+import CardContainer from "../ui/card/CardContainer.vue"
 
 const props = defineProps<{ resume: Resume }>()
 
@@ -50,11 +51,8 @@ onMounted(async () => {
             </div>
         </div>
 
-        <div class="w-full text-sm leading-relaxed rounded-xl p-4
-                       bg-zinc-50 text-zinc-700 border border-zinc-200
-                       cursor-pointer whitespace-pre-wrap
-                       hover:bg-zinc-100 transition-colors" @click="togglePrompt">
+        <CardContainer variant="text" @click="togglePrompt">
             {{ isOpen ? resume.prompt : shortPrompt }}
-        </div>
+        </CardContainer>
     </div>
 </template>

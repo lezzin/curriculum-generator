@@ -3,6 +3,7 @@ import { computed, ref, watchEffect } from "vue"
 import type { MarketplaceProposal } from "../../interfaces/freelance.interfaces"
 import BaseButton from "../ui/BaseButton.vue"
 import { toHumanReadableDate } from "../../helper/string.helper";
+import CardContainer from "../ui/card/CardContainer.vue";
 
 const props = defineProps<{
     proposal: MarketplaceProposal
@@ -70,12 +71,9 @@ async function copyProposal() {
                 Solicitação
             </label>
 
-            <div class="w-full text-sm leading-relaxed rounded-xl p-4
-                       bg-zinc-50 text-zinc-700 border border-zinc-200
-                       cursor-pointer whitespace-pre-wrap
-                       hover:bg-zinc-100 transition-colors" @click="togglePrompt">
+            <CardContainer variant="text" @click="togglePrompt">
                 {{ isOpen ? proposal.prompt : shortPrompt }}
-            </div>
+            </CardContainer>
         </div>
 
         <div class="space-y-1">

@@ -8,6 +8,7 @@ import AppTitle from '../components/layout/AppTitle.vue';
 import { useAuth } from '../composables/useAuth';
 import { useAuthValidation } from '../composables/useAuthValidation';
 import { useRouter } from 'vue-router';
+import CardContainer from '../components/ui/card/CardContainer.vue';
 
 const state = reactive({
     email: '',
@@ -58,7 +59,7 @@ onMounted(() => {
 </script>
 
 <template>
-    <div class="max-w-lg mx-auto p-8 rounded-lg shadow-sm border">
+    <CardContainer class="max-w-lg mx-auto" size="lg">
         <form class="space-y-4" @submit.prevent="signup()">
             <AppTitle title="Crie sua conta" subtitle="Preencha os dados abaixo" />
 
@@ -78,5 +79,5 @@ onMounted(() => {
                 Já tem uma conta? Faça login
             </router-link>
         </form>
-    </div>
+    </CardContainer>
 </template>

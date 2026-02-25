@@ -8,6 +8,7 @@ import AppTitle from '../components/layout/AppTitle.vue';
 import { useAuth } from '../composables/useAuth';
 import { useAuthValidation } from '../composables/useAuthValidation';
 import { useRouter } from 'vue-router';
+import CardContainer from '../components/ui/card/CardContainer.vue';
 
 const state = reactive({
     email: '',
@@ -55,7 +56,7 @@ onMounted(() => {
 </script>
 
 <template>
-    <div class="max-w-lg mx-auto p-8 rounded-lg shadow-sm border">
+    <CardContainer class="max-w-lg mx-auto" size="lg">
         <form class="space-y-4" @submit.prevent="login()">
             <AppTitle title="Bem-vindo de volta!" subtitle="Faça login para continuar" />
 
@@ -72,5 +73,5 @@ onMounted(() => {
                 Não tem uma conta? Cadastre-se
             </router-link>
         </form>
-    </div>
+    </CardContainer>
 </template>

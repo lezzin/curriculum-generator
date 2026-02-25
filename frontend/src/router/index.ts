@@ -7,6 +7,7 @@ import FreelanceHistoryView from '../views/FreelanceHistoryView.vue'
 import { useAuth } from '../composables/useAuth'
 import LoginView from '../views/LoginView.vue'
 import SignupView from '../views/SignupView.vue'
+import ProfileView from '../views/ProfileView.vue'
 
 const { checkAuth, user } = useAuth();
 
@@ -14,6 +15,7 @@ const routes = [
     { path: '/', name: 'Home', component: HomeView },
     { path: '/auth/login', name: 'Login', component: LoginView },
     { path: '/auth/signup', name: 'Signup', component: SignupView },
+    { path: '/auth/profile', name: 'Profile', component: ProfileView },
 
     { path: '/resume', name: 'ResumeGenerator', component: ResumeGeneratorView },
     { path: '/resume/history', name: 'ResumeHistory', component: ResumeHistoryView },
