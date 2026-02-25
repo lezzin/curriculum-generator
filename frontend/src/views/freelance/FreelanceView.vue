@@ -20,19 +20,21 @@ const { errors, validateForm, isFormValid } = useFreelanceValidation(state)
 async function generateProposal() {
     if (!validateForm()) return
 
-    await request(async () => {
-        await api.post("/freelance/proposal/generate", {
-            solicitation: state.solicitationText,
-        }).then(response => {
-            state.solicitationText = ""
-            show(response.data.message ?? "Solicitação de proposta enviada com sucesso!")
-        }).catch(() => {
-            show({
-                message: "Ocorreu um erro ao enviar a solicitação. Tente novamente mais tarde.",
-                type: "error",
+    try {
+        await request(async () => {
+            const response = await api.post("/freelance/proposal/generate", {
+                solicitation: state.solicitationText,
             })
+
+            show(response.data.message ?? "Solicitação de proposta enviada com sucesso!")
+            state.solicitationText = ""
         })
-    })
+    } catch (err: any) {
+        show({
+            message: err.message || "Ocorreu um erro ao enviar a solicitação. Tente novamente mais tarde.",
+            type: "error",
+        })
+    }
 }
 </script>
 

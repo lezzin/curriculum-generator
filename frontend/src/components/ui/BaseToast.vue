@@ -44,7 +44,7 @@ function handleLink(toast: Toast) {
 <template>
     <div class="fixed bottom-5 right-5 z-50">
         <transition-group name="toast" tag="div" class="flex flex-col gap-2 items-end">
-            <div class="flex items-center p-4 text-gray-500 bg-white rounded-lg border shadow-sm" role="alert"
+            <div class="flex items-center p-4 text-gray-500 bg-white rounded-lg border shadow-sm max-w-lg" role="alert"
                 v-for="toast in toasts" :key="toast.id">
                 <div class="inline-flex items-center justify-center shrink-0 w-8 h-8 rounded-lg"
                     :class="typeIcons[toast.type].color">

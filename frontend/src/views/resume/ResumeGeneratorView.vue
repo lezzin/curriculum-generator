@@ -24,25 +24,27 @@ const { errors, validateJobText, isFormValid } = useResumeValidation(state)
 async function generateResume() {
     if (!validateJobText()) return
 
-    await request(async () => {
-        await api.post("/resume/generate", {
-            jobDescription: state.jobText,
-            options: {
-                language: state.language,
-                targetSeniority: state.seniority,
-                focusArea: state.focusArea,
-                market: state.market
-            }
-        }).then(response => {
-            state.jobText = ""
-            show(response.data.message ?? "Solicitação de currículo enviada com sucesso!")
-        }).catch(() => {
-            show({
-                message: "Ocorreu um erro ao enviar a solicitação. Tente novamente mais tarde.",
-                type: "error",
+    try {
+        await request(async () => {
+            const response = await api.post("/resume/generate", {
+                jobDescription: state.jobText,
+                options: {
+                    language: state.language,
+                    targetSeniority: state.seniority,
+                    focusArea: state.focusArea,
+                    market: state.market
+                }
             })
-        })
-    })
+
+            show(response.data.message ?? "Solicitação de currículo enviada com sucesso!")
+            state.jobText = ""
+        });
+    } catch (err: any) {
+        show({
+            message: err.message || "Ocorreu um erro ao enviar a solicitação. Tente novamente mais tarde.",
+            type: 'error',
+        });
+    }
 }
 </script>
 
