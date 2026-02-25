@@ -9,7 +9,6 @@ import { SseModule } from '../sse/sse.module';
 import { CacheModule } from '../cache/cache.module';
 import { ResumePublisher } from './messaging/rabbimq-publisher';
 import { ResumeConsumer } from './messaging/rabbitmq-consumer';
-import { RabbitMQModule } from '../../common/rabbitmq/rabbitmq.module';
 import { AuthModule } from '../auth/auth.module';
 import { MinioModule } from '../minio/minio.module';
 import { ProfileModule } from '../profile/profile.module';
@@ -20,7 +19,6 @@ import { ProfileModule } from '../profile/profile.module';
     GeminiModule,
     SseModule,
     CacheModule,
-    RabbitMQModule,
     AuthModule,
     MinioModule,
     ProfileModule,

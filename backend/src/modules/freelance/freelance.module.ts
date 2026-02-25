@@ -7,7 +7,6 @@ import { FreelanceProposalEntity } from './entities/freelance-proposal.entity';
 import { SseModule } from '../sse/sse.module';
 import { FreelancePublisher } from './messaging/rabbimq-publisher';
 import { FreelanceConsumer } from './messaging/rabbitmq-consumer';
-import { RabbitMQModule } from '../../common/rabbitmq/rabbitmq.module';
 import { CacheModule } from '../cache/cache.module';
 import { AuthModule } from '../auth/auth.module';
 import { ProfileModule } from '../profile/profile.module';
@@ -17,7 +16,6 @@ import { ProfileModule } from '../profile/profile.module';
     GeminiModule,
     TypeOrmModule.forFeature([FreelanceProposalEntity]),
     SseModule,
-    RabbitMQModule,
     CacheModule,
     AuthModule,
     ProfileModule,

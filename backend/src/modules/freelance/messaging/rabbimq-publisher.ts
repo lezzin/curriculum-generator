@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { BasePublisher } from 'src/common/rabbitmq/base.publisher';
-import { RabbitMQConnection } from 'src/common/rabbitmq/rabbitmq.connection';
 
 @Injectable()
 export class FreelancePublisher extends BasePublisher {
@@ -8,7 +8,7 @@ export class FreelancePublisher extends BasePublisher {
   protected routingKey = 'freelance.generate';
   protected queue = 'freelance.queue';
 
-  constructor(rmq: RabbitMQConnection) {
-    super(rmq);
+  constructor(readonly configService: ConfigService) {
+    super(configService);
   }
 }

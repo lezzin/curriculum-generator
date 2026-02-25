@@ -1,52 +1,48 @@
 import { Logger, OnModuleInit } from '@nestjs/common';
-import { ConsumeMessage } from 'amqplib';
-import { RabbitMQConnection } from './rabbitmq.connection';
+import { Channel, ChannelModel, connect, ConsumeMessage } from 'amqplib';
+import { ConfigService } from '@nestjs/config';
 
 export abstract class BaseConsumer implements OnModuleInit {
   protected abstract exchange: string;
   protected abstract routingKey: string;
   protected abstract queue: string;
 
+  private connection: ChannelModel;
+  protected channel: Channel;
+
   protected readonly PREFETCH = 10;
   protected readonly MAX_RETRIES = 5;
 
   protected readonly logger = new Logger(this.constructor.name);
 
-  constructor(protected readonly rmq: RabbitMQConnection) { }
+  constructor(readonly configService: ConfigService) { }
 
   async onModuleInit() {
-    const channel = await this.rmq.createChannel();
+    const user = this.configService.get<string>('RABBITMQ_USER');
+    const password = this.configService.get<string>('RABBITMQ_PASSWORD');
+    const url = this.configService.get<string>('RABBITMQ_URL');
 
-    if (!channel) {
-      this.logger.error('Failed to establish RabbitMQ channel');
-      return;
-    }
+    this.connection = await connect(`amqp://${user}:${password}@${url}`);
+    this.channel = await this.connection.createChannel();
 
-    await channel.prefetch(this.PREFETCH);
+    await this.channel.prefetch(this.PREFETCH);
 
-    await channel.assertExchange(this.exchange, 'direct', { durable: true });
+    await this.channel.assertExchange(this.exchange, 'direct', { durable: true });
 
-    await channel.assertQueue(this.queue, {
+    await this.channel.assertQueue(this.queue, {
       durable: true,
       arguments: {
         'x-dead-letter-exchange': `${this.exchange}.dlx`,
       },
     });
 
-    await channel.bindQueue(this.queue, this.exchange, this.routingKey);
+    await this.channel.bindQueue(this.queue, this.exchange, this.routingKey);
 
-    await channel.consume(this.queue, (msg) => this.consume(msg));
+    await this.channel.consume(this.queue, (msg) => this.consume(msg));
   }
 
   private async consume(msg: ConsumeMessage | null) {
     if (!msg) return;
-
-    const channel = await this.rmq.createChannel();
-
-    if (!channel) {
-      this.logger.error('Failed to establish RabbitMQ channel');
-      return;
-    }
 
     const retryCount = this.getRetryCount(msg);
 
@@ -55,18 +51,18 @@ export abstract class BaseConsumer implements OnModuleInit {
 
       await this.handleMessage(content);
 
-      channel.ack(msg);
+      this.channel.ack(msg);
     } catch (error) {
       this.logger.error('Processing error', error);
 
       if (retryCount < this.MAX_RETRIES) {
         this.logger.warn(`Retrying message (${retryCount + 1})`);
-        channel.nack(msg, false, true);
+        this.channel.nack(msg, false, true);
         return;
       }
 
       this.logger.error('Max retries reached. Sending to DLQ');
-      channel.nack(msg, false, false);
+      this.channel.nack(msg, false, false);
     }
   }
 

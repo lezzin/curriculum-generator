@@ -1,23 +1,31 @@
 import { Logger, OnModuleInit } from '@nestjs/common';
-import { Channel } from 'amqplib';
-import { RabbitMQConnection } from './rabbitmq.connection';
+import { ConfigService } from '@nestjs/config';
+import { Channel, ChannelModel, connect } from 'amqplib';
 
 export abstract class BasePublisher implements OnModuleInit {
   protected abstract exchange: string;
   protected abstract routingKey: string;
   protected abstract queue: string;
 
+  private connection: ChannelModel;
   protected channel: Channel;
+
   protected readonly logger = new Logger(this.constructor.name);
 
-  constructor(protected readonly rmq: RabbitMQConnection) { }
+  constructor(readonly configService: ConfigService) { }
 
   async onModuleInit() {
-    this.channel = await this.rmq.createChannel();
     await this.setupInfrastructure();
   }
 
   private async setupInfrastructure() {
+    const user = this.configService.get<string>('RABBITMQ_USER');
+    const password = this.configService.get<string>('RABBITMQ_PASSWORD');
+    const url = this.configService.get<string>('RABBITMQ_URL');
+
+    this.connection = await connect(`amqp://${user}:${password}@${url}`);
+    this.channel = await this.connection.createChannel();
+
     await this.channel.assertExchange(this.exchange, 'direct', {
       durable: true,
     });
@@ -37,10 +45,6 @@ export abstract class BasePublisher implements OnModuleInit {
   async publish(message: unknown): Promise<void> {
     try {
       const payload = Buffer.from(JSON.stringify(message));
-
-      if (!this.channel) {
-        this.channel = await this.rmq.createChannel();
-      }
 
       this.channel.publish(this.exchange, this.routingKey, payload, {
         persistent: true,

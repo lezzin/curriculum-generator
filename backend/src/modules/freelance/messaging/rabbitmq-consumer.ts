@@ -2,7 +2,7 @@ import { FreelanceService } from '../services/freelance.service';
 import { Injectable } from '@nestjs/common';
 import { SolicitationDto } from '../dto/freelance.dto';
 import { BaseConsumer } from 'src/common/rabbitmq/base.consumer';
-import { RabbitMQConnection } from 'src/common/rabbitmq/rabbitmq.connection';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class FreelanceConsumer extends BaseConsumer {
@@ -11,10 +11,10 @@ export class FreelanceConsumer extends BaseConsumer {
   protected queue = 'freelance.queue';
 
   constructor(
-    rmq: RabbitMQConnection,
     private readonly freelanceService: FreelanceService,
+    readonly configService: ConfigService,
   ) {
-    super(rmq);
+    super(configService);
   }
 
   protected async handleMessage(message: SolicitationDto & { userId: string }): Promise<void> {
