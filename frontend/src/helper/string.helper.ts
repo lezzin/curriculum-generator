@@ -9,3 +9,7 @@ export function toHumanReadableDate(date: string): string {
 
     return new Date(date).toLocaleDateString(undefined, options);
 }
+
+export function getFirstLetter(value?: string) {
+    return value?.charAt(0).toUpperCase();
+}

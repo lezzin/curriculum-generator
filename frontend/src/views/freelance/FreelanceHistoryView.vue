@@ -44,12 +44,21 @@ onMounted(getProposals)
 </script>
 
 <template>
-    <AppTitle title="Propostas Geradas" />
+    <AppTitle title="Minhas Propostas Geradas"
+        subtitle="Visualize e acompanhe as propostas criadas a partir das oportunidades selecionadas." />
 
     <LoadContainer :loading="isLoading">
         <div class="grid gap-4" v-if="proposalList.length > 0">
             <ProposalPreview v-for="proposal in proposalList" :key="proposal.id" :proposal="proposal" />
         </div>
-        <p v-else class="text-center text-gray-500">Nenhuma proposta gerada ainda.</p>
+
+        <div v-else class="text-center space-y-3">
+            <p class="text-gray-500">
+                Você ainda não gerou nenhuma proposta personalizada.
+            </p>
+            <router-link to="/proposal" class="text-primary font-medium hover:underline">
+                Criar minha primeira proposta
+            </router-link>
+        </div>
     </LoadContainer>
 </template>

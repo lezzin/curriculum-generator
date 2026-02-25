@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { reactive, watch } from "vue"
+import { reactive } from "vue"
 import BaseButton from "../../components/ui/BaseButton.vue"
 import AppTitle from "../../components/layout/AppTitle.vue"
 import TextAreaField from "../../components/ui/form/TextAreaField.vue"
@@ -14,8 +14,8 @@ const state = reactive({
     error: "",
 })
 
-const { api, loading: isGeneratingProposal, request } = useApi()
-const { errors, validateSolicitationText, validateForm, isFormValid } = useFreelanceValidation(state)
+const { api, loading: isSendingRequest, request } = useApi()
+const { errors, validateForm, isFormValid } = useFreelanceValidation(state)
 
 async function generateProposal() {
     if (!validateForm()) return
@@ -24,6 +24,7 @@ async function generateProposal() {
         await api.post("/freelance/proposal/generate", {
             solicitation: state.solicitationText,
         }).then(response => {
+            state.solicitationText = ""
             show(response.data.message ?? "Solicitação enviada com sucesso!")
         }).catch(() => {
             show({
@@ -33,20 +34,19 @@ async function generateProposal() {
         })
     })
 }
-
-watch(() => state.solicitationText, validateSolicitationText)
 </script>
 
 <template>
-    <AppTitle title="Gerar Proposta" />
+    <AppTitle title="Gerar Proposta Personalizada"
+        subtitle="Crie uma proposta estratégica com base na solicitação recebida." />
 
     <div class="space-y-4 mt-6">
-        <TextAreaField label="Descrição da solicitação" v-model="state.solicitationText" :rows="10"
-            placeholder="Cole a descrição da solicitação..." :error="errors.solicitationText" />
+        <TextAreaField label="Descrição completa da solicitação" v-model="state.solicitationText" :rows="10"
+            placeholder="Cole aqui todos os detalhes da solicitação. Quanto mais informações, mais personalizada será a proposta."
+            :error="errors.solicitationText" />
 
-        <BaseButton @click="generateProposal" :disabled="!isFormValid || isGeneratingProposal"
-            :loading="isGeneratingProposal">
-            Gerar Proposta
+        <BaseButton @click="generateProposal" :disabled="!isFormValid || isSendingRequest" :loading="isSendingRequest">
+            Gerar proposta personalizada
         </BaseButton>
 
         <p v-if="state.error" class="text-red-500 text-sm">

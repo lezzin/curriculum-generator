@@ -16,6 +16,7 @@ export enum Language {
 export enum TargetSeniority {
   JUNIOR = 'Junior',
   MID_LEVEL = 'Mid-level',
+  SENIOR = 'Senior',
 }
 
 export enum FocusArea {

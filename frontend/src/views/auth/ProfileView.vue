@@ -7,6 +7,8 @@ import { useProfileValidation } from '../../composables/useProfileValidation'
 import SelectField from '../../components/ui/form/SelectField.vue'
 import BaseButton from '../../components/ui/BaseButton.vue'
 import TextAreaField from '../../components/ui/form/TextAreaField.vue'
+import AppTitle from '../../components/layout/AppTitle.vue'
+import { getFirstLetter } from '../../helper/string.helper'
 
 const BASE_TYPES = {
     RESUME: 'resume',
@@ -74,55 +76,70 @@ onMounted(loadBaseData)
 </script>
 
 <template>
-    <header class="flex flex-col mb-6">
-        <p class="text-lg font-semibold">{{ user?.name }}</p>
-        <p class="text-sm text-gray-500">{{ user?.email }}</p>
+    <AppTitle title="Perfil do Usuário"
+        subtitle="Gerencie aqui as informações base utilizadas na geração de currículos e propostas personalizadas." />
+
+    <header class="flex items-center gap-4 mb-6">
+        <div class="w-12 h-12 rounded-full bg-black text-white flex items-center justify-center text-lg font-semibold">
+            {{ getFirstLetter(user?.name) }}
+        </div>
+
+        <div class="flex flex-col">
+            <p class="text-lg font-semibold">
+                {{ user?.name }}
+            </p>
+
+            <p class="text-sm text-gray-600">
+                {{ user?.email }}
+            </p>
+        </div>
     </header>
 
     <CardContainer>
         <form class="space-y-4" @submit.prevent="createBaseData">
-            <SelectField label="Tipo de dado base" v-model="state.type" :error="errors.type">
-                <option disabled value="">Selecione</option>
+            <SelectField label="Tipo de informação base" v-model="state.type" :error="errors.type">
+                <option disabled value="">Selecione uma opção</option>
                 <option v-for="type in types" :key="type" :value="type">
                     {{ typeLabels[type] }}
                 </option>
             </SelectField>
 
-            <TextAreaField label="Descrição" v-model="state.description" :rows="10"
-                placeholder="Cole a descrição base para os modelos de IA..." :error="errors.description"
-                @blur="validateRequired('description', state.description)" :show-length="false" />
+            <TextAreaField label="Descrição base" v-model="state.description" :rows="10"
+                placeholder="Insira aqui as informações principais que servirão como base para gerar seus conteúdos (experiência, habilidades, diferenciais, etc.)."
+                :error="errors.description" @blur="validateRequired('description', state.description)"
+                :show-length="false" />
 
             <BaseButton type="submit" class="w-full" :disabled="isLoading || !state.description.trim()"
                 :loading="isLoading">
-                Salvar
+                Salvar informações base
             </BaseButton>
         </form>
     </CardContainer>
 
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
         <CardContainer class="space-y-4">
-            <h2 class="font-semibold">Currículo</h2>
+            <h2 class="font-semibold">Base para Currículos</h2>
 
-            <CardContainer variant="text" size="sm" class="min-h-24 whitespace-pre-wrap">
-                {{ baseData.resume ?? 'Sem dados' }}
+            <CardContainer variant="text" size="sm" class="h-80 overflow-y-auto whitespace-pre-wrap">
+                {{ baseData.resume ?? 'Nenhuma informação cadastrada.' }}
             </CardContainer>
 
             <BaseButton v-if="baseData.resume" variant="destructive" size="sm"
                 @click="removeBaseData(BASE_TYPES.RESUME)">
-                Remover
+                Remover informações
             </BaseButton>
         </CardContainer>
 
         <CardContainer class="space-y-4">
-            <h2 class="font-semibold">Propostas Freelance</h2>
+            <h2 class="font-semibold">Base para Propostas Freelance</h2>
 
-            <CardContainer variant="text" size="sm" class="min-h-24 whitespace-pre-wrap">
-                {{ baseData['freelance-proposal'] ?? 'Sem dados' }}
+            <CardContainer variant="text" size="sm" class="h-80 overflow-y-auto whitespace-pre-wrap">
+                {{ baseData['freelance-proposal'] ?? 'Nenhuma informação cadastrada.' }}
             </CardContainer>
 
             <BaseButton v-if="baseData['freelance-proposal']" variant="destructive" size="sm"
                 @click="removeBaseData(BASE_TYPES.FREELANCE_PROPOSAL)">
-                Remover
+                Remover informações
             </BaseButton>
         </CardContainer>
     </div>

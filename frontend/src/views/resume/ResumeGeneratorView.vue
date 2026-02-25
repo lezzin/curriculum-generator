@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { reactive, watch } from "vue"
+import { reactive } from "vue"
 import { useApi } from "../../composables/useApi"
 import { useResumeValidation } from "../../composables/useResumeValidation"
 import BaseButton from "../../components/ui/BaseButton.vue"
@@ -12,14 +12,14 @@ const { show } = useToast()
 
 const state = reactive({
     jobText: "",
-    language: "EN",
+    language: "PT",
     seniority: "Junior",
     focusArea: "Backend",
-    market: "US"
+    market: "Brazil"
 })
 
-const { api, error, loading: isGeneratingResume, request } = useApi()
-const { errors, validateJobText, validateRequired, isFormValid } = useResumeValidation(state)
+const { api, error, loading: isSendingRequest, request } = useApi()
+const { errors, validateJobText, isFormValid } = useResumeValidation(state)
 
 async function generateResume() {
     if (!validateJobText()) return
@@ -34,6 +34,7 @@ async function generateResume() {
                 market: state.market
             }
         }).then(response => {
+            state.jobText = ""
             show(response.data.message ?? "Solicitação enviada com sucesso!")
         }).catch(() => {
             show({
@@ -43,53 +44,49 @@ async function generateResume() {
         })
     })
 }
-
-watch(() => state.jobText, validateJobText)
-watch(() => state.language, v => validateRequired("language", v))
-watch(() => state.seniority, v => validateRequired("seniority", v))
-watch(() => state.focusArea, v => validateRequired("focusArea", v))
-watch(() => state.market, v => validateRequired("market", v))
 </script>
 
 <template>
-    <AppTitle title="Gerar currículo" />
+    <AppTitle title="Gerar Currículo Personalizado"
+        subtitle="Crie um currículo estratégico com base em uma vaga específica." />
 
     <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <SelectField label="Idioma" v-model="state.language" :error="errors.language">
-            <option value="">Selecione</option>
-            <option value="EN">English</option>
+        <SelectField label="Idioma do currículo" v-model="state.language" :error="errors.language">
+            <option value="" disabled>Selecione o idioma</option>
             <option value="PT">Português</option>
+            <option value="EN">Inglês</option>
         </SelectField>
 
-        <SelectField label="Senioridade" v-model="state.seniority" :error="errors.seniority">
-            <option value="">Selecione</option>
-            <option value="Junior">Junior</option>
-            <option value="Mid-level">Mid-level</option>
+        <SelectField label="Nível de senioridade" v-model="state.seniority" :error="errors.seniority">
+            <option value="" disabled>Selecione o nível</option>
+            <option value="Junior">Júnior</option>
+            <option value="Mid-level">Pleno</option>
+            <option value="Senior">Sênior</option>
         </SelectField>
 
-        <SelectField label="Área de Foco" v-model="state.focusArea" :error="errors.focusArea">
-            <option value="">Selecione</option>
+        <SelectField label="Área principal de atuação" v-model="state.focusArea" :error="errors.focusArea">
+            <option value="" disabled>Selecione a área</option>
             <option value="Backend">Backend</option>
-            <option value="Fullstack">Fullstack</option>
-            <option value="Microservices">Microservices</option>
+            <option value="Fullstack">Full Stack</option>
+            <option value="Microservices">Microsserviços</option>
             <option value="DevOps">DevOps</option>
         </SelectField>
 
-        <SelectField label="Mercado" v-model="state.market" :error="errors.market">
-            <option value="">Selecione</option>
-            <option value="US">US</option>
-            <option value="Europe">Europe</option>
-            <option value="Brazil">Brazil</option>
+        <SelectField label="Mercado de destino" v-model="state.market" :error="errors.market">
+            <option value="" disabled>Selecione o mercado</option>
+            <option value="Brazil">Brasil</option>
+            <option value="US">Estados Unidos</option>
+            <option value="Europe">Europa</option>
         </SelectField>
     </div>
 
     <div class="space-y-4 mt-6">
-        <TextAreaField label="Descrição da vaga" v-model="state.jobText" :rows="10"
-            placeholder="Cole a descrição da vaga..." :error="errors.jobText" />
+        <TextAreaField label="Descrição completa da vaga" v-model="state.jobText" :rows="10"
+            placeholder="Cole aqui a descrição completa da vaga. Quanto mais detalhes, melhor será a personalização do currículo."
+            :error="errors.jobText" />
 
-        <BaseButton @click="generateResume" :disabled="!isFormValid || isGeneratingResume"
-            :loading="isGeneratingResume">
-            Gerar Currículo
+        <BaseButton @click="generateResume" :disabled="!isFormValid || isSendingRequest" :loading="isSendingRequest">
+            Gerar currículo personalizado
         </BaseButton>
 
         <p v-if="error" class="text-red-500 text-sm">

@@ -10,16 +10,6 @@ export function useResumeValidation(state: any) {
         market: ""
     })
 
-    function validateRequired(field: keyof typeof errors, value: string) {
-        if (!value) {
-            errors[field] = "Campo obrigatório."
-            return false
-        }
-
-        errors[field] = ""
-        return true
-    }
-
     function validateJobText() {
         const text = state.jobText.trim()
 
@@ -54,7 +44,6 @@ export function useResumeValidation(state: any) {
     return {
         errors,
         validateJobText,
-        validateRequired,
         isFormValid
     }
 }

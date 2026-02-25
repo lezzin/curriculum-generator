@@ -44,12 +44,21 @@ onMounted(getResumes)
 </script>
 
 <template>
-    <AppTitle title="Currículos Gerados" />
+    <AppTitle title="Meus Currículos Gerados"
+        subtitle="Acompanhe, visualize e gerencie os currículos criados com base nas vagas enviadas." />
 
     <LoadContainer :loading="isLoading">
         <div class="grid gap-4" v-if="resumesList.length > 0">
             <ResumePreview v-for="resume in resumesList" :key="resume.id" :resume="resume" />
         </div>
-        <p v-else class="text-center text-gray-500">Nenhum currículo gerado ainda.</p>
+        <div v-else class="text-center space-y-3">
+            <p class="text-gray-500">
+                Você ainda não gerou nenhum currículo personalizado.
+            </p>
+
+            <router-link to="/resume" class="text-primary font-medium hover:underline">
+                Criar meu primeiro currículo
+            </router-link>
+        </div>
     </LoadContainer>
 </template>
