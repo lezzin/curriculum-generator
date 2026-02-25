@@ -5,6 +5,7 @@ import type { Resume } from "../../interfaces/resume.interfaces"
 import BaseButton from "../ui/BaseButton.vue"
 import { toHumanReadableDate } from "../../helper/string.helper"
 import CardContainer from "../ui/card/CardContainer.vue"
+import RotateArrow from "../icon/RotateArrow.vue"
 
 const props = defineProps<{ resume: Resume }>()
 
@@ -40,10 +41,7 @@ onMounted(async () => {
             <small class="text-gray-500">Criado em: {{ toHumanReadableDate(resume.createdAt ?? "") }}</small>
 
             <div class="flex items-center gap-3">
-                <svg class="w-4 h-4 text-gray-400 transition-transform duration-200" :class="{ 'rotate-180': isOpen }"
-                    fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
-                </svg>
+                <RotateArrow :rotate="isOpen" />
 
                 <BaseButton v-if="resume.id" @click.stop="goToPdfUrl" size="sm" variant="outline">
                     PDF

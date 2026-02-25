@@ -8,7 +8,7 @@ import SelectField from '../../components/ui/form/SelectField.vue'
 import BaseButton from '../../components/ui/BaseButton.vue'
 import TextAreaField from '../../components/ui/form/TextAreaField.vue'
 import AppTitle from '../../components/layout/AppTitle.vue'
-import { getFirstLetter } from '../../helper/string.helper'
+import UserAvatar from '../../components/ui/UserAvatar.vue'
 
 const BASE_TYPES = {
     RESUME: 'resume',
@@ -80,9 +80,7 @@ onMounted(loadBaseData)
         subtitle="Gerencie aqui as informações base utilizadas na geração de currículos e propostas personalizadas." />
 
     <header class="flex items-center gap-4 mb-6">
-        <div class="w-12 h-12 rounded-full bg-black text-white flex items-center justify-center text-lg font-semibold">
-            {{ getFirstLetter(user?.name) }}
-        </div>
+        <UserAvatar v-if="user?.name" :name="user.name" />
 
         <div class="flex flex-col">
             <p class="text-lg font-semibold">
