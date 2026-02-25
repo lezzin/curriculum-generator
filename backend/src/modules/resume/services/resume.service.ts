@@ -1,17 +1,13 @@
-import { Injectable, Logger } from '@nestjs/common';
-import { buildResumePrompt } from '../helpers/resume.helper';
+import { Injectable, Logger, UnprocessableEntityException } from '@nestjs/common';
 import { ResumeOptionsDto } from '../dto/prompt.dto';
-import { GeminiService } from 'src/modules/gemini/services/gemini.service';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ResumeEntity } from '../entities/resume.entity';
 import { Repository } from 'typeorm';
-import { Resume } from '../interfaces/resume.interfaces';
-import { SseService } from 'src/modules/sse/sse.service';
+import { InjectQueue } from '@nestjs/bullmq';
+import { Queue } from 'bullmq';
 import { CacheService } from 'src/modules/cache/cache.service';
-import { ResumePublisher } from '../messaging/rabbimq-publisher';
-import { PdfService } from './pdf.service';
-import { BaseType } from 'src/modules/profile/enum/base-type.enum';
 import { BaseService } from 'src/modules/profile/base.service';
+import { BaseType } from 'src/modules/profile/enum/base-type.enum';
 
 @Injectable()
 export class ResumeService {
@@ -20,63 +16,33 @@ export class ResumeService {
   private readonly CACHE_KEY_PREFIX = 'resume:all';
 
   constructor(
+    @InjectQueue('resume.queue')
+    private readonly resumeQueue: Queue,
     @InjectRepository(ResumeEntity)
     private readonly resumeRepository: Repository<ResumeEntity>,
-
-    private readonly resumePublisher: ResumePublisher,
-    private readonly geminiService: GeminiService,
-    private readonly sseService: SseService,
     private readonly cacheService: CacheService,
-    private readonly pdfService: PdfService,
     private readonly baseService: BaseService,
   ) { }
 
-  async sendResumeToQueue(
-    userId: string,
-    jobDescription: string,
-    options: ResumeOptionsDto,
-  ) {
-    await this.resumePublisher
-      .publish({ userId, jobDescription, options })
-      .catch((err) => {
-        this.logger.error('Failed to publish message to RabbitMQ', err);
-      });
-
-    return { message: 'Solicitação enviada com sucesso!' };
-  }
-
-  async generateAIResume(
-    userId: string,
-    jobDescription: string,
-    options: ResumeOptionsDto,
-  ) {
+  async sendResumeToQueue(userId: string, jobDescription: string, options: ResumeOptionsDto) {
     const baseData = (await this.baseService.getType(BaseType.RESUME, userId)).data
 
-    try {
-      const prompt = buildResumePrompt(baseData, jobDescription, options);
-      const resume = await this.geminiService.generateJsonResponse<Resume>(prompt);
+    if (!baseData) {
+      this.logger.debug(
+        `Usuário ${userId} tentou gerar currículo sem configurar dados base.`
+      )
 
-      this.logger.debug(JSON.stringify(resume));
-
-      const savedResume = await this.resumeRepository.save({
-        ...resume,
-        prompt: jobDescription,
-        userId: userId,
-      });
-
-      await this.cacheService.del(`${this.CACHE_KEY_PREFIX}:${userId}`);
-      await this.pdfService.generateResumePdfById(savedResume.id);
-
-      this.sseService.sendEvent({
-        event: 'resume-generated',
-        data: savedResume,
-      });
-
-      return savedResume;
-    } catch (err) {
-      this.logger.error('Failed to generate AI resume flow', err);
-      throw err;
+      throw new UnprocessableEntityException(
+        'Cadastre primeiro suas informações base na página de Perfil para gerar um currículo personalizado.'
+      )
     }
+
+    await this.resumeQueue.add('resume', { userId, jobDescription, options }, {
+      backoff: 5000,
+      attempts: 3
+    })
+
+    return { message: 'Solicitação enviada com sucesso!' };
   }
 
   async getResumes(userId: string): Promise<ResumeEntity[] | undefined> {

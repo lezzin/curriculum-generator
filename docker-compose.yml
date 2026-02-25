@@ -16,11 +16,9 @@ services:
       - PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
       - PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium
       - DATABASE_HOST=host.docker.internal
-      - RABBITMQ_URL=rabbitmq:5672
       - REDIS_HOST=redis
       - MINIO_ENDPOINT=minio
     depends_on:
-      - rabbitmq
       - redis
     networks:
       - app_network
@@ -40,21 +38,6 @@ services:
     networks:
       - app_network
     restart: unless-stopped
-
-  rabbitmq:
-    image: rabbitmq:3-management
-    container_name: rabbitmq
-    restart: unless-stopped
-    ports:
-      - "5672:5672"     
-      - "15672:15672"   
-    environment:
-      RABBITMQ_DEFAULT_USER: admin
-      RABBITMQ_DEFAULT_PASS: admin123
-    volumes:
-      - rabbitmq_data:/var/lib/rabbitmq
-    networks:
-      - app_network
 
   redis:
     image: redis:latest
@@ -82,5 +65,4 @@ services:
       - app_network
 
 volumes:
-  rabbitmq_data:
   minio_data:

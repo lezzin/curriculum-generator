@@ -9,6 +9,7 @@ import { SseModule } from './modules/sse/sse.module';
 import { CacheModule } from '@nestjs/cache-manager';
 import { redisStore } from 'cache-manager-redis-store';
 import { ProfileModule } from './modules/profile/profile.module';
+import { BullModule } from '@nestjs/bullmq';
 
 @Module({
   imports: [
@@ -28,6 +29,16 @@ import { ProfileModule } from './modules/profile/profile.module';
         store: redisStore,
         host: configService.get('REDIS_HOST') || 'localhost',
         port: configService.get<number>('REDIS_PORT') || 6379,
+      }),
+    }),
+    BullModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => ({
+        connection: {
+          host: configService.get('REDIS_HOST') || 'localhost',
+          port: configService.get<number>('REDIS_PORT') || 6379,
+        }
       }),
     }),
   ],

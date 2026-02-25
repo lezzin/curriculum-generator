@@ -1,15 +1,12 @@
-import { Injectable, Logger } from '@nestjs/common';
-import { build99FreelasProposalPrompt } from '../helpers/freelance.helper';
-import { GeminiService } from 'src/modules/gemini/services/gemini.service';
-import { SseService } from 'src/modules/sse/sse.service';
+import { Injectable, Logger, UnprocessableEntityException } from '@nestjs/common';
 import { FreelanceProposalEntity } from '../entities/freelance-proposal.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
-import { MarketplaceProposal } from '../interfaces/freelance.interfaces';
-import { FreelancePublisher } from '../messaging/rabbimq-publisher';
 import { CacheService } from 'src/modules/cache/cache.service';
-import { BaseService } from 'src/modules/profile/base.service';
+import { Queue } from 'bullmq';
+import { InjectQueue } from '@nestjs/bullmq';
 import { BaseType } from 'src/modules/profile/enum/base-type.enum';
+import { BaseService } from 'src/modules/profile/base.service';
 
 @Injectable()
 export class FreelanceService {
@@ -18,50 +15,34 @@ export class FreelanceService {
   private readonly CACHE_KEY_PREFIX = 'freelance:proposals:all';
 
   constructor(
+    @InjectQueue('freelance.queue')
+    private readonly freelanceQueue: Queue,
+
     @InjectRepository(FreelanceProposalEntity)
     private readonly freelanceProposalRepository: Repository<FreelanceProposalEntity>,
-    private readonly freelancePublisher: FreelancePublisher,
-    private readonly geminiService: GeminiService,
-    private readonly sseService: SseService,
     private readonly cacheService: CacheService,
     private readonly baseService: BaseService,
   ) { }
 
   async sendProposalToQueue(solicitation: string, userId: string) {
-    await this.freelancePublisher
-      .publish({ solicitation, userId })
-      .catch((err) => {
-        this.logger.error('Failed to publish message to RabbitMQ', err);
-      });
-
-    return { message: 'Solicitação enviada com sucesso!' };
-  }
-
-  async generateAIProposal(solicitation: string, userId: string) {
     const baseData = (await this.baseService.getType(BaseType.FREELANCE_PROPOSAL, userId)).data
 
-    try {
-      const prompt = build99FreelasProposalPrompt(baseData, solicitation);
-      const proposal = await this.geminiService.generateJsonResponse<MarketplaceProposal>(prompt);
+    if (!baseData) {
+      this.logger.debug(
+        `Usuário ${userId} tentou gerar proposta freelance sem configurar dados base.`
+      )
 
-      const savedProposal = await this.freelanceProposalRepository.save({
-        ...proposal,
-        prompt: solicitation,
-        userId: userId,
-      });
-
-      await this.cacheService.del(`${this.CACHE_KEY_PREFIX}:${userId}`);
-
-      this.sseService.sendEvent({
-        event: 'proposal-generated',
-        data: savedProposal,
-      });
-
-      return savedProposal;
-    } catch (err) {
-      this.logger.error('Failed to generate AI proposal flow', err);
-      throw err;
+      throw new UnprocessableEntityException(
+        'Você precisa cadastrar suas informações base de propostas freelance antes de gerar uma nova proposta.'
+      )
     }
+
+    await this.freelanceQueue.add('proposal', { solicitation, userId }, {
+      attempts: 3,
+      backoff: 5000,
+    })
+
+    return { message: 'Solicitação enviada com sucesso!' };
   }
 
   async getAllProposals(userId: string) {

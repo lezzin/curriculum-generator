@@ -5,14 +5,17 @@ import { GeminiModule } from '../gemini/gemini.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { FreelanceProposalEntity } from './entities/freelance-proposal.entity';
 import { SseModule } from '../sse/sse.module';
-import { FreelancePublisher } from './messaging/rabbimq-publisher';
-import { FreelanceConsumer } from './messaging/rabbitmq-consumer';
 import { CacheModule } from '../cache/cache.module';
 import { AuthModule } from '../auth/auth.module';
 import { ProfileModule } from '../profile/profile.module';
+import { BullModule } from '@nestjs/bullmq';
+import { FreelanceProcessor } from './services/freelance.processor';
 
 @Module({
   imports: [
+    BullModule.registerQueue({
+      name: 'freelance.queue',
+    }),
     GeminiModule,
     TypeOrmModule.forFeature([FreelanceProposalEntity]),
     SseModule,
@@ -21,6 +24,6 @@ import { ProfileModule } from '../profile/profile.module';
     ProfileModule,
   ],
   controllers: [FreelanceController],
-  providers: [FreelanceService, FreelancePublisher, FreelanceConsumer],
+  providers: [FreelanceService, FreelanceProcessor],
 })
 export class FreelanceModule { }

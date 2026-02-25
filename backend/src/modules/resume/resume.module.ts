@@ -7,14 +7,17 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ResumeEntity } from './entities/resume.entity';
 import { SseModule } from '../sse/sse.module';
 import { CacheModule } from '../cache/cache.module';
-import { ResumePublisher } from './messaging/rabbimq-publisher';
-import { ResumeConsumer } from './messaging/rabbitmq-consumer';
 import { AuthModule } from '../auth/auth.module';
 import { MinioModule } from '../minio/minio.module';
 import { ProfileModule } from '../profile/profile.module';
+import { ResumeProcessor } from './services/resume.processor';
+import { BullModule } from '@nestjs/bullmq';
 
 @Module({
   imports: [
+    BullModule.registerQueue({
+      name: 'resume.queue',
+    }),
     TypeOrmModule.forFeature([ResumeEntity]),
     GeminiModule,
     SseModule,
@@ -24,6 +27,6 @@ import { ProfileModule } from '../profile/profile.module';
     ProfileModule,
   ],
   controllers: [ResumeController],
-  providers: [ResumeService, PdfService, ResumePublisher, ResumeConsumer],
+  providers: [ResumeService, PdfService, ResumeProcessor],
 })
 export class ResumeModule { }
