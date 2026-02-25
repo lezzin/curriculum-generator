@@ -7,12 +7,11 @@ import { Queue } from 'bullmq';
 import { InjectQueue } from '@nestjs/bullmq';
 import { BaseType } from 'src/modules/profile/enum/base-type.enum';
 import { BaseService } from 'src/modules/profile/base.service';
+import { CACHE_KEY_PREFIX } from '../constants/freelance.constants';
 
 @Injectable()
 export class FreelanceService {
   private readonly logger = new Logger(FreelanceService.name);
-
-  private readonly CACHE_KEY_PREFIX = 'freelance:proposals:all';
 
   constructor(
     @InjectQueue('freelance.queue')
@@ -48,7 +47,7 @@ export class FreelanceService {
   async getAllProposals(userId: string) {
     return await this.cacheService
       .getOrSet<FreelanceProposalEntity[]>(
-        `${this.CACHE_KEY_PREFIX}:${userId}`,
+        `${CACHE_KEY_PREFIX}:${userId}`,
         async () => {
           const proposals = await this.freelanceProposalRepository.find({
             order: { createdAt: 'DESC' },

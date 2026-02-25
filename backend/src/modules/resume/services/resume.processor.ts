@@ -12,12 +12,11 @@ import { buildResumePrompt } from '../helpers/resume.helper';
 import { Resume } from '../interfaces/resume.interfaces';
 import { ResumeEntity } from '../entities/resume.entity';
 import { PdfService } from './pdf.service';
+import { CACHE_KEY_PREFIX } from '../constants/resume.constants';
 
 @Processor('resume.queue')
 export class ResumeProcessor extends WorkerHost {
     private readonly logger = new Logger(ResumeProcessor.name);
-
-    private readonly CACHE_KEY_PREFIX = 'resume:all';
 
     constructor(
         @InjectRepository(ResumeEntity)
@@ -54,7 +53,7 @@ export class ResumeProcessor extends WorkerHost {
                 userId: userId,
             });
 
-            await this.cacheService.del(`${this.CACHE_KEY_PREFIX}:${userId}`);
+            await this.cacheService.del(`${CACHE_KEY_PREFIX}:${userId}`);
             await this.pdfService.generateResumePdfById(savedResume.id);
 
             this.sseService.sendEvent({

@@ -11,12 +11,11 @@ import { BaseType } from 'src/modules/profile/enum/base-type.enum';
 import { build99FreelasProposalPrompt } from '../helpers/freelance.helper';
 import { Logger } from '@nestjs/common';
 import { MarketplaceProposal } from '../interfaces/freelance.interfaces';
+import { CACHE_KEY_PREFIX } from '../constants/freelance.constants';
 
 @Processor('freelance.queue')
 export class FreelanceProcessor extends WorkerHost {
     private readonly logger = new Logger(FreelanceProcessor.name);
-
-    private readonly CACHE_KEY_PREFIX = 'freelance:proposals:all';
 
     constructor(
         @InjectRepository(FreelanceProposalEntity)
@@ -51,7 +50,7 @@ export class FreelanceProcessor extends WorkerHost {
                 userId: userId,
             });
 
-            await this.cacheService.del(`${this.CACHE_KEY_PREFIX}:${userId}`);
+            await this.cacheService.del(`${CACHE_KEY_PREFIX}:${userId}`);
 
             this.sseService.sendEvent({
                 event: 'proposal-generated',

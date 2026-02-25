@@ -14,3 +14,5 @@ export const SECTION_LABELS = {
     technologies: 'Technologies',
   },
 };
+
+export const CACHE_KEY_PREFIX = 'resume:all';

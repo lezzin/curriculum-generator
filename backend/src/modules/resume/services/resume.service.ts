@@ -8,12 +8,11 @@ import { Queue } from 'bullmq';
 import { CacheService } from 'src/modules/cache/cache.service';
 import { BaseService } from 'src/modules/profile/base.service';
 import { BaseType } from 'src/modules/profile/enum/base-type.enum';
+import { CACHE_KEY_PREFIX } from '../constants/resume.constants';
 
 @Injectable()
 export class ResumeService {
   private readonly logger = new Logger(ResumeService.name);
-
-  private readonly CACHE_KEY_PREFIX = 'resume:all';
 
   constructor(
     @InjectQueue('resume.queue')
@@ -48,7 +47,7 @@ export class ResumeService {
   async getResumes(userId: string): Promise<ResumeEntity[] | undefined> {
     return await this.cacheService
       .getOrSet<ResumeEntity[]>(
-        `${this.CACHE_KEY_PREFIX}:${userId}`,
+        `${CACHE_KEY_PREFIX}:${userId}`,
         async () => {
           const resumes = await this.resumeRepository.find({
             order: { createdAt: 'DESC' },
