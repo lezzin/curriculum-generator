@@ -12,6 +12,7 @@ import { ResumeConsumer } from './messaging/rabbitmq-consumer';
 import { RabbitMQModule } from '../../common/rabbitmq/rabbitmq.module';
 import { AuthModule } from '../auth/auth.module';
 import { MinioModule } from '../minio/minio.module';
+import { ProfileModule } from '../profile/profile.module';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { MinioModule } from '../minio/minio.module';
     RabbitMQModule,
     AuthModule,
     MinioModule,
+    ProfileModule,
   ],
   controllers: [ResumeController],
   providers: [ResumeService, PdfService, ResumePublisher, ResumeConsumer],

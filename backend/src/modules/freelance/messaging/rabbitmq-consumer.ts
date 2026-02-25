@@ -1,7 +1,6 @@
 import { FreelanceService } from '../services/freelance.service';
 import { Injectable } from '@nestjs/common';
 import { SolicitationDto } from '../dto/freelance.dto';
-import { baseFreelance } from 'src/data/base-freelance';
 import { BaseConsumer } from 'src/common/rabbitmq/base.consumer';
 import { RabbitMQConnection } from 'src/common/rabbitmq/rabbitmq.connection';
 
@@ -20,7 +19,6 @@ export class FreelanceConsumer extends BaseConsumer {
 
   protected async handleMessage(message: SolicitationDto & { userId: string }): Promise<void> {
     await this.freelanceService.generateAIProposal(
-      baseFreelance,
       message.solicitation,
       message.userId,
     );

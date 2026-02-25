@@ -10,6 +10,8 @@ import { SseService } from 'src/modules/sse/sse.service';
 import { CacheService } from 'src/modules/cache/cache.service';
 import { ResumePublisher } from '../messaging/rabbimq-publisher';
 import { PdfService } from './pdf.service';
+import { BaseType } from 'src/modules/profile/enum/base-type.enum';
+import { BaseService } from 'src/modules/profile/base.service';
 
 @Injectable()
 export class ResumeService {
@@ -26,16 +28,16 @@ export class ResumeService {
     private readonly sseService: SseService,
     private readonly cacheService: CacheService,
     private readonly pdfService: PdfService,
+    private readonly baseService: BaseService,
   ) { }
 
   async sendResumeToQueue(
-    baseResume: any,
     userId: string,
     jobDescription: string,
     options: ResumeOptionsDto,
   ) {
     await this.resumePublisher
-      .publish({ baseResume, userId, jobDescription, options })
+      .publish({ userId, jobDescription, options })
       .catch((err) => {
         this.logger.error('Failed to publish message to RabbitMQ', err);
       });
@@ -44,13 +46,14 @@ export class ResumeService {
   }
 
   async generateAIResume(
-    baseResume: any,
     userId: string,
     jobDescription: string,
     options: ResumeOptionsDto,
   ) {
+    const baseData = (await this.baseService.getType(BaseType.RESUME, userId)).data
+
     try {
-      const prompt = buildResumePrompt(baseResume, jobDescription, options);
+      const prompt = buildResumePrompt(baseData, jobDescription, options);
       const resume = await this.geminiService.generateJsonResponse<Resume>(prompt);
 
       this.logger.debug(JSON.stringify(resume));

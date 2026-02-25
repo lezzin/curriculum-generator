@@ -1,7 +1,6 @@
 import { Body, Controller, Get, Post, Req, UseGuards } from '@nestjs/common';
 import { FreelanceService } from './services/freelance.service';
 import { SolicitationDto } from './dto/freelance.dto';
-import { baseFreelance } from 'src/data/base-freelance';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 
 @UseGuards(JwtAuthGuard)
@@ -15,7 +14,6 @@ export class FreelanceController {
     const userId = req.user?.id;
 
     return await this.freelanceService.sendProposalToQueue(
-      baseFreelance,
       solicitation,
       userId,
     );

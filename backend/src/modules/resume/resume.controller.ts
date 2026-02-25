@@ -1,6 +1,5 @@
 import { Body, Controller, Get, Param, Post, Req, Res, UseGuards } from '@nestjs/common';
 import { GenerateDto } from './dto/prompt.dto';
-import { baseResume } from 'src/data/base-resume';
 import { PdfService } from './services/pdf.service';
 import { ResumeService } from './services/resume.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
@@ -19,7 +18,6 @@ export class ResumeController {
     const userId = req.user?.id;
 
     return await this.resumeService.sendResumeToQueue(
-      baseResume,
       userId,
       jobDescription,
       options,

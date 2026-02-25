@@ -8,6 +8,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { MarketplaceProposal } from '../interfaces/freelance.interfaces';
 import { FreelancePublisher } from '../messaging/rabbimq-publisher';
 import { CacheService } from 'src/modules/cache/cache.service';
+import { BaseService } from 'src/modules/profile/base.service';
+import { BaseType } from 'src/modules/profile/enum/base-type.enum';
 
 @Injectable()
 export class FreelanceService {
@@ -22,11 +24,12 @@ export class FreelanceService {
     private readonly geminiService: GeminiService,
     private readonly sseService: SseService,
     private readonly cacheService: CacheService,
+    private readonly baseService: BaseService,
   ) { }
 
-  async sendProposalToQueue(baseData: any, solicitation: string, userId: string) {
+  async sendProposalToQueue(solicitation: string, userId: string) {
     await this.freelancePublisher
-      .publish({ baseData, solicitation, userId })
+      .publish({ solicitation, userId })
       .catch((err) => {
         this.logger.error('Failed to publish message to RabbitMQ', err);
       });
@@ -34,7 +37,9 @@ export class FreelanceService {
     return { message: 'Solicitação enviada com sucesso!' };
   }
 
-  async generateAIProposal(baseData: any, solicitation: string, userId: string) {
+  async generateAIProposal(solicitation: string, userId: string) {
+    const baseData = (await this.baseService.getType(BaseType.FREELANCE_PROPOSAL, userId)).data
+
     try {
       const prompt = build99FreelasProposalPrompt(baseData, solicitation);
       const proposal = await this.geminiService.generateJsonResponse<MarketplaceProposal>(prompt);

@@ -57,28 +57,32 @@ export class BaseService {
   async getAll(userId: string) {
     return await Promise.all(
       Object.values(BaseType).map(async (type) => {
-        const filename = this.getFilename(type, userId)
-
-        try {
-          const stream = await this.minioService.getObject(
-            this.BUCKET_NAME,
-            filename,
-          )
-
-          const content = await this.minioService.streamToString(stream)
-
-          return {
-            type,
-            data: content,
-          }
-        } catch (error) {
-          return {
-            type,
-            data: null
-          }
-        }
+        return await this.getType(type, userId)
       }),
     )
+  }
+
+  async getType(type: BaseType, userId: string) {
+    const filename = this.getFilename(type, userId)
+
+    try {
+      const stream = await this.minioService.getObject(
+        this.BUCKET_NAME,
+        filename,
+      )
+
+      const content = await this.minioService.streamToString(stream)
+
+      return {
+        type,
+        data: content,
+      }
+    } catch (error) {
+      return {
+        type,
+        data: null
+      }
+    }
   }
 
   getFilename(type: BaseType, userId: string) {

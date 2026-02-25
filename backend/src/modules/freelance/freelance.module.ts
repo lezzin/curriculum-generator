@@ -10,6 +10,7 @@ import { FreelanceConsumer } from './messaging/rabbitmq-consumer';
 import { RabbitMQModule } from '../../common/rabbitmq/rabbitmq.module';
 import { CacheModule } from '../cache/cache.module';
 import { AuthModule } from '../auth/auth.module';
+import { ProfileModule } from '../profile/profile.module';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { AuthModule } from '../auth/auth.module';
     RabbitMQModule,
     CacheModule,
     AuthModule,
+    ProfileModule,
   ],
   controllers: [FreelanceController],
   providers: [FreelanceService, FreelancePublisher, FreelanceConsumer],

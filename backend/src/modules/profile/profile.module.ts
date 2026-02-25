@@ -11,6 +11,7 @@ import { MinioModule } from "../minio/minio.module";
         MinioModule,
     ],
     controllers: [BaseController],
-    providers: [BaseService]
+    providers: [BaseService],
+    exports: [BaseService],
 })
 export class ProfileModule { }
