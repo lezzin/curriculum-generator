@@ -47,8 +47,8 @@ export class MinioService implements OnModuleInit {
         }
     }
 
-    async getPresignedUrl(bucket: string, fileName: string) {
-        return this.minioClient.presignedGetObject(bucket, fileName, 60 * 60);
+    async getObject(bucket: string, fileName: string) {
+        return this.minioClient.getObject(bucket, fileName);
     }
 
     async createBucket(bucket: string) {

@@ -22,9 +22,9 @@ const shortPrompt = computed(() => {
 })
 
 const goToPdfUrl = async () => {
-    const url = await getPublicPdfUrl(resume.value.id!)
-    window.open(url, "_blank")
-}
+    const pdfUrl = await getPublicPdfUrl(resume.value.id!);
+    window.open(pdfUrl, "_blank");
+};
 </script>
 
 <template>

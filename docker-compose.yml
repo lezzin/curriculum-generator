@@ -18,6 +18,7 @@ services:
       - DATABASE_HOST=host.docker.internal
       - RABBITMQ_URL=rabbitmq:5672
       - REDIS_HOST=redis
+      - MINIO_ENDPOINT=minio
     depends_on:
       - rabbitmq
       - redis

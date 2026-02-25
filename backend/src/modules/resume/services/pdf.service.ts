@@ -5,6 +5,7 @@ import {
 } from '@nestjs/common';
 import * as puppeteer from 'puppeteer';
 import * as Handlebars from 'handlebars';
+import * as stream from 'node:stream';
 import * as fs from 'fs';
 import * as path from 'path';
 import { Language, ResumePdfDto } from '../dto/prompt.dto';
@@ -63,7 +64,7 @@ export class PdfService implements OnModuleInit, OnModuleDestroy {
     return Buffer.from(pdf);
   }
 
-  async generateResumePdfById(id: string): Promise<string> {
+  async generateResumePdfById(id: string) {
     const bucket = 'resumes';
     const fileName = `${id}.pdf`;
 
@@ -76,8 +77,13 @@ export class PdfService implements OnModuleInit, OnModuleDestroy {
       const pdf = await this.generateResumePdf(resume as ResumePdfDto);
       await this.minioService.uploadFile(bucket, fileName, pdf, 'application/pdf');
     }
+  }
 
-    return this.minioService.getPresignedUrl(bucket, fileName);
+  async getPdfById(id: string): Promise<stream.Readable> {
+    const bucket = 'resumes';
+    const fileName = `${id}.pdf`;
+
+    return await this.minioService.getObject(bucket, fileName);
   }
 
   async onModuleDestroy() {

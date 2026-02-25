@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Req, Res, UseGuards } from '@nestjs/common';
 import { GenerateDto } from './dto/prompt.dto';
 import { baseResume } from 'src/data/base-resume';
 import { PdfService } from './services/pdf.service';
@@ -27,8 +27,15 @@ export class ResumeController {
   }
 
   @Get('/pdf/:id')
-  async generatePdfByUuid(@Param('id') id: string) {
-    return await this.pdfService.generateResumePdfById(id);
+  async generatePdfByUuid(@Param('id') id: string, @Res() res) {
+    const stream = await this.pdfService.getPdfById(id);
+
+    res.set({
+      'Content-Type': 'application/pdf',
+      'Content-Disposition': `inline; filename="${id}.pdf"`,
+    });
+
+    stream.pipe(res);
   }
 
   @UseGuards(JwtAuthGuard)
