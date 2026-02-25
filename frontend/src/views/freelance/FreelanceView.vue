@@ -25,7 +25,7 @@ async function generateProposal() {
             solicitation: state.solicitationText,
         }).then(response => {
             state.solicitationText = ""
-            show(response.data.message ?? "Solicitação enviada com sucesso!")
+            show(response.data.message ?? "Solicitação de proposta enviada com sucesso!")
         }).catch(() => {
             show({
                 message: "Ocorreu um erro ao enviar a solicitação. Tente novamente mais tarde.",

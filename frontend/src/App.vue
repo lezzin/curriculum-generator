@@ -21,7 +21,7 @@ sseService.init(api)
 sseService.on<Resume>("resume-generated", () => {
   if (route.name !== 'ResumeHistory') {
     show({
-      message: "Currículo gerado com sucesso!",
+      message: "Novo currículo gerado com sucesso!",
       link: {
         label: "Ver histórico",
         to: 'ResumeHistory'
@@ -34,7 +34,7 @@ sseService.on<Resume>("resume-generated", () => {
 sseService.on<MarketplaceProposal>("proposal-generated", () => {
   if (route.name !== 'FreelanceProposalHistory') {
     show({
-      message: "Proposta gerada com sucesso!",
+      message: "Nova proposta gerada com sucesso!",
       link: {
         label: "Ver histórico",
         to: 'FreelanceProposalHistory'
