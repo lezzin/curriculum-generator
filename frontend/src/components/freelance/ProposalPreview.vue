@@ -71,7 +71,7 @@ async function copyProposal() {
                 Solicitação
             </label>
 
-            <CardContainer variant="text" @click="togglePrompt">
+            <CardContainer variant="text" @click="togglePrompt" size="sm">
                 {{ isOpen ? proposal.prompt : shortPrompt }}
             </CardContainer>
         </div>
