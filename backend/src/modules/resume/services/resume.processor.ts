@@ -17,7 +17,7 @@ import { PdfService } from './pdf.service';
 export class ResumeProcessor extends WorkerHost {
     private readonly logger = new Logger(ResumeProcessor.name);
 
-    private readonly CACHE_KEY_PREFIX = 'freelance:proposals:all';
+    private readonly CACHE_KEY_PREFIX = 'resume:all';
 
     constructor(
         @InjectRepository(ResumeEntity)
