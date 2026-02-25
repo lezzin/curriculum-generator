@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import { reactive, watch } from "vue"
-import { useApi } from "../composables/useApi"
-import { useResumeValidation } from "../composables/useResumeValidation"
-import BaseButton from "../components/ui/BaseButton.vue"
-import TextAreaField from "../components/ui/form/TextAreaField.vue"
-import SelectField from "../components/ui/form/SelectField.vue"
-import AppTitle from "../components/layout/AppTitle.vue"
-import { useToast } from "../composables/useToast"
+import { useApi } from "../../composables/useApi"
+import { useResumeValidation } from "../../composables/useResumeValidation"
+import BaseButton from "../../components/ui/BaseButton.vue"
+import TextAreaField from "../../components/ui/form/TextAreaField.vue"
+import SelectField from "../../components/ui/form/SelectField.vue"
+import AppTitle from "../../components/layout/AppTitle.vue"
+import { useToast } from "../../composables/useToast"
 
 const { show } = useToast()
 

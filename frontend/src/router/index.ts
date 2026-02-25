@@ -1,13 +1,13 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import ResumeGeneratorView from '../views/ResumeGeneratorView.vue'
+import ResumeGeneratorView from '../views/resume/ResumeGeneratorView.vue'
 import HomeView from '../views/HomeView.vue'
-import FreelanceView from '../views/FreelanceView.vue'
-import ResumeHistoryView from '../views/ResumeHistoryView.vue'
-import FreelanceHistoryView from '../views/FreelanceHistoryView.vue'
+import FreelanceView from '../views/freelance/FreelanceView.vue'
+import ResumeHistoryView from '../views/resume/ResumeHistoryView.vue'
+import FreelanceHistoryView from '../views/freelance/FreelanceHistoryView.vue'
 import { useAuth } from '../composables/useAuth'
-import LoginView from '../views/LoginView.vue'
-import SignupView from '../views/SignupView.vue'
-import ProfileView from '../views/ProfileView.vue'
+import LoginView from '../views/auth/LoginView.vue'
+import SignupView from '../views/auth/SignupView.vue'
+import ProfileView from '../views/auth/ProfileView.vue'
 
 const { checkAuth, user } = useAuth();
 

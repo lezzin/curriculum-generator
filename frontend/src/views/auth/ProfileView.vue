@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import { onMounted, reactive, computed } from 'vue'
-import CardContainer from '../components/ui/card/CardContainer.vue'
-import { useApi } from '../composables/useApi'
-import { useAuth } from '../composables/useAuth'
-import { useProfileValidation } from '../composables/useProfileValidation'
-import SelectField from '../components/ui/form/SelectField.vue'
-import BaseButton from '../components/ui/BaseButton.vue'
-import TextAreaField from '../components/ui/form/TextAreaField.vue'
+import CardContainer from '../../components/ui/card/CardContainer.vue'
+import { useApi } from '../../composables/useApi'
+import { useAuth } from '../../composables/useAuth'
+import { useProfileValidation } from '../../composables/useProfileValidation'
+import SelectField from '../../components/ui/form/SelectField.vue'
+import BaseButton from '../../components/ui/BaseButton.vue'
+import TextAreaField from '../../components/ui/form/TextAreaField.vue'
 
 const BASE_TYPES = {
     RESUME: 'resume',

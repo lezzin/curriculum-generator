@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { reactive, watch } from "vue"
-import BaseButton from "../components/ui/BaseButton.vue"
-import AppTitle from "../components/layout/AppTitle.vue"
-import TextAreaField from "../components/ui/form/TextAreaField.vue"
-import { useFreelanceValidation } from "../composables/useFreelanceValidation"
-import { useApi } from "../composables/useApi"
-import { useToast } from "../composables/useToast"
+import BaseButton from "../../components/ui/BaseButton.vue"
+import AppTitle from "../../components/layout/AppTitle.vue"
+import TextAreaField from "../../components/ui/form/TextAreaField.vue"
+import { useFreelanceValidation } from "../../composables/useFreelanceValidation"
+import { useApi } from "../../composables/useApi"
+import { useToast } from "../../composables/useToast"
 
 const { show } = useToast()
 

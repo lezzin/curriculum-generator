@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import { onMounted, reactive, ref } from 'vue'
-import { useApi } from '../composables/useApi'
-import { sseService } from '../services/sse.service'
-import type { Resume } from '../interfaces/resume.interfaces'
-import ResumePreview from '../components/resume/ResumePreview.vue'
-import AppTitle from '../components/layout/AppTitle.vue'
-import LoadContainer from '../components/ui/LoadContainer.vue'
-import { useToast } from '../composables/useToast'
-import { useAuth } from '../composables/useAuth'
+import { useApi } from '../../composables/useApi'
+import { sseService } from '../../services/sse.service'
+import type { Resume } from '../../interfaces/resume.interfaces'
+import ResumePreview from '../../components/resume/ResumePreview.vue'
+import AppTitle from '../../components/layout/AppTitle.vue'
+import LoadContainer from '../../components/ui/LoadContainer.vue'
+import { useToast } from '../../composables/useToast'
+import { useAuth } from '../../composables/useAuth'
 
 const { api, request } = useApi()
 const { user } = useAuth()

@@ -1,19 +1,18 @@
 <script setup lang="ts">
 import { onMounted, reactive, watch } from 'vue';
-import { useApi } from '../composables/useApi';
-import { useToast } from '../composables/useToast';
-import BaseButton from '../components/ui/BaseButton.vue';
-import InputField from '../components/ui/form/InputField.vue';
-import AppTitle from '../components/layout/AppTitle.vue';
-import { useAuth } from '../composables/useAuth';
-import { useAuthValidation } from '../composables/useAuthValidation';
+import { useApi } from '../../composables/useApi';
+import { useToast } from '../../composables/useToast';
+import BaseButton from '../../components/ui/BaseButton.vue';
+import InputField from '../../components/ui/form/InputField.vue';
+import AppTitle from '../../components/layout/AppTitle.vue';
+import { useAuth } from '../../composables/useAuth';
+import { useAuthValidation } from '../../composables/useAuthValidation';
 import { useRouter } from 'vue-router';
-import CardContainer from '../components/ui/card/CardContainer.vue';
+import CardContainer from '../../components/ui/card/CardContainer.vue';
 
 const state = reactive({
     email: '',
     password: '',
-    username: '',
 });
 
 const router = useRouter();
@@ -24,24 +23,23 @@ const { user, checkAuth } = useAuth();
 const { request, api, loading: isLoading } = useApi();
 const { show } = useToast();
 
-const signup = async () => {
+const login = async () => {
     if (!isFormValid.value) return;
 
     try {
         await request(() =>
-            api.post('/auth/signup', {
-                name: state.username,
+            api.post('/auth/login', {
                 email: state.email,
                 password: state.password,
             })
         );
 
-        show('Conta criada com sucesso!');
+        show('Logado com sucesso!');
         checkAuth();
         router.push('/');
     } catch (err: any) {
         show({
-            message: err.message || 'Erro ao criar conta.',
+            message: err.message || 'Erro ao fazer login.',
             type: 'error',
         });
     }
@@ -49,7 +47,6 @@ const signup = async () => {
 
 watch(() => state.email, v => validateRequired('email', v));
 watch(() => state.password, v => validateRequired('password', v));
-watch(() => state.username, v => validateRequired('username', v));
 
 onMounted(() => {
     if (user.value) {
@@ -60,11 +57,8 @@ onMounted(() => {
 
 <template>
     <CardContainer class="max-w-lg mx-auto" size="lg">
-        <form class="space-y-4" @submit.prevent="signup()">
-            <AppTitle title="Crie sua conta" subtitle="Preencha os dados abaixo" />
-
-            <InputField label="Nome de Usuário" v-model="state.username" placeholder="Nome de Usuário"
-                :error="errors.username" />
+        <form class="space-y-4" @submit.prevent="login()">
+            <AppTitle title="Bem-vindo de volta!" subtitle="Faça login para continuar" />
 
             <InputField label="Email" v-model="state.email" placeholder="Email" type="email" :error="errors.email" />
 
@@ -72,11 +66,11 @@ onMounted(() => {
                 :error="errors.password" />
 
             <BaseButton type="submit" :disabled="!isFormValid || isLoading" :loading="isLoading" class="w-full">
-                Criar Conta
+                Login
             </BaseButton>
 
-            <router-link to="/auth/login" class="text-center block text-sm text-blue-500 hover:underline">
-                Já tem uma conta? Faça login
+            <router-link to="/auth/signup" class="text-center block text-sm text-blue-500 hover:underline">
+                Não tem uma conta? Cadastre-se
             </router-link>
         </form>
     </CardContainer>
