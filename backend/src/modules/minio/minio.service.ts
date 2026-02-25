@@ -51,11 +51,28 @@ export class MinioService implements OnModuleInit {
         return this.minioClient.getObject(bucket, fileName);
     }
 
+    async removeObject(bucket: string, fileName: string) {
+        return this.minioClient.removeObject(bucket, fileName);
+    }
+
     async createBucket(bucket: string) {
         const exists = await this.minioClient.bucketExists(bucket);
 
         if (!exists) {
             await this.minioClient.makeBucket(bucket, 'us-east-1');
         }
+    }
+
+    async streamToString(stream: NodeJS.ReadableStream): Promise<string> {
+        return new Promise((resolve, reject) => {
+            let data = ''
+
+            stream.on('data', chunk => {
+                data += chunk.toString()
+            })
+
+            stream.on('end', () => resolve(data))
+            stream.on('error', reject)
+        })
     }
 }

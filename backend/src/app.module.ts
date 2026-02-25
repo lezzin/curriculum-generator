@@ -8,6 +8,7 @@ import { DatabaseModule } from './modules/database/database.module';
 import { SseModule } from './modules/sse/sse.module';
 import { CacheModule } from '@nestjs/cache-manager';
 import { redisStore } from 'cache-manager-redis-store';
+import { ProfileModule } from './modules/profile/profile.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { redisStore } from 'cache-manager-redis-store';
     HealthModule,
     DatabaseModule,
     SseModule,
+    ProfileModule,
     CacheModule.registerAsync({
       isGlobal: true,
       imports: [ConfigModule],
