@@ -84,6 +84,7 @@ export class ResumeService {
           const resumes = await this.resumeRepository.find({
             order: { createdAt: 'DESC' },
             where: { userId },
+            select: ['id', 'prompt', 'createdAt']
           });
 
           return resumes;

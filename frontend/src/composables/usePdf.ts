@@ -7,14 +7,13 @@ export function usePdf() {
     const pdfUrl = ref<string | null>(null)
     const isGenerating = ref(false)
 
-    async function getPublicPdfUrl(id: string): Promise<string> {
+    async function setPublicPdfUrl(id: string) {
         const response = await api.get(`/resume/pdf/${id}`, {
             responseType: 'arraybuffer',
         });
 
         const pdfBlob = new Blob([response.data], { type: 'application/pdf' });
-
-        return URL.createObjectURL(pdfBlob);
+        pdfUrl.value = URL.createObjectURL(pdfBlob);
     }
 
     function revoke() {
@@ -29,7 +28,7 @@ export function usePdf() {
     return {
         pdfUrl,
         isGenerating,
-        getPublicPdfUrl,
+        setPublicPdfUrl,
         revoke
     }
 }
