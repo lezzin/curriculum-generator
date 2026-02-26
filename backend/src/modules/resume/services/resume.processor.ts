@@ -1,4 +1,4 @@
-import { Processor, WorkerHost } from '@nestjs/bullmq'
+import { OnWorkerEvent, Processor, WorkerHost } from '@nestjs/bullmq'
 import { Job } from 'bullmq'
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -38,41 +38,50 @@ export class ResumeProcessor extends WorkerHost {
         super()
     }
 
-    async process(job: Job<any>) {
-        const { userId, jobDescription, options } = job.data as JobPayload;
-        const baseData = (await this.baseService.getType(BaseType.RESUME, userId)).data
+    async process(job: Job<JobPayload>) {
+        const { userId, jobDescription, options } = job.data;
 
-        if (!baseData) {
-            this.logger.debug(
-                `Usuário ${userId} tentou gerar currículo sem configurar dados base.`
-            )
+        const baseData = (await this.baseService.getType(BaseType.RESUME, userId)).data;
+        if (!baseData) return;
 
-            return;
-        }
+        const resume = await this.geminiService.generateJsonResponse<Resume>({
+            prompt: buildResumePrompt(baseData, jobDescription, options),
+            discordData: [
+                `**Tipo**: Currículo`,
+                `**Usuário**: ${userId}`,
+            ]
+        });
 
-        try {
-            const prompt = buildResumePrompt(baseData, jobDescription, options);
-            const resume = await this.geminiService.generateJsonResponse<Resume>(prompt);
+        const savedResume = await this.resumeRepository.save({
+            ...resume,
+            prompt: jobDescription,
+            userId,
+            template: options.template
+        }) as ResumePdfDto & { id: string };
 
-            const savedResume = await this.resumeRepository.save({
-                ...resume,
-                prompt: jobDescription,
-                userId: userId,
-                template: options.template
-            }) as ResumePdfDto & { id: string };
+        await this.cacheService.del(`${CACHE_KEY_PREFIX}:${userId}`);
+        await this.pdfService.generateResumePdfByEntity(savedResume);
 
-            await this.cacheService.del(`${CACHE_KEY_PREFIX}:${userId}`);
-            await this.pdfService.generateResumePdfByEntity(savedResume);
+        this.sseService.sendEvent({
+            event: 'resume-generated',
+            data: savedResume,
+        });
 
-            this.sseService.sendEvent({
-                event: 'resume-generated',
-                data: savedResume,
-            });
+        return savedResume;
+    }
 
-            return savedResume;
-        } catch (err) {
-            this.logger.error('Failed to generate AI resume flow', err);
-            throw err;
-        }
+    @OnWorkerEvent('active')
+    onActive(job: Job) {
+        this.logger.log(`[${job.queueName}] Job ${job.id} está ativo`);
+    }
+
+    @OnWorkerEvent('completed')
+    onCompleted(job: Job) {
+        this.logger.log(`[${job.queueName}] Job ${job.id} finalizado`);
+    }
+
+    @OnWorkerEvent('failed')
+    onFailed(job: Job, error: Error) {
+        this.logger.error(`[${job?.queueName}] Job ${job?.id} falhou`, error.stack);
     }
 }

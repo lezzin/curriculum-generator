@@ -20,7 +20,7 @@ const baseClasses = "rounded-lg shadow-sm border"
 const variantClasses = computed(() => {
     switch (props.variant) {
         case "text":
-            return "text-sm leading-relaxed bg-zinc-50 text-zinc-700 border-zinc-200 cursor-pointer whitespace-pre-wrap hover:bg-zinc-100 transition-colors"
+            return "text-sm leading-relaxed bg-zinc-50 text-zinc-700 border-zinc-200 whitespace-pre-wrap"
         default:
             return ""
     }

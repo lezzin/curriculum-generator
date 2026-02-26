@@ -30,6 +30,7 @@
     "@nestjs/passport": "^11.0.5",
     "@nestjs/platform-express": "^11.0.1",
     "@nestjs/typeorm": "^11.0.0",
+    "axios": "^1.13.5",
     "bcryptjs": "^3.0.3",
     "bullmq": "^5.70.1",
     "cache-manager": "^7.2.8",

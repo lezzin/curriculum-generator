@@ -10,6 +10,7 @@ import RotateArrow from "../icon/RotateArrow.vue"
 const props = defineProps<{ resume: Resume }>()
 
 const isOpen = ref(false)
+const shouldToggle = ref(false)
 const resume = computed(() => props.resume)
 
 const { setPublicPdfUrl, pdfUrl } = usePdf()
@@ -20,7 +21,14 @@ function togglePrompt() {
 
 const shortPrompt = computed(() => {
     const prompt = resume.value.prompt ?? ""
-    return prompt.length > 120 ? prompt.slice(0, 120) + "..." : prompt
+
+    if (prompt.length > 120) {
+        shouldToggle.value = true;
+        return prompt.slice(0, 120);
+    }
+
+    shouldToggle.value = false;
+    return prompt
 })
 
 const goToPdfUrl = async () => {
@@ -34,22 +42,21 @@ onMounted(async () => {
 </script>
 
 <template>
-    <div
-        class="group border rounded-2xl px-5 pb-5 bg-white shadow-sm hover:shadow-md transition-all duration-200 relative">
-        <div class="sticky py-4 top-12 bg-white flex justify-between items-center cursor-pointer gap-4"
-            @click="isOpen = !isOpen">
+    <div class="group border rounded-2xl px-5 pb-5 bg-white shadow-sm hover:shadow-md transition-all duration-200"
+        @click="togglePrompt" :class="shouldToggle && 'cursor-pointer'">
+        <div class="py-4 flex justify-between items-center gap-4">
             <small class="text-gray-500">Criado em: {{ toHumanReadableDate(resume.createdAt ?? "") }}</small>
 
             <div class="flex items-center gap-3">
-                <RotateArrow :rotate="isOpen" />
+                <RotateArrow :rotate="isOpen" v-if="shouldToggle" />
 
-                <BaseButton v-if="resume.id" @click.stop="goToPdfUrl" size="sm" variant="outline">
+                <BaseButton v-if="resume.id" @click.stop="goToPdfUrl" size="sm" variant="outline" :disabled="!pdfUrl">
                     PDF
                 </BaseButton>
             </div>
         </div>
 
-        <CardContainer variant="text" @click="togglePrompt">
+        <CardContainer variant="text">
             {{ isOpen ? resume.prompt : shortPrompt }}
         </CardContainer>
     </div>
