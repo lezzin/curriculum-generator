@@ -1,46 +1,31 @@
 import { Module } from '@nestjs/common';
+import { UserModule } from './modules/user.module';
+import { AuthModule } from './modules/auth.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { GeminiModule } from './modules/gemini/gemini.module';
-import { FreelanceModule } from './modules/freelance/freelance.module';
-import { ResumeModule } from './modules/resume/resume.module';
-import { HealthModule } from './modules/health/health.module';
-import { DatabaseModule } from './modules/database/database.module';
-import { SseModule } from './modules/sse/sse.module';
-import { CacheModule } from '@nestjs/cache-manager';
-import { redisStore } from 'cache-manager-redis-store';
-import { ProfileModule } from './modules/profile/profile.module';
-import { BullModule } from '@nestjs/bullmq';
+import { TypeOrmModule } from '@nestjs/typeorm';
 
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
-    GeminiModule,
-    FreelanceModule,
-    ResumeModule,
-    HealthModule,
-    DatabaseModule,
-    SseModule,
-    ProfileModule,
-    CacheModule.registerAsync({
-      isGlobal: true,
+    TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
-      useFactory: (configService: ConfigService) => ({
-        store: redisStore,
-        host: configService.get('REDIS_HOST') || 'localhost',
-        port: configService.get<number>('REDIS_PORT') || 6379,
+      useFactory: (config: ConfigService) => ({
+        type: 'postgres',
+        host: config.get<string>('DATABASE_HOST'),
+        port: Number(config.get<number>('DATABASE_PORT')),
+        username: config.get<string>('DATABASE_USER'),
+        password: config.get<string>('DATABASE_PASSWORD'),
+        database: config.get<string>('DATABASE_DB'),
+        synchronize: false,
+        //quando setado como true faz um drop no database inteiro
+        dropSchema: false,
+        logging: false,
+        entities: ['dist/**/entities/*.entity.js'],
       }),
     }),
-    BullModule.forRootAsync({
-      imports: [ConfigModule],
-      inject: [ConfigService],
-      useFactory: (configService: ConfigService) => ({
-        connection: {
-          host: configService.get('REDIS_HOST') || 'localhost',
-          port: configService.get<number>('REDIS_PORT') || 6379,
-        }
-      }),
-    }),
+    UserModule,
+    AuthModule,
   ],
 })
 export class AppModule { }
