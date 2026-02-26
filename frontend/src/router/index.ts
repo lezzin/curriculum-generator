@@ -29,24 +29,28 @@ export const router = createRouter({
     routes,
 })
 
-router.beforeEach(async (to, _, next) => {
-    const publicPages = [
-        '/auth/login',
-        '/auth/signup',
-        '/',
-    ];
+router.beforeEach(async (to) => {
+    const HOME_ROUTE = 'Home' as const;
+    const AUTH_ROUTES = ['Login', 'Signup'] as const;
 
-    const authRequired = !publicPages.includes(to.path);
+    const PUBLIC_ROUTES = [
+        HOME_ROUTE,
+        ...AUTH_ROUTES,
+    ] as const;
 
-    if (authRequired) {
-        if (!user.value) {
-            await checkAuth();
-        }
-
-        if (!user.value) {
-            return next("/auth/login");
-        }
+    if (!user.value) {
+        await checkAuth();
     }
 
-    next();
+    if (user.value && AUTH_ROUTES.includes(to.name as any)) {
+        return { name: HOME_ROUTE };
+    }
+
+    const authRequired = !PUBLIC_ROUTES.includes(to.name as any);
+
+    if (authRequired && !user.value) {
+        return { name: 'Login' };
+    }
+
+    return true;
 });

@@ -67,11 +67,15 @@ export class PdfService implements OnModuleInit, OnModuleDestroy {
     }
   }
 
-  async getPdfById(id: string): Promise<stream.Readable> {
-    const bucket = 'resumes';
-    const fileName = `${id}.pdf`;
+  async getPdfById(id: string): Promise<stream.Readable | null> {
+    try {
+      const bucket = 'resumes';
+      const fileName = `${id}.pdf`;
 
-    return await this.minioService.getObject(bucket, fileName);
+      return await this.minioService.getObject(bucket, fileName);
+    } catch (err: any) {
+      return null
+    }
   }
 
   loadTemplate(templateType?: SelectedTemplate): HandlebarsTemplateDelegate<any> {

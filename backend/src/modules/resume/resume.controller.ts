@@ -29,6 +29,10 @@ export class ResumeController {
   async generatePdfByUuid(@Param('id') id: string, @Res() res) {
     const stream = await this.pdfService.getPdfById(id);
 
+    if (!stream) {
+      return null
+    }
+
     res.set({
       'Content-Type': 'application/pdf',
       'Content-Disposition': `inline; filename="${id}.pdf"`,

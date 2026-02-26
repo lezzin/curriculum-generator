@@ -10,10 +10,11 @@ import type { Resume } from './interfaces/resume.interfaces';
 import type { MarketplaceProposal } from './interfaces/freelance.interfaces';
 import { useRoute } from 'vue-router';
 import { useAuth } from './composables/useAuth';
+import LoadContainer from './components/ui/LoadContainer.vue';
 
 const { api } = useApi()
 const { show } = useToast()
-const { checkAuth } = useAuth()
+const { checkAuth, isAuthLoading } = useAuth()
 const route = useRoute()
 
 sseService.init(api)
@@ -55,8 +56,11 @@ onUnmounted(() => {
 
 <template>
   <AppHeader />
-  <AppContainer class="p-8 space-y-8">
-    <router-view></router-view>
-    <BaseToast />
-  </AppContainer>
+
+  <LoadContainer :loading="isAuthLoading">
+    <AppContainer class="p-8 space-y-8">
+      <router-view></router-view>
+      <BaseToast />
+    </AppContainer>
+  </LoadContainer>
 </template>
