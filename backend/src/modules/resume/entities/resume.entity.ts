@@ -25,6 +25,9 @@ export class ResumeEntity {
   @Column()
   summary: string;
 
+  @Column()
+  template: string;
+
   @Column('text', { array: true })
   skills: string[];
 

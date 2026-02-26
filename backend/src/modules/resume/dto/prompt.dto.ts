@@ -8,6 +8,12 @@ import {
 } from 'class-validator';
 import { Type } from 'class-transformer';
 
+export enum SelectedTemplate {
+  DEFAULT = 'default',
+  CLASSIC = 'classic',
+  CONDENSED = 'condensed',
+}
+
 export enum Language {
   PT = 'PT',
   EN = 'EN',
@@ -44,6 +50,9 @@ export class ResumeOptionsDto {
 
   @IsEnum(Market, { message: 'Mercado inválido.' })
   market: Market;
+
+  @IsEnum(SelectedTemplate, { message: 'Template inválido.' })
+  template?: SelectedTemplate;
 }
 
 export class GenerateDto {
@@ -90,6 +99,10 @@ class ProjectDto {
 }
 
 export class ResumePdfDto {
+  @IsOptional()
+  @IsEnum(SelectedTemplate, { message: 'Template inválido.' })
+  template?: SelectedTemplate;
+
   @IsString({ message: 'O nome deve ser um texto.' })
   name: string;
 

@@ -7,7 +7,8 @@ export function useResumeValidation(state: any) {
         language: "",
         seniority: "",
         focusArea: "",
-        market: ""
+        market: "",
+        templateType: ""
     })
 
     function validateJobText() {
@@ -38,7 +39,8 @@ export function useResumeValidation(state: any) {
         state.language &&
         state.seniority &&
         state.focusArea &&
-        state.market
+        state.market &&
+        state.templateType
     )
 
     return {

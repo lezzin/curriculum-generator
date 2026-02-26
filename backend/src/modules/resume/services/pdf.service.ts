@@ -8,21 +8,15 @@ import * as Handlebars from 'handlebars';
 import * as stream from 'node:stream';
 import * as fs from 'fs';
 import * as path from 'path';
-import { Language, ResumePdfDto } from '../dto/prompt.dto';
+import { Language, ResumePdfDto, SelectedTemplate } from '../dto/prompt.dto';
 import { SECTION_LABELS } from '../constants/resume.constants';
-import { InjectRepository } from '@nestjs/typeorm';
-import { ResumeEntity } from '../entities/resume.entity';
-import { Repository } from 'typeorm';
 import { MinioService } from 'src/modules/minio/minio.service';
 
 @Injectable()
 export class PdfService implements OnModuleInit, OnModuleDestroy {
   private browser: puppeteer.Browser;
-  private template: Handlebars.TemplateDelegate;
 
   constructor(
-    @InjectRepository(ResumeEntity)
-    private resumeRepository: Repository<ResumeEntity>,
     private readonly minioService: MinioService,
   ) { }
 
@@ -31,18 +25,15 @@ export class PdfService implements OnModuleInit, OnModuleDestroy {
       headless: 'shell',
       args: ['--no-sandbox', '--disable-setuid-sandbox'],
     });
-
-    const templatePath = path.join(__dirname, '../../../templates/resume.hbs');
-
-    const templateContent = fs.readFileSync(templatePath, 'utf-8');
-    this.template = Handlebars.compile(templateContent);
   }
 
   async generateResumePdf(resume: ResumePdfDto): Promise<Buffer> {
+    const hbsTemplate = this.loadTemplate(resume.template);
+
     const labels =
       SECTION_LABELS[resume.language] || SECTION_LABELS[Language.PT];
 
-    const html = this.template({
+    const html = hbsTemplate({
       ...resume,
       labels,
     });
@@ -64,17 +55,14 @@ export class PdfService implements OnModuleInit, OnModuleDestroy {
     return Buffer.from(pdf);
   }
 
-  async generateResumePdfById(id: string) {
+  async generateResumePdfByEntity(entity: ResumePdfDto & { id: string }) {
     const bucket = 'resumes';
-    const fileName = `${id}.pdf`;
-
-    const resume = await this.resumeRepository.findOne({ where: { id } });
-    if (!resume) throw new Error('Resume not found');
+    const fileName = `${entity.id}.pdf`;
 
     await this.minioService.createBucket(bucket);
 
     if (!(await this.minioService.hasFile(bucket, fileName))) {
-      const pdf = await this.generateResumePdf(resume as ResumePdfDto);
+      const pdf = await this.generateResumePdf(entity);
       await this.minioService.uploadFile(bucket, fileName, pdf, 'application/pdf');
     }
   }
@@ -84,6 +72,14 @@ export class PdfService implements OnModuleInit, OnModuleDestroy {
     const fileName = `${id}.pdf`;
 
     return await this.minioService.getObject(bucket, fileName);
+  }
+
+  loadTemplate(templateType?: SelectedTemplate): HandlebarsTemplateDelegate<any> {
+    const templateFilename = templateType ?? SelectedTemplate.DEFAULT;
+    const templatePath = path.join(__dirname, `../../../templates/${templateFilename}.hbs`);
+    const templateContent = fs.readFileSync(templatePath, 'utf-8');
+
+    return Handlebars.compile(templateContent);
   }
 
   async onModuleDestroy() {

@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <title>{{name}} - Currículo</title>
+
+  <style>
+    @page {
+      size: A4;
+      margin: 2cm;
+    }
+
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 12pt;
+      line-height: 1.5;
+      color: #000;
+    }
+
+    h1 {
+      font-size: 22pt;
+      margin-bottom: 0;
+    }
+
+    h2 {
+      font-size: 14pt;
+      margin-top: 4px;
+      font-weight: normal;
+    }
+
+    h3 {
+      font-size: 13pt;
+      margin-top: 24px;
+      margin-bottom: 8px;
+      border-bottom: 1px solid #000;
+      padding-bottom: 4px;
+    }
+
+    h4 {
+      font-size: 12pt;
+      margin-bottom: 4px;
+    }
+
+    p {
+      margin: 4px 0;
+    }
+
+    ul {
+      margin: 4px 0 8px 18px;
+      padding: 0;
+    }
+
+    .section {
+      margin-bottom: 12px;
+    }
+
+    .experience, .project {
+      margin-bottom: 14px;
+      page-break-inside: avoid;
+    }
+
+    .muted {
+      font-size: 11pt;
+    }
+  </style>
+</head>
+
+<body>
+
+  <header>
+    <h1>{{name}}</h1>
+    <h2>{{role}}</h2>
+  </header>
+
+  <section class="section">
+    <h3>Resumo Profissional</h3>
+    <p>{{summary}}</p>
+  </section>
+
+  <section class="section">
+    <h3>Competências Técnicas</h3>
+    <ul>
+      {{#each skills}}
+        <li>{{this}}</li>
+      {{/each}}
+    </ul>
+  </section>
+
+  <section class="section">
+    <h3>Experiência Profissional</h3>
+
+    {{#each experiences}}
+      <div class="experience">
+        <h4>{{title}} - {{company}}</h4>
+        <p class="muted">{{period}}</p>
+
+        <strong>Responsabilidades:</strong>
+        <ul>
+          {{#each responsibilities}}
+            <li>{{this}}</li>
+          {{/each}}
+        </ul>
+
+        <strong>Tecnologias:</strong>
+        <p>
+          {{#each technologies}}
+            {{this}}{{#unless @last}}, {{/unless}}
+          {{/each}}
+        </p>
+      </div>
+    {{/each}}
+  </section>
+
+  <section class="section">
+    <h3>Projetos</h3>
+
+    {{#each projects}}
+      <div class="project">
+        <h4>{{name}}</h4>
+
+        <strong>Destaques:</strong>
+        <ul>
+          {{#each highlights}}
+            <li>{{this}}</li>
+          {{/each}}
+        </ul>
+
+        <strong>Tecnologias:</strong>
+        <p>
+          {{#each technologies}}
+            {{this}}{{#unless @last}}, {{/unless}}
+          {{/each}}
+        </p>
+      </div>
+    {{/each}}
+
+  </section>
+
+</body>
+</html>

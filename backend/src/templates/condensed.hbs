@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <title>{{name}} - {{role}}</title>
+
+  <style>
+    @page {
+      size: A4;
+      margin: 1.8cm;
+    }
+
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 11pt;
+      line-height: 1.4;
+      color: #000;
+    }
+
+    h1 {
+      font-size: 20pt;
+      margin-bottom: 2px;
+    }
+
+    h2 {
+      font-size: 13pt;
+      font-weight: normal;
+      margin-top: 0;
+    }
+
+    h3 {
+      font-size: 12pt;
+      margin-top: 18px;
+      margin-bottom: 6px;
+      text-transform: uppercase;
+    }
+
+    h4 {
+      font-size: 11.5pt;
+      margin-bottom: 2px;
+    }
+
+    ul {
+      margin: 2px 0 6px 16px;
+      padding: 0;
+    }
+
+    .block {
+      margin-bottom: 10px;
+      page-break-inside: avoid;
+    }
+
+    .skills-line {
+      margin-top: 4px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <header>
+    <h1>{{name}}</h1>
+    <h2>{{role}}</h2>
+  </header>
+
+  <section class="block">
+    <h3>Perfil Profissional</h3>
+    <p>{{summary}}</p>
+  </section>
+
+  <section class="block">
+    <h3>Habilidades Técnicas</h3>
+    <p class="skills-line">
+      {{#each skills}}
+        {{this}}{{#unless @last}}, {{/unless}}
+      {{/each}}
+    </p>
+  </section>
+
+  <section class="block">
+    <h3>Experiência</h3>
+
+    {{#each experiences}}
+      <div class="block">
+        <h4>{{title}} | {{company}}</h4>
+        <p>{{period}}</p>
+
+        <ul>
+          {{#each responsibilities}}
+            <li>{{this}}</li>
+          {{/each}}
+        </ul>
+
+        <p>
+          <strong>Stack:</strong>
+          {{#each technologies}}
+            {{this}}{{#unless @last}}, {{/unless}}
+          {{/each}}
+        </p>
+      </div>
+    {{/each}}
+
+  </section>
+
+  <section class="block">
+    <h3>Projetos</h3>
+
+    {{#each projects}}
+      <div class="block">
+        <h4>{{name}}</h4>
+
+        <ul>
+          {{#each highlights}}
+            <li>{{this}}</li>
+          {{/each}}
+        </ul>
+
+        <p>
+          <strong>Tecnologias:</strong>
+          {{#each technologies}}
+            {{this}}{{#unless @last}}, {{/unless}}
+          {{/each}}
+        </p>
+      </div>
+    {{/each}}
+
+  </section>
+
+</body>
+</html>

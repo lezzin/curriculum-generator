@@ -13,6 +13,13 @@ import { Resume } from '../interfaces/resume.interfaces';
 import { ResumeEntity } from '../entities/resume.entity';
 import { PdfService } from './pdf.service';
 import { CACHE_KEY_PREFIX } from '../constants/resume.constants';
+import { ResumeOptionsDto, ResumePdfDto } from '../dto/prompt.dto';
+
+type JobPayload = {
+    userId: string
+    jobDescription: string
+    options: ResumeOptionsDto
+}
 
 @Processor('resume.queue')
 export class ResumeProcessor extends WorkerHost {
@@ -32,7 +39,7 @@ export class ResumeProcessor extends WorkerHost {
     }
 
     async process(job: Job<any>) {
-        const { userId, jobDescription, options } = job.data;
+        const { userId, jobDescription, options } = job.data as JobPayload;
         const baseData = (await this.baseService.getType(BaseType.RESUME, userId)).data
 
         if (!baseData) {
@@ -51,10 +58,11 @@ export class ResumeProcessor extends WorkerHost {
                 ...resume,
                 prompt: jobDescription,
                 userId: userId,
-            });
+                template: options.template
+            }) as ResumePdfDto & { id: string };
 
             await this.cacheService.del(`${CACHE_KEY_PREFIX}:${userId}`);
-            await this.pdfService.generateResumePdfById(savedResume.id);
+            await this.pdfService.generateResumePdfByEntity(savedResume);
 
             this.sseService.sendEvent({
                 event: 'resume-generated',

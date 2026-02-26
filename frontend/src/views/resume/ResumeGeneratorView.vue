@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { reactive } from "vue"
+import { computed, reactive } from "vue"
 import { useApi } from "../../composables/useApi"
 import { useResumeValidation } from "../../composables/useResumeValidation"
 import BaseButton from "../../components/ui/BaseButton.vue"
@@ -8,6 +8,14 @@ import SelectField from "../../components/ui/form/SelectField.vue"
 import AppTitle from "../../components/layout/AppTitle.vue"
 import { useToast } from "../../composables/useToast"
 
+const BASE_TEMPLATE_TYPES = {
+    DEFAULT: 'default',
+    CLASSIC: 'classic',
+    CONDENSED: 'condensed',
+} as const
+
+type BaseTemplateType = typeof BASE_TEMPLATE_TYPES[keyof typeof BASE_TEMPLATE_TYPES]
+
 const { show } = useToast()
 
 const state = reactive({
@@ -15,11 +23,14 @@ const state = reactive({
     language: "PT",
     seniority: "Junior",
     focusArea: "Backend",
-    market: "Brazil"
+    market: "Brazil",
+    templateType: BASE_TEMPLATE_TYPES.DEFAULT as BaseTemplateType,
 })
 
 const { api, error, loading: isSendingRequest, request } = useApi()
 const { errors, validateJobText, isFormValid } = useResumeValidation(state)
+
+const templateTypes = computed(() => Object.values(BASE_TEMPLATE_TYPES))
 
 async function generateResume() {
     if (!validateJobText()) return
@@ -32,7 +43,8 @@ async function generateResume() {
                     language: state.language,
                     targetSeniority: state.seniority,
                     focusArea: state.focusArea,
-                    market: state.market
+                    market: state.market,
+                    template: state.templateType
                 }
             })
 
@@ -52,13 +64,22 @@ async function generateResume() {
     <AppTitle title="Gerar Currículo Personalizado"
         subtitle="Crie um currículo estratégico com base em uma vaga específica." />
 
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+    <div class="grid md:grid-cols-2 gap-4">
         <SelectField label="Idioma do currículo" v-model="state.language" :error="errors.language">
             <option value="" disabled>Selecione o idioma</option>
             <option value="PT">Português</option>
             <option value="EN">Inglês</option>
         </SelectField>
 
+        <SelectField label="Tipo de template" v-model="state.templateType" :error="errors.templateType">
+            <option disabled value="">Selecione uma opção</option>
+            <option v-for="type in templateTypes" :key="type" :value="type">
+                {{ type.toUpperCase() }}
+            </option>
+        </SelectField>
+    </div>
+
+    <div class="grid md:grid-cols-3 gap-4">
         <SelectField label="Nível de senioridade" v-model="state.seniority" :error="errors.seniority">
             <option value="" disabled>Selecione o nível</option>
             <option value="Junior">Júnior</option>
@@ -82,7 +103,7 @@ async function generateResume() {
         </SelectField>
     </div>
 
-    <div class="space-y-4 mt-6">
+    <div class="space-y-4">
         <TextAreaField label="Descrição completa da vaga" v-model="state.jobText" :rows="10"
             placeholder="Cole aqui a descrição completa da vaga. Quanto mais detalhes, melhor será a personalização do currículo."
             :error="errors.jobText" />
