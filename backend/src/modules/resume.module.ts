@@ -16,12 +16,13 @@ import { ResumeProcessor } from 'src/infrastructure/queue/processors/resume.proc
 import { PdfService } from 'src/infrastructure/services/pdf.service';
 import { StorageModule } from 'src/infrastructure/modules/storage.module';
 import { SseModule } from 'src/infrastructure/modules/sse.module';
-import { GeneratePdfUseCase } from 'src/application/use-cases/resume/generate-pdf.use-case';
+import { GetPdfUseCase } from 'src/application/use-cases/resume/get-pdf.use-case';
 import { CacheRepository } from 'src/domain/repositories/cache.repository';
 import { CacheModule } from 'src/infrastructure/modules/cache.module';
 import { SseService } from 'src/infrastructure/services/sse.service';
 import { BaseDataRepository } from 'src/domain/repositories/base-data.repository';
 import { ResumeGenerationUseCase } from 'src/application/use-cases/resume/resume-generation.use-case';
+import { GeneratePdfUseCase } from 'src/application/use-cases/resume/generate-pdf.use-case';
 
 @Module({
     imports: [
@@ -50,6 +51,12 @@ import { ResumeGenerationUseCase } from 'src/application/use-cases/resume/resume
             provide: GeneratePdfUseCase,
             useFactory: (pdfService: PdfService) =>
                 new GeneratePdfUseCase(pdfService),
+            inject: [PdfService],
+        },
+        {
+            provide: GetPdfUseCase,
+            useFactory: (pdfService: PdfService) =>
+                new GetPdfUseCase(pdfService),
             inject: [PdfService],
         },
         {

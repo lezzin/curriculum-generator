@@ -1,11 +1,12 @@
 import { Body, Controller, Get, Param, Post, Res, UseGuards } from '@nestjs/common';
 import type { Response } from 'express';
-import { GeneratePdfUseCase } from 'src/application/use-cases/resume/generate-pdf.use-case';
+import { GetPdfUseCase } from 'src/application/use-cases/resume/get-pdf.use-case';
 import { GenerateResumeUseCase } from 'src/application/use-cases/resume/generate-resume.use-case';
 import { GetAllResumesUseCase } from 'src/application/use-cases/resume/get-all-resumes.use-case';
 import { CurrentUser } from 'src/infrastructure/auth/current-user.decorator';
 import { JwtAuthGuard } from 'src/infrastructure/auth/jwt-auth.guard';
 import { GenerateResumeDto } from './resume.dto';
+import { GeneratePdfUseCase } from 'src/application/use-cases/resume/generate-pdf.use-case';
 
 @UseGuards(JwtAuthGuard)
 @Controller('/resume')
@@ -13,7 +14,8 @@ export class ResumeController {
     constructor(
         private readonly generateResumeUseCase: GenerateResumeUseCase,
         private readonly getAllResumesUseCase: GetAllResumesUseCase,
-        private readonly generatePDfUseCase: GeneratePdfUseCase,
+        private readonly getPdfUseCase: GetPdfUseCase,
+        private readonly generatePdfUseCase: GeneratePdfUseCase,
     ) { }
 
     @Post('/generate')
@@ -34,7 +36,7 @@ export class ResumeController {
         @Param('id') id: string,
         @Res() res: Response
     ) {
-        const stream = await this.generatePDfUseCase.execute(id);
+        const stream = await this.getPdfUseCase.execute(id);
 
         if (!stream) {
             return null
@@ -46,5 +48,21 @@ export class ResumeController {
         });
 
         stream.pipe(res);
+    }
+
+    @Post('/pdf/generate')
+    async generatePdf(
+        @Body() body: any,
+        @CurrentUser('id') userId: string,
+        @Res() res: Response
+    ) {
+        const buffer = await this.generatePdfUseCase.execute({ ...body, userId });
+
+        res.set({
+            'Content-Type': 'application/pdf',
+            'Content-Disposition': `inline; filename="resume.pdf"`,
+        });
+
+        res.end(buffer)
     }
 }

@@ -1,3 +1,4 @@
+import { Resume } from "src/domain/entities/resume.entity";
 import { PdfService } from "src/infrastructure/services/pdf.service";
 
 export class GeneratePdfUseCase {
@@ -5,7 +6,7 @@ export class GeneratePdfUseCase {
         private readonly pdfService: PdfService
     ) { }
 
-    async execute(id: string) {
-        return this.pdfService.getPdfById(id)
+    async execute(body: Resume) {
+        return this.pdfService.generateResumePdf(body)
     }
 }
