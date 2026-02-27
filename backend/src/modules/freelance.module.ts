@@ -16,6 +16,9 @@ import { BullModule } from '@nestjs/bullmq';
 import { SseModule } from 'src/infrastructure/modules/sse.module';
 import { CacheRepository } from 'src/domain/repositories/cache.repository';
 import { CacheModule } from 'src/infrastructure/modules/cache.module';
+import { ProposalGenerationUseCase } from 'src/application/use-cases/freelance/proposal-generation.use-case';
+import { BaseDataRepository } from 'src/domain/repositories/base-data.repository';
+import { SseService } from 'src/infrastructure/services/sse.service';
 
 @Module({
     imports: [
@@ -49,6 +52,30 @@ import { CacheModule } from 'src/infrastructure/modules/cache.module';
             useFactory: (freelanceProposalRepository: FreelanceProposalRepository, cache: CacheRepository) =>
                 new GetAllProposalsUseCase(freelanceProposalRepository, cache),
             inject: [FreelanceProposalRepository, CacheRepository],
+        },
+        {
+            provide: ProposalGenerationUseCase,
+            useFactory: (
+                freelanceProposalRepository: FreelanceProposalRepository,
+                baseDataRepository: BaseDataRepository,
+                geminiService: GeminiService,
+                sseService: SseService,
+                cache: CacheRepository,
+            ) =>
+                new ProposalGenerationUseCase(
+                    freelanceProposalRepository,
+                    baseDataRepository,
+                    geminiService,
+                    sseService,
+                    cache,
+                ),
+            inject: [
+                FreelanceProposalRepository,
+                BaseDataRepository,
+                GeminiService,
+                SseService,
+                CacheRepository,
+            ],
         },
 
     ],

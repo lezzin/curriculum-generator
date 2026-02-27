@@ -19,6 +19,9 @@ import { SseModule } from 'src/infrastructure/modules/sse.module';
 import { GeneratePdfUseCase } from 'src/application/use-cases/resume/generate-pdf.use-case';
 import { CacheRepository } from 'src/domain/repositories/cache.repository';
 import { CacheModule } from 'src/infrastructure/modules/cache.module';
+import { SseService } from 'src/infrastructure/services/sse.service';
+import { BaseDataRepository } from 'src/domain/repositories/base-data.repository';
+import { ResumeGenerationUseCase } from 'src/application/use-cases/resume/resume-generation.use-case';
 
 @Module({
     imports: [
@@ -61,7 +64,33 @@ import { CacheModule } from 'src/infrastructure/modules/cache.module';
                 new GetAllResumesUseCase(resumeRepository, cache),
             inject: [ResumeRepository, CacheRepository],
         },
-
+        {
+            provide: ResumeGenerationUseCase,
+            useFactory: (
+                resumeRepository: ResumeRepository,
+                baseDataRepository: BaseDataRepository,
+                geminiService: GeminiService,
+                pdfService: PdfService,
+                sseService: SseService,
+                cache: CacheRepository,
+            ) =>
+                new ResumeGenerationUseCase(
+                    resumeRepository,
+                    baseDataRepository,
+                    geminiService,
+                    pdfService,
+                    sseService,
+                    cache,
+                ),
+            inject: [
+                ResumeRepository,
+                BaseDataRepository,
+                GeminiService,
+                PdfService,
+                SseService,
+                CacheRepository,
+            ],
+        },
     ],
 })
 export class ResumeModule { }
