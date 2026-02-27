@@ -59,7 +59,7 @@ const loadBaseData = async () => {
         baseData[BASE_TYPES.FREELANCE_PROPOSAL] = freelanceItem?.description ?? null
     } catch (err) {
         console.error(err)
-        show('Erro ao carregar base data:')
+        show('Erro ao carregar dados base.')
     }
 }
 
