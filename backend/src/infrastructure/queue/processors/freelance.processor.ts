@@ -9,6 +9,7 @@ import { GeminiService } from 'src/infrastructure/services/gemini.service';
 import { BaseDataRepository } from 'src/domain/repositories/base-data.repository';
 import { FreelanceProposal } from 'src/domain/entities/freelance-proposal.entity';
 import { randomUUID } from 'crypto';
+import { SseService } from 'src/infrastructure/services/sse.service';
 
 @Processor('freelance.queue')
 export class FreelanceProcessor extends WorkerHost {
@@ -18,6 +19,7 @@ export class FreelanceProcessor extends WorkerHost {
         private readonly freelanceProposalRepository: FreelanceProposalRepository,
         private readonly baseDataRepository: BaseDataRepository,
         private readonly geminiService: GeminiService,
+        private readonly sseService: SseService,
     ) {
         super()
     }
@@ -46,12 +48,7 @@ export class FreelanceProcessor extends WorkerHost {
                 userId
             ))
 
-        // await this.cacheService.del(`${CACHE_KEY_PREFIX}:${userId}`);
-
-        // this.sseService.sendEvent({
-        //     event: 'proposal-generated',
-        //     data: savedProposal,
-        // });
+        this.sseService.sendEvent(userId, 'proposal-generated', savedProposal);
 
         return savedProposal;
     }

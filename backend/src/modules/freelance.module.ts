@@ -13,6 +13,7 @@ import { BaseDataModule } from './base-data.module';
 import { BullMQModule } from 'src/infrastructure/queue/bullmq.module';
 import { FreelanceProcessor } from 'src/infrastructure/queue/processors/freelance.processor';
 import { BullModule } from '@nestjs/bullmq';
+import { SseService } from 'src/infrastructure/services/sse.service';
 
 @Module({
     imports: [
@@ -31,6 +32,7 @@ import { BullModule } from '@nestjs/bullmq';
         },
         GeminiService,
         DiscordService,
+        SseService,
         BullMQProposalQueue,
         FreelanceProcessor,
         {

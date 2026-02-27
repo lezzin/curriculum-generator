@@ -1,0 +1,22 @@
+import { Injectable } from '@nestjs/common';
+import { Repository } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
+import { ResumeRepository } from 'src/domain/repositories/resume.repository';
+import { Resume } from 'src/domain/entities/resume.entity';
+import { ResumeEntity } from '../entities/resume.entity';
+
+@Injectable()
+export class TypeOrmResumeRepository implements ResumeRepository {
+    constructor(
+        @InjectRepository(ResumeEntity)
+        private ormRepo: Repository<ResumeEntity>,
+    ) { }
+
+    async create(resume: Resume): Promise<Resume> {
+        return await this.ormRepo.save(resume) as Resume;
+    }
+
+    async getAll(userId: string): Promise<Resume[]> {
+        return await this.ormRepo.findBy({ userId }) as Resume[]
+    }
+}
