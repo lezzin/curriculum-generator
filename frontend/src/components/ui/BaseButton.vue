@@ -24,7 +24,7 @@ const props = withDefaults(defineProps<{
 })
 
 const baseClasses =
-    "inline-flex items-center justify-center gap-2 rounded-xl font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2"
+    "inline-flex items-center justify-center gap-2 rounded font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2"
 
 const variantClasses = computed(() => {
     switch (props.variant) {

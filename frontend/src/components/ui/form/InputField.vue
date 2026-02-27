@@ -33,7 +33,7 @@ const handleInput = (event: Event) => {
 
         <input v-bind="attrs" :value="modelValue" @input="handleInput" :placeholder="placeholder" :disabled="disabled"
             :class="[
-                'w-full p-4 border rounded-xl focus:outline-none focus:ring-2 transition',
+                'p-2 border rounded-lg focus:outline-none focus:ring-2 disabled:opacity-50',
                 error ? 'border-red-500 focus:ring-red-500' : 'focus:ring-black'
             ]" />
 
