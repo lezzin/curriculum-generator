@@ -9,7 +9,7 @@ export class AuthController {
     @Post('login')
     async login(
         @Body() body: { email: string; password: string },
-        @Res() res: Response,
+        @Res({ passthrough: true }) res: Response,
     ) {
         const { access_token } = await this.loginUseCase.execute(
             body.email,
@@ -23,6 +23,6 @@ export class AuthController {
             maxAge: 15 * 60 * 1000,
         });
 
-        return res.json({ message: 'Login realizado com sucesso' });
+        return { message: 'Login realizado com sucesso' };
     }
 }
