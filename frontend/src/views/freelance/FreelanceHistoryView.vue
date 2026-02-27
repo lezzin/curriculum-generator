@@ -56,7 +56,7 @@ onMounted(getProposals)
             <p class="text-gray-500">
                 Você ainda não gerou nenhuma proposta personalizada.
             </p>
-            <router-link to="/proposal" class="text-primary font-medium hover:underline">
+            <router-link :to="{ name: 'Freelance' }" class="text-primary font-medium hover:underline">
                 Criar minha primeira proposta
             </router-link>
         </div>

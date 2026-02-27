@@ -56,7 +56,7 @@ onMounted(getResumes)
                 Você ainda não gerou nenhum currículo personalizado.
             </p>
 
-            <router-link to="/resume" class="text-primary font-medium hover:underline">
+            <router-link :to="{ name: 'ResumeGenerator' }" class="text-primary font-medium hover:underline">
                 Criar meu primeiro currículo
             </router-link>
         </div>
