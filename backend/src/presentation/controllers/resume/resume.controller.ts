@@ -1,4 +1,6 @@
-import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Res, UseGuards } from '@nestjs/common';
+import type { Response } from 'express';
+import { GeneratePdfUseCase } from 'src/application/use-cases/resume/generate-pdf.use-case';
 import { GenerateResumeUseCase } from 'src/application/use-cases/resume/generate-resume.use-case';
 import { GetAllResumesUseCase } from 'src/application/use-cases/resume/get-all-resumes.use-case';
 import { ResumeOptions } from 'src/domain/shared/interfaces/resume.interfaces';
@@ -11,6 +13,7 @@ export class ResumeController {
     constructor(
         private readonly generateResumeUseCase: GenerateResumeUseCase,
         private readonly getAllResumesUseCase: GetAllResumesUseCase,
+        private readonly generatePDfUseCase: GeneratePdfUseCase,
     ) { }
 
     @Post('/generate')
@@ -27,5 +30,24 @@ export class ResumeController {
     @Get('/all')
     async getAllResumes(@CurrentUser('id') userId: any) {
         return await this.getAllResumesUseCase.getAll(userId);
+    }
+
+    @Get('/pdf/:id')
+    async getPdfById(
+        @Param('id') id: string,
+        @Res() res: Response
+    ) {
+        const stream = await this.generatePDfUseCase.execute(id);
+
+        if (!stream) {
+            return null
+        }
+
+        res.set({
+            'Content-Type': 'application/pdf',
+            'Content-Disposition': `inline; filename="${id}.pdf"`,
+        });
+
+        stream.pipe(res);
     }
 }

@@ -40,19 +40,19 @@ export class ResumeProcessor extends WorkerHost {
             ]
         });
 
-        const savedResume = await this.resumeRepository.create(
-            new Resume(randomUUID(),
-                jobDescription,
-                resume.name,
-                resume.language,
-                resume.role,
-                resume.summary,
-                resume.template,
-                resume.skills,
-                resume.experiences,
-                resume.projects,
-                userId)
-        )
+        const savedResume = await this.resumeRepository.create(new Resume(
+            randomUUID(),
+            jobDescription,
+            resume.name,
+            resume.language,
+            resume.role,
+            resume.summary,
+            resume.template,
+            resume.skills,
+            resume.experiences,
+            resume.projects,
+            userId
+        ))
 
         await this.pdfService.generateResumePdfByEntity(savedResume);
         this.sseService.sendEvent(userId, 'resume-generated', savedResume);

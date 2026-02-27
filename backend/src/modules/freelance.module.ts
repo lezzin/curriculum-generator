@@ -10,16 +10,17 @@ import { FreelanceProposalEntity } from 'src/infrastructure/database/entities/fr
 import { DiscordService } from 'src/infrastructure/services/discord.service';
 import { GetAllProposalsUseCase } from 'src/application/use-cases/freelance/get-all-proposals.use-case';
 import { BaseDataModule } from './base-data.module';
-import { BullMQModule } from 'src/infrastructure/queue/bullmq.module';
+import { BullMQModule } from 'src/infrastructure/modules/bullmq.module';
 import { FreelanceProcessor } from 'src/infrastructure/queue/processors/freelance.processor';
 import { BullModule } from '@nestjs/bullmq';
-import { SseService } from 'src/infrastructure/services/sse.service';
+import { SseModule } from 'src/infrastructure/modules/sse.module';
 
 @Module({
     imports: [
         TypeOrmModule.forFeature([FreelanceProposalEntity]),
         BaseDataModule,
         BullMQModule,
+        SseModule,
         BullModule.registerQueue({
             name: 'freelance.queue'
         })
@@ -32,7 +33,6 @@ import { SseService } from 'src/infrastructure/services/sse.service';
         },
         GeminiService,
         DiscordService,
-        SseService,
         BullMQProposalQueue,
         FreelanceProcessor,
         {

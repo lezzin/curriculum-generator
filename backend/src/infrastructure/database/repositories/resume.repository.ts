@@ -17,6 +17,9 @@ export class TypeOrmResumeRepository implements ResumeRepository {
     }
 
     async getAll(userId: string): Promise<Resume[]> {
-        return await this.ormRepo.findBy({ userId }) as Resume[]
+        return await this.ormRepo.find({
+            where: { userId },
+            order: { createdAt: 'DESC' }
+        }) as Resume[]
     }
 }

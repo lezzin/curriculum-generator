@@ -13,11 +13,14 @@ export class TypeOrmFreelanceProposalRepository implements FreelanceProposalRepo
         private ormRepo: Repository<FreelanceProposalEntity>,
     ) { }
 
-    async create(freelanceProposal: FreelanceProposal): Promise<void> {
-        await this.ormRepo.save(freelanceProposal);
+    async create(freelanceProposal: FreelanceProposal): Promise<FreelanceProposal> {
+        return await this.ormRepo.save(freelanceProposal);
     }
 
     async getAll(userId: string): Promise<FreelanceProposal[]> {
-        return await this.ormRepo.findBy({ userId }) as FreelanceProposal[]
+        return await this.ormRepo.find({
+            where: { userId },
+            order: { createdAt: 'DESC' }
+        }) as FreelanceProposal[]
     }
 }

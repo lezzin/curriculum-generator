@@ -1,10 +1,10 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { Response } from 'express';
+import type { Response } from 'express';
 
 @Injectable()
 export class SseService {
     private readonly logger = new Logger(SseService.name);
-    private clients: Map<string, Response[]> = new Map();
+    private clients: Map<string, Set<Response>> = new Map();
 
     registerClient(userId: string, res: Response) {
         res.set({
@@ -15,30 +15,21 @@ export class SseService {
 
         res.flushHeaders();
 
-        if (!this.clients.has(userId)) {
-            this.clients.set(userId, []);
-        }
-
-        this.clients.get(userId)?.push(res);
+        if (!this.clients.has(userId)) this.clients.set(userId, new Set());
+        this.clients.get(userId)?.add(res);
 
         res.on('close', () => {
-            const arr = this.clients.get(userId) || [];
-
-            this.clients.set(
-                userId,
-                arr.filter((r) => r !== res),
-            );
-
+            this.clients.get(userId)?.delete(res);
             this.logger.log(`SSE connection closed for user ${userId}`);
         });
     }
 
     sendEvent(userId: string, event: string, data: any) {
-        const connections = this.clients.get(userId) || [];
+        const payload = JSON.stringify(data);
 
-        connections.forEach((res) => {
+        this.clients.get(userId)?.forEach((res) => {
             res.write(`event: ${event}\n`);
-            res.write(`data: ${JSON.stringify(data)}\n\n`);
+            res.write(`data: ${payload}\n\n`);
         });
     }
 }

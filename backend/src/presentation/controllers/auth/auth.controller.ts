@@ -28,9 +28,20 @@ export class AuthController {
         return { message: 'Login realizado com sucesso' };
     }
 
+    @Post('logout')
+    logout(@Res({ passthrough: true }) res: Response) {
+        res.clearCookie('authToken', {
+            httpOnly: true,
+            secure: false, // true em produção
+            sameSite: 'lax',
+        });
+
+        return { message: 'Deslogado com sucesso!' };
+    }
+
     @Get('me')
     @UseGuards(JwtAuthGuard)
-    getMe(@CurrentUser() user) {
+    getMe(@CurrentUser() user: any) {
         return user;
     }
 }

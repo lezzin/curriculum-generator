@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { StorageRepository } from 'src/domain/repositories/storage.repository';
-import { MinIOStorageService } from './minio-storage.service';
+import { MinIOStorageService } from '../storage/minio-storage.service';
 
 @Module({
     providers: [

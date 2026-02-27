@@ -1,68 +1,65 @@
-import type { AxiosInstance } from "axios"
+import type { AxiosInstance } from "axios";
 
-type SSECallback<T = any> = (payload: T) => void
+type SSECallback<T = any> = (payload: T) => void;
 
 class SSEService {
-    private api!: AxiosInstance
-    private eventSource: EventSource | null = null
-    private listeners = new Map<string, SSECallback[]>()
-    private reconnectInterval = 3000
+    private api!: AxiosInstance;
+    private eventSource: EventSource | null = null;
+    private listeners = new Map<string, SSECallback[]>();
+    private reconnectInterval = 3000;
 
     init(api: AxiosInstance) {
-        if (this.eventSource) return
-        this.api = api
-        this.connect()
+        if (this.eventSource) return;
+        this.api = api;
+        this.connect();
     }
 
     private connect() {
-        this.eventSource = new EventSource(`${this.api.defaults.baseURL}/events`)
+        if (!this.api) return console.error("SSEService: API não inicializada");
 
-        this.eventSource.onmessage = (event) => {
-            try {
-                const parsed = JSON.parse(event.data)
-                const callbacks = this.listeners.get(parsed.event)
-                callbacks?.forEach(cb => cb(parsed.data))
-            } catch (err) {
-                console.error("Erro ao processar SSE:", err)
-            }
-        }
+        const url = `${this.api.defaults.baseURL}/events/connect`;
+        this.eventSource = new EventSource(url, { withCredentials: true });
+
+        this.eventSource.addEventListener('message', (e) => this.emitEvent('message', e.data));
+        this.eventSource.addEventListener('resume-generated', (e) => this.emitEvent('resume-generated', e.data));
+        this.eventSource.addEventListener('proposal-generated', (e) => this.emitEvent('proposal-generated', e.data));
 
         this.eventSource.onerror = () => {
-            console.warn("SSE desconectado, tentando reconectar...")
-            this.eventSource?.close()
-            this.eventSource = null
-            setTimeout(() => this.connect(), this.reconnectInterval)
-        }
+            console.warn("SSE desconectado, tentando reconectar...");
+            this.eventSource?.close();
+            this.eventSource = null;
+            setTimeout(() => this.connect(), this.reconnectInterval);
+        };
     }
 
-    on<T>(eventName: string, callback: (payload: T) => void) {
-        if (!this.listeners.has(eventName)) {
-            this.listeners.set(eventName, [])
+    private emitEvent(eventName: string, data: any) {
+        let parsed = null;
+
+        try {
+            parsed = typeof data === "string" ? JSON.parse(data) : data;
+        } catch (err) {
+            console.error("Erro ao obter payload SSE:", err);
         }
 
-        this.listeners.get(eventName)!.push(callback)
+        this.listeners.get(eventName)?.forEach((cb) => cb(parsed));
+    }
+
+    on<T>(eventName: string, callback: SSECallback<T>) {
+        if (!this.listeners.has(eventName)) this.listeners.set(eventName, []);
+        this.listeners.get(eventName)!.push(callback);
     }
 
     off(eventName: string, callback?: SSECallback) {
-        if (!callback) {
-            this.listeners.delete(eventName)
-            return
-        }
-
-        const callbacks = this.listeners.get(eventName)
-        if (!callbacks) return
-
-        this.listeners.set(
-            eventName,
-            callbacks.filter(cb => cb !== callback)
-        )
+        if (!callback) return this.listeners.delete(eventName);
+        const arr = this.listeners.get(eventName) || [];
+        this.listeners.set(eventName, arr.filter((cb) => cb !== callback));
     }
 
     close() {
-        this.eventSource?.close()
-        this.eventSource = null
-        this.listeners.clear()
+        this.eventSource?.close();
+        this.eventSource = null;
+        this.listeners.clear();
     }
 }
 
-export const sseService = new SSEService()
+export const sseService = new SSEService();

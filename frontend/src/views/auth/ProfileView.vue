@@ -9,6 +9,7 @@ import BaseButton from '../../components/ui/BaseButton.vue'
 import TextAreaField from '../../components/ui/form/TextAreaField.vue'
 import AppTitle from '../../components/layout/AppTitle.vue'
 import UserAvatar from '../../components/ui/UserAvatar.vue'
+import { useToast } from '../../composables/useToast'
 
 const BASE_TYPES = {
     RESUME: 'resume',
@@ -17,14 +18,17 @@ const BASE_TYPES = {
 
 type BaseType = typeof BASE_TYPES[keyof typeof BASE_TYPES]
 
+type BaseDataItem = {
+    id: string
+    description: string
+    type: BaseType
+    userId: string
+    createdAt: string
+}
+
 const typeLabels: Record<BaseType, string> = {
     'resume': 'Currículo',
     'freelance-proposal': 'Proposta Freelance'
-}
-
-type BaseDataResponse = {
-    type: BaseType
-    data: string | null
 }
 
 const state = reactive({
@@ -40,14 +44,22 @@ const baseData = reactive<Record<BaseType, string | null>>({
 const { errors, validateRequired, isFormValid } = useProfileValidation(state)
 const { api, loading: isLoading } = useApi()
 const { user } = useAuth()
+const { show } = useToast();
 
 const types = computed(() => Object.values(BASE_TYPES))
 
 const loadBaseData = async () => {
-    const { data } = await api.get<BaseDataResponse[]>('/base/all')
+    try {
+        const { data } = await api.get<BaseDataItem[]>('/base-data/all')
 
-    for (const item of data) {
-        baseData[item.type] = item.data
+        const resumeItem = data.find(item => item.type === BASE_TYPES.RESUME)
+        const freelanceItem = data.find(item => item.type === BASE_TYPES.FREELANCE_PROPOSAL)
+
+        baseData[BASE_TYPES.RESUME] = resumeItem?.description ?? null
+        baseData[BASE_TYPES.FREELANCE_PROPOSAL] = freelanceItem?.description ?? null
+    } catch (err) {
+        console.error(err)
+        show('Erro ao carregar base data:')
     }
 }
 
@@ -57,7 +69,7 @@ const createBaseData = async () => {
 
     if (!isFormValid.value) return
 
-    await api.post('/base/create', {
+    await api.post('/base-data/upsert', {
         type: state.type,
         description: state.description,
     })
@@ -68,7 +80,7 @@ const createBaseData = async () => {
 }
 
 const removeBaseData = async (type: BaseType) => {
-    await api.post('/base/remove', { type })
+    await api.post('/base-data/remove', { type })
     baseData[type] = null
 }
 

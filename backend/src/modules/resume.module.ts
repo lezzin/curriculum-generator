@@ -3,7 +3,7 @@ import { GeminiService } from 'src/infrastructure/services/gemini.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { DiscordService } from 'src/infrastructure/services/discord.service';
 import { BaseDataModule } from './base-data.module';
-import { BullMQModule } from 'src/infrastructure/queue/bullmq.module';
+import { BullMQModule } from 'src/infrastructure/modules/bullmq.module';
 import { BullModule } from '@nestjs/bullmq';
 import { ResumeEntity } from 'src/infrastructure/database/entities/resume.entity';
 import { ResumeController } from 'src/presentation/controllers/resume/resume.controller';
@@ -13,9 +13,10 @@ import { BullMQResumeQueue } from 'src/infrastructure/queue/bullmq-resume.queue'
 import { GenerateResumeUseCase } from 'src/application/use-cases/resume/generate-resume.use-case';
 import { GetAllResumesUseCase } from 'src/application/use-cases/resume/get-all-resumes.use-case';
 import { ResumeProcessor } from 'src/infrastructure/queue/processors/resume.processor';
-import { StorageModule } from 'src/infrastructure/storage/storage.module';
 import { PdfService } from 'src/infrastructure/services/pdf.service';
-import { SseService } from 'src/infrastructure/services/sse.service';
+import { StorageModule } from 'src/infrastructure/modules/storage.module';
+import { SseModule } from 'src/infrastructure/modules/sse.module';
+import { GeneratePdfUseCase } from 'src/application/use-cases/resume/generate-pdf.use-case';
 
 @Module({
     imports: [
@@ -23,6 +24,7 @@ import { SseService } from 'src/infrastructure/services/sse.service';
         BaseDataModule,
         BullMQModule,
         StorageModule,
+        SseModule,
         BullModule.registerQueue({
             name: 'resume.queue'
         })
@@ -35,10 +37,15 @@ import { SseService } from 'src/infrastructure/services/sse.service';
         },
         GeminiService,
         PdfService,
-        SseService,
         DiscordService,
         BullMQResumeQueue,
         ResumeProcessor,
+        {
+            provide: GeneratePdfUseCase,
+            useFactory: (pdfService: PdfService) =>
+                new GeneratePdfUseCase(pdfService),
+            inject: [PdfService],
+        },
         {
             provide: GenerateResumeUseCase,
             useFactory: (resumeQueue: BullMQResumeQueue) =>
