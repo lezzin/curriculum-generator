@@ -29,7 +29,7 @@ const signup = async () => {
 
     try {
         await request(() =>
-            api.post('/auth/signup', {
+            api.post('/user/create', {
                 name: state.username,
                 email: state.email,
                 password: state.password,

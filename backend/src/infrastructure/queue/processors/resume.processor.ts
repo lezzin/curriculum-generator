@@ -14,6 +14,8 @@ import { SseService } from 'src/infrastructure/services/sse.service';
 import { CacheRepository } from 'src/domain/repositories/cache.repository';
 import { makeCacheKey } from 'src/domain/shared/helpers/cache-key.helper';
 import { REMEMBER_FREELANCE_PROPOSALS_CACHE_PREFIX, REMEMBER_RESUMES_CACHE_PREFIX } from 'src/domain/shared/constants/cache.constants';
+import { GenerateResumeInput } from 'src/application/models/generate-resume.input';
+import { SelectedTemplate } from 'src/domain/shared/enums/resume.enums';
 
 @Processor('resume.queue')
 export class ResumeProcessor extends WorkerHost {
@@ -31,7 +33,7 @@ export class ResumeProcessor extends WorkerHost {
     }
 
     async process(job: Job<any>) {
-        const { userId, jobDescription, options } = job.data as { userId: string, jobDescription: string, options: ResumeOptions };
+        const { userId, jobDescription, options } = job.data as GenerateResumeInput;
 
         const baseData = await this.baseDataRepository.findDescriptionByUserAndType(userId, BaseDataType.RESUME)
         if (!baseData) return;
@@ -51,7 +53,7 @@ export class ResumeProcessor extends WorkerHost {
             resume.language,
             resume.role,
             resume.summary,
-            resume.template,
+            options.template ?? SelectedTemplate.DEFAULT,
             resume.skills,
             resume.experiences,
             resume.projects,

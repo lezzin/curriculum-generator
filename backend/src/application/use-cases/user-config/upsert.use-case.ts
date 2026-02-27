@@ -1,4 +1,5 @@
 import { randomUUID } from "crypto";
+import { UpsertUserConfigInput } from "src/application/models/upsert-user-config.input";
 import { UserConfig } from "src/domain/entities/user.config.entity";
 import { UserConfigRepository } from "src/domain/repositories/user-config.repository";
 
@@ -7,20 +8,14 @@ export class UpsertUserConfigUseCase {
         private userConfigRepository: UserConfigRepository,
     ) { }
 
-    async execute(
-        userId: string,
-        linkedin?: string,
-        github?: string,
-        portfolio?: string,
-        cellphone?: string,
-    ) {
+    async execute(body: UpsertUserConfigInput) {
         await this.userConfigRepository.upsert(new UserConfig(
             randomUUID(),
-            userId,
-            linkedin,
-            github,
-            portfolio,
-            cellphone
+            body.userId,
+            body.linkedin,
+            body.github,
+            body.portfolio,
+            body.cellphone
         ));
     }
 }

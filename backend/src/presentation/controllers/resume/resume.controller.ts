@@ -3,9 +3,9 @@ import type { Response } from 'express';
 import { GeneratePdfUseCase } from 'src/application/use-cases/resume/generate-pdf.use-case';
 import { GenerateResumeUseCase } from 'src/application/use-cases/resume/generate-resume.use-case';
 import { GetAllResumesUseCase } from 'src/application/use-cases/resume/get-all-resumes.use-case';
-import { ResumeOptions } from 'src/domain/shared/interfaces/resume.interfaces';
 import { CurrentUser } from 'src/infrastructure/auth/current-user.decorator';
 import { JwtAuthGuard } from 'src/infrastructure/auth/jwt-auth.guard';
+import { GenerateResumeDto } from './resume.dto';
 
 @UseGuards(JwtAuthGuard)
 @Controller('/resume')
@@ -18,13 +18,10 @@ export class ResumeController {
 
     @Post('/generate')
     async generateResume(
-        @Body() body: { userId: string, jobDescription: string, options: ResumeOptions },
+        @Body() body: GenerateResumeDto,
         @CurrentUser('id') userId: string
     ) {
-        return await this.generateResumeUseCase.execute(userId,
-            body.jobDescription,
-            body.options
-        );
+        return await this.generateResumeUseCase.execute({ ...body, userId });
     }
 
     @Get('/all')

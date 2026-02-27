@@ -1,4 +1,5 @@
 import { randomUUID } from "crypto";
+import { UpsertBaseDataInput } from "src/application/models/upsert-base-data.input";
 import { BaseData } from "src/domain/entities/base-data.entity";
 import { BaseDataRepository } from "src/domain/repositories/base-data.repository";
 import { BaseDataType } from "src/domain/shared/enums/base-data-type.enum";
@@ -8,12 +9,12 @@ export class UpsertBaseDataUseCase {
         private baseDataRepository: BaseDataRepository,
     ) { }
 
-    async execute(userId: string, description: string, type: BaseDataType) {
+    async execute(body: UpsertBaseDataInput) {
         await this.baseDataRepository.upsert(new BaseData(
             randomUUID(),
-            description,
-            userId,
-            type
+            body.description,
+            body.userId,
+            body.type
         ));
     }
 }

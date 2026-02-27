@@ -3,6 +3,8 @@ import { LoginUseCase } from 'src/application/use-cases/auth/login.use-case';
 import type { Response } from 'express';
 import { JwtAuthGuard } from 'src/infrastructure/auth/jwt-auth.guard';
 import { CurrentUser } from 'src/infrastructure/auth/current-user.decorator';
+import { LoginDto } from './auth.dto';
+import { cookieOptions } from 'src/domain/shared/config/cookie.config';
 
 @Controller('auth')
 export class AuthController {
@@ -10,18 +12,13 @@ export class AuthController {
 
     @Post('login')
     async login(
-        @Body() body: { email: string; password: string },
+        @Body() body: LoginDto,
         @Res({ passthrough: true }) res: Response,
     ) {
-        const { access_token } = await this.loginUseCase.execute(
-            body.email,
-            body.password,
-        );
+        const { access_token } = await this.loginUseCase.execute(body);
 
         res.cookie('authToken', access_token, {
-            httpOnly: true,
-            secure: process.env.NODE_ENV === 'production',
-            sameSite: 'lax',
+            ...cookieOptions,
             maxAge: 15 * 60 * 1000,
         });
 
@@ -30,12 +27,7 @@ export class AuthController {
 
     @Post('logout')
     logout(@Res({ passthrough: true }) res: Response) {
-        res.clearCookie('authToken', {
-            httpOnly: true,
-            secure: false, // true em produção
-            sameSite: 'lax',
-        });
-
+        res.clearCookie('authToken', cookieOptions);
         return { message: 'Deslogado com sucesso!' };
     }
 

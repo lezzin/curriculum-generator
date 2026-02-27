@@ -5,6 +5,7 @@ import { UpsertBaseDataUseCase } from "src/application/use-cases/base-data/upser
 import { BaseDataType } from "src/domain/shared/enums/base-data-type.enum";
 import { CurrentUser } from "src/infrastructure/auth/current-user.decorator";
 import { JwtAuthGuard } from "src/infrastructure/auth/jwt-auth.guard";
+import { UpsertBaseDataDto } from "./base-data.dto";
 
 @Controller('base-data')
 export class BaseDataController {
@@ -17,15 +18,10 @@ export class BaseDataController {
     @UseGuards(JwtAuthGuard)
     @Post('upsert')
     async generate(
-        @Body() body: { description: string, type: BaseDataType },
+        @Body() body: UpsertBaseDataDto,
         @CurrentUser('id') userId: string,
     ) {
-        await this.upsertBaseDataUseCase.execute(
-            userId,
-            body.description,
-            body.type
-        );
-
+        await this.upsertBaseDataUseCase.execute({ ...body, userId });
         return { message: 'Dado base adicionado/atualizado com sucesso!' };
     }
 

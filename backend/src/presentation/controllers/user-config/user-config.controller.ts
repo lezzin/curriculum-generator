@@ -3,6 +3,7 @@ import { GetByUserIdUserConfigUseCase } from "src/application/use-cases/user-con
 import { UpsertUserConfigUseCase } from "src/application/use-cases/user-config/upsert.use-case";
 import { CurrentUser } from "src/infrastructure/auth/current-user.decorator";
 import { JwtAuthGuard } from "src/infrastructure/auth/jwt-auth.guard";
+import { UpsertUserConfigDto } from "./user-config.dto";
 
 @UseGuards(JwtAuthGuard)
 @Controller('user-config')
@@ -14,23 +15,10 @@ export class UserConfigController {
 
     @Post('upsert')
     async generate(
-        @Body() body: {
-            userId: string,
-            linkedin?: string,
-            github?: string,
-            portfolio?: string,
-            cellphone?: string,
-        },
+        @Body() body: UpsertUserConfigDto,
         @CurrentUser('id') userId: string,
     ) {
-        await this.upsertUserConfigUseCase.execute(
-            userId,
-            body.linkedin,
-            body.github,
-            body.portfolio,
-            body.cellphone
-        );
-
+        await this.upsertUserConfigUseCase.execute({ ...body, userId });
         return { message: 'Dados de configuração adicionados/atualizados com sucesso!' };
     }
 

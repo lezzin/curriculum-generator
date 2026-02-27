@@ -1,9 +1,5 @@
-import { ResumeOptions } from "src/domain/shared/interfaces/resume.interfaces";
+import { GenerateResumeInput } from "../models/generate-resume.input";
 
 export interface ResumeQueue {
-    addGenerateResumeJob(data: {
-        userId: string;
-        jobDescription: string,
-        options: ResumeOptions
-    }): Promise<void>;
+    addGenerateResumeJob(data: GenerateResumeInput): Promise<void>;
 }

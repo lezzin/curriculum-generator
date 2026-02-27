@@ -6,6 +6,7 @@ import BaseButton from '../../components/ui/BaseButton.vue'
 import { useToast } from '../../composables/useToast'
 import InputField from '../ui/form/InputField.vue'
 import { useConfigValidation } from '../../composables/useConfigValidation'
+import { nullToEmpty } from '../../helper/string.helper'
 
 interface UserConfig {
     linkedin: string
@@ -29,18 +30,22 @@ const { show } = useToast()
 
 const completionPercentage = computed(() => {
     const total = Object.keys(state).length
-    const filled = Object.values(state).filter(v => v.trim().length > 0).length
+    const filled = Object.values(state).filter(v => v?.trim()?.length > 0).length
     return Math.round((filled / total) * 100)
 })
 
 const loadUserConfig = async () => {
     try {
         const { data } = await api.get('/user-config/all')
-        Object.assign(state, data)
+        const normalized = nullToEmpty(data)
+        Object.assign(state, normalized)
         userConfig.value = data
     } catch (err) {
         console.error(err)
-        show('Erro ao carregar configurações.')
+        show({
+            message: 'Erro ao carregar configurações.',
+            type: 'error'
+        })
     }
 }
 
@@ -53,7 +58,10 @@ const upsertUserConfigData = async () => {
         show('Informações atualizadas com sucesso!')
     } catch (err) {
         console.error(err)
-        show('Erro ao salvar configurações.')
+        show({
+            message: 'Erro ao salvar configurações.',
+            type: 'error'
+        })
     }
 }
 

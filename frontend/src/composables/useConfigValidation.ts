@@ -23,7 +23,10 @@ export function useConfigValidation(state: any) {
     }
 
     function validateUrl(field: keyof typeof errors, value: string) {
-        if (!value) return;
+        if (!value) {
+            errors[field] = ""
+            return true
+        };
 
         if (!isValidUrl(value)) {
             errors[field] = "URL inválida."
@@ -35,7 +38,10 @@ export function useConfigValidation(state: any) {
     }
 
     function validatePhone(value: string) {
-        if (!value) return;
+        if (!value) {
+            errors.cellphone = ""
+            return true
+        };
 
         if (!isValidPhone(value)) {
             errors.cellphone = "Telefone inválido."

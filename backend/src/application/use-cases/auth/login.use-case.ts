@@ -1,7 +1,9 @@
 import { UnauthorizedException } from '@nestjs/common';
 import * as bcrypt from 'bcryptjs';
+import { LoginInput } from 'src/application/models/login.input';
 import { UserRepository } from 'src/domain/repositories/user.repository';
 import { JwtAdapter } from 'src/infrastructure/auth/jwt.service';
+import { LoginDto } from 'src/presentation/controllers/auth/auth.dto';
 
 export class LoginUseCase {
     constructor(
@@ -9,14 +11,14 @@ export class LoginUseCase {
         private jwtService: JwtAdapter,
     ) { }
 
-    async execute(email: string, password: string) {
-        const user = await this.userRepository.findByEmail(email);
+    async execute(body: LoginInput) {
+        const user = await this.userRepository.findByEmail(body.email);
 
         if (!user) {
             throw new UnauthorizedException('Credenciais inválidas');
         }
 
-        const passwordMatch = await bcrypt.compare(password, user.password);
+        const passwordMatch = await bcrypt.compare(body.password, user.password);
 
         if (!passwordMatch) {
             throw new UnauthorizedException('Credenciais inválidas');

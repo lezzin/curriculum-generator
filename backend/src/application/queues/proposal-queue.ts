@@ -1,6 +1,5 @@
+import { GenerateProposalInput } from "../models/generate-proposal.input";
+
 export interface ProposalQueue {
-    addGenerateProposalJob(data: {
-        solicitation: string;
-        userId: string;
-    }): Promise<void>;
+    addGenerateProposalJob(data: GenerateProposalInput): Promise<void>;
 }

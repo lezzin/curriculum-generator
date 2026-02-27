@@ -13,3 +13,12 @@ export function toHumanReadableDate(date: string): string {
 export function getFirstLetter(value?: string) {
     return value?.charAt(0).toUpperCase();
 }
+
+export function nullToEmpty<T extends Record<string, any>>(obj: T): T {
+    return Object.fromEntries(
+        Object.entries(obj).map(([key, value]) => [
+            key,
+            value ?? ''
+        ])
+    ) as T
+}

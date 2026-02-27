@@ -13,6 +13,7 @@ import { SseService } from 'src/infrastructure/services/sse.service';
 import { CacheRepository } from 'src/domain/repositories/cache.repository';
 import { makeCacheKey } from 'src/domain/shared/helpers/cache-key.helper';
 import { REMEMBER_FREELANCE_PROPOSALS_CACHE_PREFIX } from 'src/domain/shared/constants/cache.constants';
+import { GenerateProposalInput } from 'src/application/models/generate-proposal.input';
 
 @Processor('freelance.queue')
 export class FreelanceProcessor extends WorkerHost {
@@ -29,7 +30,7 @@ export class FreelanceProcessor extends WorkerHost {
     }
 
     async process(job: Job<any>) {
-        const { solicitation, userId } = job.data as { solicitation: string, userId: string };
+        const { solicitation, userId } = job.data as GenerateProposalInput;
 
         const baseData = await this.baseDataRepository.findDescriptionByUserAndType(userId, BaseDataType.FREELANCE_PROPOSAL)
         if (!baseData) return;
