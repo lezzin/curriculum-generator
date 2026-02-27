@@ -1,6 +1,8 @@
-import { Controller, Post, Body, Res } from '@nestjs/common';
+import { Controller, Post, Body, Res, Get, UseGuards } from '@nestjs/common';
 import { LoginUseCase } from 'src/application/use-cases/auth/login.use-case';
 import type { Response } from 'express';
+import { JwtAuthGuard } from 'src/infrastructure/auth/jwt-auth.guard';
+import { CurrentUser } from 'src/infrastructure/auth/current-user.decorator';
 
 @Controller('auth')
 export class AuthController {
@@ -24,5 +26,11 @@ export class AuthController {
         });
 
         return { message: 'Login realizado com sucesso' };
+    }
+
+    @Get('me')
+    @UseGuards(JwtAuthGuard)
+    getMe(@CurrentUser() user) {
+        return user;
     }
 }
