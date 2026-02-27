@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { BaseDataRepository } from 'src/domain/repositories/base-data.repository';
@@ -26,6 +26,19 @@ export class TypeOrmBaseDataRepository implements BaseDataRepository {
     }
 
     async getAll(userId: string): Promise<BaseData[]> {
-        return await this.ormRepo.findBy({ userId }) as unknown as BaseData[];
+        return await this.ormRepo.findBy({ userId }) as BaseData[];
+    }
+
+    async findDescriptionByUserAndType(userId: string, type: BaseDataType): Promise<string> {
+        const entity = await this.ormRepo.findOne({
+            where: { userId, type },
+            select: ['description']
+        })
+
+        if (!entity) {
+            throw new NotFoundException('Erro ao obter conteúdo do dado base')
+        }
+
+        return entity.description;
     }
 }
