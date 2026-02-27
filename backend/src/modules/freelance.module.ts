@@ -14,6 +14,8 @@ import { BullMQModule } from 'src/infrastructure/modules/bullmq.module';
 import { FreelanceProcessor } from 'src/infrastructure/queue/processors/freelance.processor';
 import { BullModule } from '@nestjs/bullmq';
 import { SseModule } from 'src/infrastructure/modules/sse.module';
+import { CacheRepository } from 'src/domain/repositories/cache.repository';
+import { CacheModule } from 'src/infrastructure/modules/cache.module';
 
 @Module({
     imports: [
@@ -21,6 +23,7 @@ import { SseModule } from 'src/infrastructure/modules/sse.module';
         BaseDataModule,
         BullMQModule,
         SseModule,
+        CacheModule,
         BullModule.registerQueue({
             name: 'freelance.queue'
         })
@@ -43,9 +46,9 @@ import { SseModule } from 'src/infrastructure/modules/sse.module';
         },
         {
             provide: GetAllProposalsUseCase,
-            useFactory: (freelanceProposalRepository: FreelanceProposalRepository) =>
-                new GetAllProposalsUseCase(freelanceProposalRepository),
-            inject: [FreelanceProposalRepository],
+            useFactory: (freelanceProposalRepository: FreelanceProposalRepository, cache: CacheRepository) =>
+                new GetAllProposalsUseCase(freelanceProposalRepository, cache),
+            inject: [FreelanceProposalRepository, CacheRepository],
         },
 
     ],

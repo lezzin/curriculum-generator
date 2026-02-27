@@ -17,6 +17,8 @@ import { PdfService } from 'src/infrastructure/services/pdf.service';
 import { StorageModule } from 'src/infrastructure/modules/storage.module';
 import { SseModule } from 'src/infrastructure/modules/sse.module';
 import { GeneratePdfUseCase } from 'src/application/use-cases/resume/generate-pdf.use-case';
+import { CacheRepository } from 'src/domain/repositories/cache.repository';
+import { CacheModule } from 'src/infrastructure/modules/cache.module';
 
 @Module({
     imports: [
@@ -25,6 +27,7 @@ import { GeneratePdfUseCase } from 'src/application/use-cases/resume/generate-pd
         BullMQModule,
         StorageModule,
         SseModule,
+        CacheModule,
         BullModule.registerQueue({
             name: 'resume.queue'
         })
@@ -54,9 +57,9 @@ import { GeneratePdfUseCase } from 'src/application/use-cases/resume/generate-pd
         },
         {
             provide: GetAllResumesUseCase,
-            useFactory: (resumeRepository: ResumeRepository) =>
-                new GetAllResumesUseCase(resumeRepository),
-            inject: [ResumeRepository],
+            useFactory: (resumeRepository: ResumeRepository, cache: CacheRepository) =>
+                new GetAllResumesUseCase(resumeRepository, cache),
+            inject: [ResumeRepository, CacheRepository],
         },
 
     ],

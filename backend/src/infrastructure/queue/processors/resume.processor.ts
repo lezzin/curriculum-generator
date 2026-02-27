@@ -11,6 +11,9 @@ import { buildResumePrompt } from 'src/domain/shared/helpers/resume-prompt.helpe
 import { randomUUID } from 'crypto';
 import { PdfService } from 'src/infrastructure/services/pdf.service';
 import { SseService } from 'src/infrastructure/services/sse.service';
+import { CacheRepository } from 'src/domain/repositories/cache.repository';
+import { makeCacheKey } from 'src/domain/shared/helpers/cache-key.helper';
+import { REMEMBER_FREELANCE_PROPOSALS_CACHE_PREFIX, REMEMBER_RESUMES_CACHE_PREFIX } from 'src/domain/shared/constants/cache.constants';
 
 @Processor('resume.queue')
 export class ResumeProcessor extends WorkerHost {
@@ -22,6 +25,7 @@ export class ResumeProcessor extends WorkerHost {
         private readonly geminiService: GeminiService,
         private readonly pdfService: PdfService,
         private readonly sseService: SseService,
+        private readonly cache: CacheRepository,
     ) {
         super()
     }
@@ -54,6 +58,7 @@ export class ResumeProcessor extends WorkerHost {
             userId
         ))
 
+        await this.cache.del(makeCacheKey(REMEMBER_RESUMES_CACHE_PREFIX, userId))
         await this.pdfService.generateResumePdfByEntity(savedResume);
         this.sseService.sendEvent(userId, 'resume-generated', savedResume);
 

@@ -10,6 +10,9 @@ import { BaseDataRepository } from 'src/domain/repositories/base-data.repository
 import { FreelanceProposal } from 'src/domain/entities/freelance-proposal.entity';
 import { randomUUID } from 'crypto';
 import { SseService } from 'src/infrastructure/services/sse.service';
+import { CacheRepository } from 'src/domain/repositories/cache.repository';
+import { makeCacheKey } from 'src/domain/shared/helpers/cache-key.helper';
+import { REMEMBER_FREELANCE_PROPOSALS_CACHE_PREFIX } from 'src/domain/shared/constants/cache.constants';
 
 @Processor('freelance.queue')
 export class FreelanceProcessor extends WorkerHost {
@@ -20,6 +23,7 @@ export class FreelanceProcessor extends WorkerHost {
         private readonly baseDataRepository: BaseDataRepository,
         private readonly geminiService: GeminiService,
         private readonly sseService: SseService,
+        private readonly cache: CacheRepository,
     ) {
         super()
     }
@@ -48,6 +52,7 @@ export class FreelanceProcessor extends WorkerHost {
                 userId
             ))
 
+        await this.cache.del(makeCacheKey(REMEMBER_FREELANCE_PROPOSALS_CACHE_PREFIX, userId))
         this.sseService.sendEvent(userId, 'proposal-generated', savedProposal);
 
         return savedProposal;
