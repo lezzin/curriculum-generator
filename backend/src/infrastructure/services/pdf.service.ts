@@ -12,6 +12,8 @@ import { SECTION_LABELS } from './constants/resume-labels.constants';
 import { Language, SelectedTemplate } from 'src/domain/shared/enums/resume.enums';
 import { Resume } from 'src/domain/entities/resume.entity';
 import { StorageRepository } from 'src/domain/repositories/storage.repository';
+import { UserConfig } from 'src/domain/entities/user.config.entity';
+import { User } from 'src/domain/entities/user.entity';
 
 @Injectable()
 export class PdfService implements OnModuleInit, OnModuleDestroy {
@@ -28,14 +30,19 @@ export class PdfService implements OnModuleInit, OnModuleDestroy {
         });
     }
 
-    async generateResumePdf(resume: Resume): Promise<Buffer> {
+    async generateResumePdf(resume: Resume, user: User, userConfig: UserConfig | null): Promise<Buffer> {
         const hbsTemplate = this.loadTemplate(resume.template);
 
         const labels =
             SECTION_LABELS[resume.language] || SECTION_LABELS[Language.PT];
 
-        const html = hbsTemplate({
+        const templateData = {
             ...resume,
+            contactsHtml: this.getContactHTML(user, userConfig),
+        };
+
+        const html = hbsTemplate({
+            ...templateData,
             labels,
         });
 
@@ -56,14 +63,14 @@ export class PdfService implements OnModuleInit, OnModuleDestroy {
         return Buffer.from(pdf);
     }
 
-    async generateResumePdfByEntity(entity: Resume) {
+    async generateResumePdfByEntities(resume: Resume, user: User, userConfig: UserConfig | null) {
         const bucket = 'resumes';
-        const fileName = `${entity.id}.pdf`;
+        const fileName = `${resume.id}.pdf`;
 
         await this.storage.createBucket(bucket);
 
         if (!(await this.storage.hasFile(bucket, fileName))) {
-            const pdf = await this.generateResumePdf(entity);
+            const pdf = await this.generateResumePdf(resume, user, userConfig);
             await this.storage.uploadFile(bucket, fileName, pdf, 'application/pdf');
         }
     }
@@ -89,5 +96,17 @@ export class PdfService implements OnModuleInit, OnModuleDestroy {
 
     async onModuleDestroy() {
         await this.browser.close();
+    }
+
+    private getContactHTML(user: User, userConfig: UserConfig | null) {
+        const contacts: string[] = [];
+
+        if (user?.email) contacts.push(`<a href="mailto:${user.email}">(${user.email})</a>`);
+        if (userConfig?.cellphone) contacts.push(`<a href="tel:+55${userConfig.cellphone}">(${userConfig.cellphone})</a>`);
+        if (userConfig?.linkedin) contacts.push(`<a href="${userConfig.linkedin}">LinkedIn</a>`);
+        if (userConfig?.github) contacts.push(`<a href="${userConfig.github}">GitHub</a>`);
+        if (userConfig?.portfolio) contacts.push(`<a href="${userConfig.portfolio}">Portfólio</a>`);
+
+        return contacts.join(" | ");
     }
 }

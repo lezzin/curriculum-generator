@@ -4,9 +4,11 @@ import { Resume } from "src/domain/entities/resume.entity";
 import { BaseDataRepository } from "src/domain/repositories/base-data.repository";
 import { CacheRepository } from "src/domain/repositories/cache.repository";
 import { ResumeRepository } from "src/domain/repositories/resume.repository";
+import { UserConfigRepository } from "src/domain/repositories/user-config.repository";
+import { UserRepository } from "src/domain/repositories/user.repository";
 import { REMEMBER_RESUMES_CACHE_PREFIX } from "src/domain/shared/constants/cache.constants";
 import { BaseDataType } from "src/domain/shared/enums/base-data-type.enum";
-import { SelectedTemplate } from "src/domain/shared/enums/resume.enums";
+import { Language, SelectedTemplate } from "src/domain/shared/enums/resume.enums";
 import { generateHash, makeCacheKey } from "src/domain/shared/helpers/cache-key.helper";
 import { buildResumePrompt } from "src/domain/shared/helpers/resume-prompt.helper";
 import { GeminiService } from "src/infrastructure/services/gemini.service";
@@ -17,6 +19,8 @@ export class ResumeGenerationUseCase {
     constructor(
         private readonly resumeRepository: ResumeRepository,
         private readonly baseDataRepository: BaseDataRepository,
+        private readonly userConfigRepository: UserConfigRepository,
+        private readonly userRepository: UserRepository,
         private readonly geminiService: GeminiService,
         private readonly pdfService: PdfService,
         private readonly sseService: SseService,
@@ -28,6 +32,9 @@ export class ResumeGenerationUseCase {
 
         const baseData = await this.baseDataRepository.findDescriptionByUserAndType(userId, BaseDataType.RESUME)
         if (!baseData) return;
+
+        const userData = await this.userRepository.findById(userId)
+        if (!userData) return;
 
         const promptKey = generateHash(jobDescription)
 
@@ -57,8 +64,10 @@ export class ResumeGenerationUseCase {
             userId
         ))
 
+        const contactData = await this.userConfigRepository.getByUserId(userId);
+
         await this.invalidateCaches(userId, promptKey)
-        await this.pdfService.generateResumePdfByEntity(savedResume);
+        await this.pdfService.generateResumePdfByEntities(savedResume, userData, contactData);
         this.sseService.sendEvent(userId, 'resume-generated', savedResume);
 
         return savedResume;

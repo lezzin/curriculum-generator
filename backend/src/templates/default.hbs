@@ -1,12 +1,13 @@
 <!DOCTYPE html>
-<html>
+<html lang="pt-BR">
+
 <head>
   <meta charset="UTF-8" />
-
+  <title>{{name}} - {{role}}</title>
   <style>
     @page {
       size: A4;
-      margin: 18mm;
+      margin: 20mm;
     }
 
     body {
@@ -18,18 +19,26 @@
     }
 
     h1 {
-      font-size: 22px;
+      font-size: 22pt;
       margin: 0 0 4px 0;
     }
 
     h2 {
-      font-size: 13px;
-      margin: 18px 0 6px 0;
+      font-size: 13pt;
+      margin: 0 0 12px 0;
+      font-weight: normal;
+    }
+
+    h3 {
+      font-size: 12pt;
+      margin: 16px 0 6px 0;
       text-transform: uppercase;
+      border-bottom: 1px solid #000;
+      padding-bottom: 2px;
     }
 
     p {
-      margin: 0 0 8px 0;
+      margin: 4px 0 8px 0;
     }
 
     ul {
@@ -42,7 +51,7 @@
     }
 
     .section {
-      margin-bottom: 12px;
+      margin-bottom: 14px;
     }
 
     .job-title {
@@ -51,101 +60,59 @@
 
     .company-period {
       font-style: italic;
-      margin-bottom: 4px;
     }
 
     .contact {
-      margin-bottom: 8px;
+      margin-bottom: 10px;
     }
   </style>
 </head>
 
 <body>
+
   <header class="section">
     <h1>{{name}}</h1>
-
-    <p><strong>{{role}}</strong></p>
-
-    <p class="contact">
-      <a href="mailto:leandrinsilva22@gmail.com">leandrinsilva22@gmail.com</a> |
-      <a href="tel:+5535997242338">(35) 99724-2338</a>
-      
-      <br>
-
-      <a href="https://www.linkedin.com/in/leandro-adrian/">LinkedIn</a> |
-      <a href="https://github.com/lezzin">GitHub</a> | 
-      <a href="https://lezzin.github.io">Portfólio</a>
-    </p>
-
-    <p>
-      {{summary}}
-    </p>
+    <h2>{{role}}</h2>
+    {{#if contactsHtml}}<p class="contact">{{{contactsHtml}}}</p>{{/if}}
+    {{#if summary}}<p>{{summary}}</p>{{/if}}
   </header>
 
+  {{#if skills}}
   <section class="section">
-    <h2>{{@root.labels.skills}}</h2>
-
-    <p>
-      {{#each skills}}
-        {{this}}{{#unless @last}}, {{/unless}}
-      {{/each}}
-    </p>
+    <h3>{{@root.labels.skills}}</h3>
+    <ul>{{#each skills}}<li>{{this}}</li>{{/each}}</ul>
   </section>
+  {{/if}}
 
+  {{#if experiences}}
   <section class="section">
-    <h2>{{@root.labels.experience}}</h2>
-
+    <h3>{{@root.labels.experience}}</h3>
     {{#each experiences}}
-      <div class="section">
-        <p class="job-title">
-          {{title}}
-        </p>
-
-        <p class="company-period">
-          {{company}} | {{period}}
-        </p>
-
-        <ul>
-          {{#each responsibilities}}
-            <li>{{this}}</li>
-          {{/each}}
-        </ul>
-
-        <p>
-          <strong>{{@root.labels.technologies}}:</strong>
-          {{#each technologies}}
-            {{this}}{{#unless @last}}, {{/unless}}
-          {{/each}}
-        </p>
-      </div>
-    {{/each}}
-  </section>
-
-  {{#if projects}}
-  <section class="section">
-    <h2>{{@root.labels.projects}}</h2>
-
-    {{#each projects}}
-      <div class="section">
-        <p class="job-title">
-          {{name}}
-        </p>
-
-        <ul>
-          {{#each highlights}}
-            <li>{{this}}</li>
-          {{/each}}
-        </ul>
-
-        <p>
-          <strong>{{@root.labels.technologies}}:</strong>
-          {{#each technologies}}
-            {{this}}{{#unless @last}}, {{/unless}}
-          {{/each}}
-        </p>
-      </div>
+    <div class="section">
+      <p class="job-title">{{title}}</p>
+      <p class="company-period">{{company}} | {{period}}</p>
+      {{#if responsibilities}}<ul>{{#each responsibilities}}<li>{{this}}</li>{{/each}}</ul>{{/if}}
+      {{#if technologies}}<p><strong>{{@root.labels.technologies}}:</strong> {{#each technologies}}{{this}}{{#unless
+        @last}}, {{/unless}}{{/each}}</p>{{/if}}
+    </div>
     {{/each}}
   </section>
   {{/if}}
+
+  {{#if projects}}
+  <section class="section">
+    <h3>{{@root.labels.projects}}</h3>
+    {{#each projects}}
+    <div class="section">
+      <p class="job-title">{{name}}</p>
+      {{#if highlights}}<ul>{{#each highlights}}<li>{{this}}</li>{{/each}}</ul>{{/if}}
+      {{#if technologies}}<p><strong>{{@root.labels.technologies}}:</strong> {{#each technologies}}{{this}}{{#unless
+        @last}}, {{/unless}}{{/each}}</p>{{/if}}
+    </div>
+    {{/each}}
+  </section>
+  {{/if}}
+
 </body>
+
 </html>

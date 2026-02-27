@@ -23,6 +23,10 @@ import { SseService } from 'src/infrastructure/services/sse.service';
 import { BaseDataRepository } from 'src/domain/repositories/base-data.repository';
 import { ResumeGenerationUseCase } from 'src/application/use-cases/resume/resume-generation.use-case';
 import { GeneratePdfUseCase } from 'src/application/use-cases/resume/generate-pdf.use-case';
+import { UserConfigRepository } from 'src/domain/repositories/user-config.repository';
+import { UserConfigModule } from './user-config.module';
+import { UserRepository } from 'src/domain/repositories/user.repository';
+import { UserModule } from './user.module';
 
 @Module({
     imports: [
@@ -32,6 +36,8 @@ import { GeneratePdfUseCase } from 'src/application/use-cases/resume/generate-pd
         StorageModule,
         SseModule,
         CacheModule,
+        UserModule,
+        UserConfigModule,
         BullModule.registerQueue({
             name: 'resume.queue'
         })
@@ -77,6 +83,8 @@ import { GeneratePdfUseCase } from 'src/application/use-cases/resume/generate-pd
                 resumeRepository: ResumeRepository,
                 baseDataRepository: BaseDataRepository,
                 geminiService: GeminiService,
+                userConfigRepository: UserConfigRepository,
+                userRepository: UserRepository,
                 pdfService: PdfService,
                 sseService: SseService,
                 cache: CacheRepository,
@@ -84,6 +92,8 @@ import { GeneratePdfUseCase } from 'src/application/use-cases/resume/generate-pd
                 new ResumeGenerationUseCase(
                     resumeRepository,
                     baseDataRepository,
+                    userConfigRepository,
+                    userRepository,
                     geminiService,
                     pdfService,
                     sseService,
@@ -93,6 +103,8 @@ import { GeneratePdfUseCase } from 'src/application/use-cases/resume/generate-pd
                 ResumeRepository,
                 BaseDataRepository,
                 GeminiService,
+                UserConfigRepository,
+                UserRepository,
                 PdfService,
                 SseService,
                 CacheRepository,

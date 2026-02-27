@@ -1,66 +1,100 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
   <meta charset="UTF-8" />
-  <title>{{name}} - Currículo</title>
-
+  <title>{{name}} - {{role}}</title>
   <style>
     @page {
       size: A4;
-      margin: 2cm;
+      margin: 20mm;
     }
 
     body {
-      font-family: Arial, Helvetica, sans-serif;
-      font-size: 12pt;
+      font-family: 'Segoe UI', Arial, sans-serif;
+      font-size: 12px;
       line-height: 1.5;
-      color: #000;
+      margin: 0;
+      color: #222;
+      background: #fff;
+    }
+
+    header {
+      border-bottom: 2px solid #4CAF50;
+      padding-bottom: 6px;
+      margin-bottom: 12px;
     }
 
     h1 {
       font-size: 22pt;
-      margin-bottom: 0;
+      color: #4CAF50;
+      margin: 0;
     }
 
     h2 {
       font-size: 14pt;
-      margin-top: 4px;
       font-weight: normal;
+      margin: 2px 0 6px 0;
     }
 
     h3 {
-      font-size: 13pt;
-      margin-top: 24px;
-      margin-bottom: 8px;
-      border-bottom: 1px solid #000;
-      padding-bottom: 4px;
+      font-size: 12pt;
+      background: #f2f2f2;
+      padding: 2px 6px;
+      margin: 12px 0 4px 0;
+      text-transform: uppercase;
     }
 
     h4 {
-      font-size: 12pt;
-      margin-bottom: 4px;
+      font-size: 11pt;
+      margin: 2px 0;
     }
 
-    p {
-      margin: 4px 0;
+    p,
+    ul {
+      margin: 2px 0 6px 0;
     }
 
     ul {
-      margin: 4px 0 8px 18px;
-      padding: 0;
+      padding-left: 18px;
+    }
+
+    li {
+      margin-bottom: 2px;
     }
 
     .section {
-      margin-bottom: 12px;
-    }
-
-    .experience, .project {
       margin-bottom: 14px;
-      page-break-inside: avoid;
     }
 
-    .muted {
+    .job-title {
+      font-weight: bold;
+      color: #333;
+    }
+
+    .company-period {
+      font-style: italic;
+      font-size: 10pt;
+      color: #555;
+    }
+
+    .contact {
       font-size: 11pt;
+      margin-bottom: 6px;
+    }
+
+    .skills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .skill-item {
+      background: #4CAF50;
+      color: #fff;
+      padding: 2px 6px;
+      border-radius: 3px;
+      font-size: 10pt;
     }
   </style>
 </head>
@@ -70,71 +104,48 @@
   <header>
     <h1>{{name}}</h1>
     <h2>{{role}}</h2>
+    {{#if contactsHtml}}<p class="contact">{{{contactsHtml}}}</p>{{/if}}
+    {{#if summary}}<p>{{summary}}</p>{{/if}}
   </header>
 
+  {{#if skills}}
   <section class="section">
-    <h3>Resumo Profissional</h3>
-    <p>{{summary}}</p>
+    <h3>{{@root.labels.skills}}</h3>
+    <div class="skills">
+      {{#each skills}}<span class="skill-item">{{this}}</span>{{/each}}
+    </div>
   </section>
+  {{/if}}
 
+  {{#if experiences}}
   <section class="section">
-    <h3>Competências Técnicas</h3>
-    <ul>
-      {{#each skills}}
-        <li>{{this}}</li>
-      {{/each}}
-    </ul>
-  </section>
-
-  <section class="section">
-    <h3>Experiência Profissional</h3>
-
+    <h3>{{@root.labels.experience}}</h3>
     {{#each experiences}}
-      <div class="experience">
-        <h4>{{title}} - {{company}}</h4>
-        <p class="muted">{{period}}</p>
-
-        <strong>Responsabilidades:</strong>
-        <ul>
-          {{#each responsibilities}}
-            <li>{{this}}</li>
-          {{/each}}
-        </ul>
-
-        <strong>Tecnologias:</strong>
-        <p>
-          {{#each technologies}}
-            {{this}}{{#unless @last}}, {{/unless}}
-          {{/each}}
-        </p>
-      </div>
+    <div class="section">
+      <p class="job-title">{{title}}</p>
+      <p class="company-period">{{company}} | {{period}}</p>
+      {{#if responsibilities}}<ul>{{#each responsibilities}}<li>{{this}}</li>{{/each}}</ul>{{/if}}
+      {{#if technologies}}<p><strong>{{@root.labels.technologies}}:</strong> {{#each technologies}}{{this}}{{#unless
+        @last}}, {{/unless}}{{/each}}</p>{{/if}}
+    </div>
     {{/each}}
   </section>
+  {{/if}}
 
+  {{#if projects}}
   <section class="section">
-    <h3>Projetos</h3>
-
+    <h3>{{@root.labels.projects}}</h3>
     {{#each projects}}
-      <div class="project">
-        <h4>{{name}}</h4>
-
-        <strong>Destaques:</strong>
-        <ul>
-          {{#each highlights}}
-            <li>{{this}}</li>
-          {{/each}}
-        </ul>
-
-        <strong>Tecnologias:</strong>
-        <p>
-          {{#each technologies}}
-            {{this}}{{#unless @last}}, {{/unless}}
-          {{/each}}
-        </p>
-      </div>
+    <div class="section">
+      <p class="job-title">{{name}}</p>
+      {{#if highlights}}<ul>{{#each highlights}}<li>{{this}}</li>{{/each}}</ul>{{/if}}
+      {{#if technologies}}<p><strong>{{@root.labels.technologies}}:</strong> {{#each technologies}}{{this}}{{#unless
+        @last}}, {{/unless}}{{/each}}</p>{{/if}}
+    </div>
     {{/each}}
-
   </section>
+  {{/if}}
 
 </body>
+
 </html>
