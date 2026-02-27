@@ -6,6 +6,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { BaseDataModule } from './modules/base-data.module';
 import { FreelanceModule } from './modules/freelance.module';
 import { ResumeModule } from './modules/resume.module';
+import { UserConfigModule } from './modules/user-config.module';
 
 @Module({
   imports: [
@@ -32,6 +33,7 @@ import { ResumeModule } from './modules/resume.module';
     BaseDataModule,
     FreelanceModule,
     ResumeModule,
+    UserConfigModule,
   ],
 })
 export class AppModule { }
