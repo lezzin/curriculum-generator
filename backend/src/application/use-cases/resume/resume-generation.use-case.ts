@@ -12,7 +12,7 @@ import { Language, SelectedTemplate } from "src/domain/shared/enums/resume.enums
 import { generateHash, makeCacheKey } from "src/domain/shared/helpers/cache-key.helper";
 import { buildResumePrompt } from "src/domain/shared/helpers/resume-prompt.helper";
 import { GeminiService } from "src/infrastructure/services/gemini.service";
-import { PdfService } from "src/infrastructure/services/pdf.service";
+import { ResumeDocumentService } from "src/infrastructure/services/resume-document.service";
 import { SseService } from "src/infrastructure/services/sse.service";
 
 export class ResumeGenerationUseCase {
@@ -22,7 +22,7 @@ export class ResumeGenerationUseCase {
         private readonly userConfigRepository: UserConfigRepository,
         private readonly userRepository: UserRepository,
         private readonly geminiService: GeminiService,
-        private readonly pdfService: PdfService,
+        private readonly resumeDocumentService: ResumeDocumentService,
         private readonly sseService: SseService,
         private readonly cache: CacheRepository,
     ) { }
@@ -64,10 +64,10 @@ export class ResumeGenerationUseCase {
             userId
         ))
 
-        const contactData = await this.userConfigRepository.getByUserId(userId);
+        const contactData = await this.userConfigRepository.findByUserId(userId);
 
         await this.invalidateCaches(userId, promptKey)
-        await this.pdfService.generateResumePdfByEntities(savedResume, userData, contactData);
+        await this.resumeDocumentService.generateAndStorePdf(savedResume, userData, contactData);
         this.sseService.sendEvent(userId, 'resume-generated', savedResume);
 
         return savedResume;

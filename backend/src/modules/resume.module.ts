@@ -13,7 +13,7 @@ import { BullMQResumeQueue } from 'src/infrastructure/queue/bullmq-resume.queue'
 import { GenerateResumeUseCase } from 'src/application/use-cases/resume/generate-resume.use-case';
 import { GetAllResumesUseCase } from 'src/application/use-cases/resume/get-all-resumes.use-case';
 import { ResumeProcessor } from 'src/infrastructure/queue/processors/resume.processor';
-import { PdfService } from 'src/infrastructure/services/pdf.service';
+import { ResumeDocumentService } from 'src/infrastructure/services/resume-document.service';
 import { StorageModule } from 'src/infrastructure/modules/storage.module';
 import { SseModule } from 'src/infrastructure/modules/sse.module';
 import { GetPdfUseCase } from 'src/application/use-cases/resume/get-pdf.use-case';
@@ -27,6 +27,7 @@ import { UserConfigRepository } from 'src/domain/repositories/user-config.reposi
 import { UserConfigModule } from './user-config.module';
 import { UserRepository } from 'src/domain/repositories/user.repository';
 import { UserModule } from './user.module';
+import { GetPageUseCase } from 'src/application/use-cases/resume/get-page.use-case';
 
 @Module({
     imports: [
@@ -49,21 +50,21 @@ import { UserModule } from './user.module';
             useClass: TypeOrmResumeRepository,
         },
         GeminiService,
-        PdfService,
+        ResumeDocumentService,
         DiscordService,
         BullMQResumeQueue,
         ResumeProcessor,
         {
             provide: GeneratePdfUseCase,
-            useFactory: (pdfService: PdfService) =>
+            useFactory: (pdfService: ResumeDocumentService) =>
                 new GeneratePdfUseCase(pdfService),
-            inject: [PdfService],
+            inject: [ResumeDocumentService],
         },
         {
             provide: GetPdfUseCase,
-            useFactory: (pdfService: PdfService) =>
+            useFactory: (pdfService: ResumeDocumentService) =>
                 new GetPdfUseCase(pdfService),
-            inject: [PdfService],
+            inject: [ResumeDocumentService],
         },
         {
             provide: GenerateResumeUseCase,
@@ -85,7 +86,7 @@ import { UserModule } from './user.module';
                 geminiService: GeminiService,
                 userConfigRepository: UserConfigRepository,
                 userRepository: UserRepository,
-                pdfService: PdfService,
+                pdfService: ResumeDocumentService,
                 sseService: SseService,
                 cache: CacheRepository,
             ) =>
@@ -105,9 +106,30 @@ import { UserModule } from './user.module';
                 GeminiService,
                 UserConfigRepository,
                 UserRepository,
-                PdfService,
+                ResumeDocumentService,
                 SseService,
                 CacheRepository,
+            ],
+        },
+        {
+            provide: GetPageUseCase,
+            useFactory: (
+                resumeDocumentService: ResumeDocumentService,
+                resumeRepository: ResumeRepository,
+                userConfigRepository: UserConfigRepository,
+                userRepository: UserRepository,
+            ) =>
+                new GetPageUseCase(
+                    resumeDocumentService,
+                    resumeRepository,
+                    userConfigRepository,
+                    userRepository,
+                ),
+            inject: [
+                ResumeDocumentService,
+                ResumeRepository,
+                UserConfigRepository,
+                UserRepository,
             ],
         },
     ],

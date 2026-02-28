@@ -1,11 +1,11 @@
-import { PdfService } from "src/infrastructure/services/pdf.service";
+import { ResumeDocumentService } from "src/infrastructure/services/resume-document.service";
 
 export class GetPdfUseCase {
     constructor(
-        private readonly pdfService: PdfService
+        private readonly resumeDocumentService: ResumeDocumentService
     ) { }
 
     async execute(id: string) {
-        return this.pdfService.getPdfById(id)
+        return this.resumeDocumentService.getPdfById(id)
     }
 }

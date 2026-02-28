@@ -6,6 +6,6 @@ export class GetByUserIdUserConfigUseCase {
     ) { }
 
     async execute(userId: string) {
-        return await this.userConfigRepository.getByUserId(userId);
+        return await this.userConfigRepository.findByUserId(userId);
     }
 }

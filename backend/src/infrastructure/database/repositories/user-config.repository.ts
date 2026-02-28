@@ -16,7 +16,7 @@ export class TypeOrmUserConfigRepository implements UserConfigRepository {
         await this.ormRepo.upsert({ ...userConfig }, ["userId"]);
     }
 
-    async getByUserId(userId: string): Promise<UserConfig | null> {
+    async findByUserId(userId: string): Promise<UserConfig | null> {
         return await this.ormRepo.findOne({ where: { userId } })
     }
 }

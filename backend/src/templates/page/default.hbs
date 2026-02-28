@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{{name}} — {{role}}</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Outfit:wght@300;400;500;600&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap"
+        rel="stylesheet">
+    <style>
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        :root {
+            --bg: #f8f8f6;
+            --white: #ffffff;
+            --ink: #111110;
+            --muted: #6e6e6b;
+            --subtle: #b8b8b4;
+            --border: #e4e4e0;
+            --surface: #f0f0ec;
+            --accent: #5b4cf7;
+            --accent-soft: rgba(91, 76, 247, 0.08);
+            --accent2: #e8405a;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: var(--bg);
+            color: var(--ink);
+            font-size: 16px;
+            line-height: 1.6;
+        }
+
+        nav {
+            position: fixed;
+            top: 1.5rem;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 100;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(16px);
+            border: 1px solid var(--border);
+            border-radius: 100px;
+            padding: 0.6rem 1rem 0.6rem 1.4rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.06);
+        }
+
+        .nav-logo {
+            font-family: 'Syne', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--ink);
+            text-decoration: none;
+            margin-right: 0.5rem;
+        }
+
+        .nav-sep {
+            width: 1px;
+            height: 16px;
+            background: var(--border);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 0.25rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.62rem;
+            letter-spacing: 0.04em;
+            color: var(--muted);
+            text-decoration: none;
+            padding: 0.4rem 0.9rem;
+            border-radius: 100px;
+            transition: all 0.2s;
+        }
+
+        .nav-links a:hover {
+            background: var(--accent-soft);
+            color: var(--accent);
+        }
+
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            padding: 8rem 5rem 6rem;
+            max-width: 1300px;
+            margin: 0 auto;
+        }
+
+        .hero-inner {
+            width: 100%;
+            display: grid;
+            grid-template-columns: 1fr 380px;
+            gap: 5rem;
+            align-items: center;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: var(--accent-soft);
+            border: 1px solid rgba(91, 76, 247, 0.15);
+            border-radius: 100px;
+            padding: 0.35rem 0.9rem;
+            margin-bottom: 2rem;
+        }
+
+        .hero-badge-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--accent);
+        }
+
+        .hero-badge-text {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.62rem;
+            color: var(--accent);
+            letter-spacing: 0.06em;
+        }
+
+        .hero-name {
+            font-family: 'Syne', sans-serif;
+            font-size: clamp(3rem, 6.5vw, 5.5rem);
+            font-weight: 800;
+            line-height: 1;
+            letter-spacing: -0.03em;
+            margin-bottom: 1.2rem;
+        }
+
+        .hero-name .highlight {
+            position: relative;
+            display: inline-block;
+        }
+
+        .hero-name .highlight::after {
+            content: '';
+            position: absolute;
+            bottom: 0.05em;
+            left: 0;
+            right: 0;
+            height: 0.08em;
+            background: var(--accent);
+            border-radius: 2px;
+        }
+
+        .hero-role {
+            font-size: 1rem;
+            color: var(--muted);
+            font-weight: 300;
+            margin-bottom: 1.5rem;
+        }
+
+        .hero-summary {
+            font-size: 1.05rem;
+            color: #3a3a38;
+            line-height: 1.8;
+            max-width: 520px;
+            font-weight: 300;
+            margin-bottom: 3rem;
+        }
+
+        .hero-contacts {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.6rem;
+        }
+
+        .hero-contacts a {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.65rem;
+            color: var(--ink);
+            text-decoration: none;
+            background: var(--white);
+            border: 1px solid var(--border);
+            border-radius: 100px;
+            padding: 0.55rem 1.1rem;
+            transition: all 0.2s;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+        }
+
+        .hero-contacts a:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+            background: var(--accent-soft);
+        }
+
+        /* Hero visual */
+        .hero-visual {
+            position: relative;
+        }
+
+        .hero-card-wrap {
+            position: relative;
+        }
+
+        .hero-card {
+            width: 100%;
+            aspect-ratio: 3/4;
+            background: var(--white);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.08);
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        .hero-card-bg {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, var(--accent-soft) 0%, transparent 60%);
+        }
+
+        .hero-card-initials {
+            position: absolute;
+            bottom: -1.5rem;
+            right: -0.5rem;
+            font-family: 'Syne', sans-serif;
+            font-size: 9rem;
+            font-weight: 800;
+            color: rgba(91, 76, 247, 0.06);
+            line-height: 1;
+            user-select: none;
+        }
+
+        .hero-card-label {
+            position: absolute;
+            top: 1.5rem;
+            left: 1.5rem;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.6rem;
+            color: var(--muted);
+            letter-spacing: 0.08em;
+            background: rgba(255, 255, 255, 0.8);
+            padding: 0.3rem 0.7rem;
+            border-radius: 100px;
+            border: 1px solid var(--border);
+        }
+
+        .hero-card-blob {
+            position: absolute;
+            width: 160px;
+            height: 160px;
+            border-radius: 50%;
+            background: var(--accent);
+            opacity: 0.06;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            filter: blur(40px);
+        }
+
+        .hero-card-accent {
+            position: absolute;
+            bottom: -1.5rem;
+            left: -1.5rem;
+            width: 100px;
+            height: 100px;
+            background: var(--accent2);
+            opacity: 0.08;
+            border-radius: 50%;
+            filter: blur(30px);
+        }
+
+        .sections-wrap {
+            max-width: 1300px;
+            margin: 0 auto;
+            padding: 0 5rem;
+        }
+
+        section {
+            padding: 7rem 0;
+            border-top: 1px solid var(--border);
+        }
+
+        .section-eyebrow {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+
+        .section-chip {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.6rem;
+            background: var(--accent-soft);
+            color: var(--accent);
+            border: 1px solid rgba(91, 76, 247, 0.15);
+            padding: 0.3rem 0.8rem;
+            border-radius: 100px;
+            letter-spacing: 0.06em;
+        }
+
+        .section-title {
+            font-family: 'Syne', sans-serif;
+            font-size: clamp(2rem, 3.5vw, 2.8rem);
+            font-weight: 800;
+            line-height: 1.1;
+            letter-spacing: -0.025em;
+            margin-bottom: 3.5rem;
+        }
+
+        .section-title em {
+            font-style: normal;
+            color: var(--accent);
+        }
+
+        .skills-cloud {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.6rem;
+        }
+
+        .skill-pill {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.7rem;
+            padding: 0.55rem 1.1rem;
+            background: var(--white);
+            border: 1px solid var(--border);
+            border-radius: 100px;
+            color: var(--ink);
+            cursor: default;
+            transition: all 0.2s;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+        }
+
+        .skill-pill:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+            background: var(--accent-soft);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(91, 76, 247, 0.12);
+        }
+
+        .exp-stack {
+            display: grid;
+            gap: 1.5rem;
+        }
+
+        .exp-card {
+            background: var(--white);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 2.5rem;
+            position: relative;
+            transition: all 0.25s;
+            box-shadow: 0 1px 8px rgba(0, 0, 0, 0.04);
+        }
+
+        .exp-card:hover {
+            border-color: rgba(91, 76, 247, 0.2);
+            box-shadow: 0 8px 30px rgba(91, 76, 247, 0.07);
+            transform: translateY(-2px);
+        }
+
+        .exp-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .exp-card-left {}
+
+        .exp-title {
+            font-family: 'Syne', sans-serif;
+            font-size: 1.25rem;
+            font-weight: 700;
+            letter-spacing: -0.01em;
+            margin-bottom: 0.3rem;
+        }
+
+        .exp-company {
+            font-size: 0.85rem;
+            color: var(--accent);
+            font-weight: 500;
+        }
+
+        .exp-period {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.62rem;
+            color: var(--muted);
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 100px;
+            padding: 0.35rem 0.8rem;
+            white-space: nowrap;
+            align-self: flex-start;
+        }
+
+        .exp-responsibilities {
+            list-style: none;
+            margin-bottom: 1.5rem;
+        }
+
+        .exp-responsibilities li {
+            font-size: 0.93rem;
+            color: #4a4a48;
+            line-height: 1.7;
+            padding-left: 1.4rem;
+            position: relative;
+            margin-bottom: 0.35rem;
+            font-weight: 300;
+        }
+
+        .exp-responsibilities li::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0.6em;
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+            background: var(--accent);
+            opacity: 0.5;
+        }
+
+        .exp-tech {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.4rem;
+        }
+
+        .tech-chip {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.58rem;
+            padding: 0.2rem 0.65rem;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 100px;
+            color: var(--muted);
+        }
+
+        .projects-mosaic {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .project-tile {
+            background: var(--white);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 2.5rem;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.25s;
+            box-shadow: 0 1px 8px rgba(0, 0, 0, 0.04);
+        }
+
+        .project-tile:hover {
+            border-color: rgba(91, 76, 247, 0.2);
+            box-shadow: 0 8px 30px rgba(91, 76, 247, 0.08);
+            transform: translateY(-3px);
+        }
+
+        .project-tile::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(to right, var(--accent), var(--accent2));
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.3s ease;
+            border-radius: 16px 16px 0 0;
+        }
+
+        .project-tile:hover::before {
+            transform: scaleX(1);
+        }
+
+        .project-num {
+            font-family: 'Syne', sans-serif;
+            font-size: 0.65rem;
+            font-weight: 800;
+            color: var(--subtle);
+            letter-spacing: 0.08em;
+            margin-bottom: 1.2rem;
+        }
+
+        .project-name {
+            font-family: 'Syne', sans-serif;
+            font-size: 1.3rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            line-height: 1.2;
+            margin-bottom: 1.2rem;
+        }
+
+        .project-highlights {
+            list-style: none;
+            margin-bottom: 1.5rem;
+        }
+
+        .project-highlights li {
+            font-size: 0.88rem;
+            color: #4a4a48;
+            line-height: 1.65;
+            padding-left: 1.3rem;
+            position: relative;
+            margin-bottom: 0.3rem;
+            font-weight: 300;
+        }
+
+        .project-highlights li::before {
+            content: '→';
+            position: absolute;
+            left: 0;
+            color: var(--accent);
+            font-size: 0.75rem;
+        }
+
+        footer {
+            border-top: 1px solid var(--border);
+            padding: 3rem 5rem;
+            max-width: 1300px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .footer-name {
+            font-family: 'Syne', sans-serif;
+            font-size: 1rem;
+            font-weight: 700;
+        }
+
+        .footer-role {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.62rem;
+            color: var(--muted);
+        }
+
+        .reveal {
+            opacity: 0;
+            transform: translateY(18px);
+            transition: opacity 0.65s ease, transform 0.65s ease;
+        }
+
+        .reveal.visible {
+            opacity: 1;
+            transform: none;
+        }
+
+        @media (max-width: 960px) {
+            nav {
+                top: 1rem;
+                padding: 0.5rem 0.8rem 0.5rem 1.2rem;
+            }
+
+            .hero {
+                padding: 7rem 1.5rem 4rem;
+            }
+
+            .hero-inner {
+                grid-template-columns: 1fr;
+            }
+
+            .hero-visual {
+                display: none;
+            }
+
+            .sections-wrap {
+                padding: 0 1.5rem;
+            }
+
+            section {
+                padding: 4.5rem 0;
+            }
+
+            footer {
+                padding: 2.5rem 1.5rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <nav>
+        <a href="#" class="nav-logo">{{name}}</a>
+        <div class="nav-sep"></div>
+        <ul class="nav-links">
+            {{#if skills}}<li><a href="#skills">{{@root.labels.skills}}</a></li>{{/if}}
+            {{#if experiences}}<li><a href="#experience">{{@root.labels.experience}}</a></li>{{/if}}
+            {{#if projects}}<li><a href="#projects">{{@root.labels.projects}}</a></li>{{/if}}
+        </ul>
+    </nav>
+
+    <div style="max-width: 1300px; margin: 0 auto; padding: 0 5rem;">
+        <section class="hero" id="home" style="border: none; padding-left: 0; padding-right: 0;">
+            <div class="hero-inner">
+                <div class="hero-text reveal">
+                    <div class="hero-badge">
+                        <span class="hero-badge-dot"></span>
+                        <span class="hero-badge-text">Portfólio</span>
+                    </div>
+                    <h1 class="hero-name">{{name}}</h1>
+                    <p class="hero-role">{{role}}</p>
+                    {{#if summary}}<p class="hero-summary">{{summary}}</p>{{/if}}
+                    {{#if contactsHtml}}
+                    <div class="hero-contacts">{{{contactsHtml}}}</div>
+                    {{/if}}
+                </div>
+                <div class="hero-visual reveal" style="transition-delay: 0.2s;">
+                    <div class="hero-card-wrap">
+                        <div class="hero-card">
+                            <div class="hero-card-bg"></div>
+                            <div class="hero-card-blob"></div>
+                            <div class="hero-card-accent"></div>
+                            <span class="hero-card-initials">{{initials}}</span>
+                            <span class="hero-card-label">{{role}}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <div class="sections-wrap">
+        {{#if skills}}
+        <section id="skills">
+            <div class="reveal">
+                <div class="section-eyebrow">
+                    <span class="section-chip">{{@root.labels.skills}}</span>
+                </div>
+                <h2 class="section-title">Ferramentas &amp;<br><em>Tecnologias</em></h2>
+                <div class="skills-cloud">
+                    {{#each skills}}
+                    <span class="skill-pill">{{this}}</span>
+                    {{/each}}
+                </div>
+            </div>
+        </section>
+        {{/if}}
+
+        {{#if experiences}}
+        <section id="experience">
+            <div class="reveal">
+                <div class="section-eyebrow">
+                    <span class="section-chip">{{@root.labels.experience}}</span>
+                </div>
+                <h2 class="section-title">Trajetória<br><em>Profissional</em></h2>
+                <div class="exp-stack">
+                    {{#each experiences}}
+                    <div class="exp-card reveal">
+                        <div class="exp-card-header">
+                            <div class="exp-card-left">
+                                <h3 class="exp-title">{{title}}</h3>
+                                <p class="exp-company">{{company}}</p>
+                            </div>
+                            <span class="exp-period">{{period}}</span>
+                        </div>
+                        {{#if responsibilities}}
+                        <ul class="exp-responsibilities">
+                            {{#each responsibilities}}
+                            <li>{{this}}</li>
+                            {{/each}}
+                        </ul>
+                        {{/if}}
+                        {{#if technologies}}
+                        <div class="exp-tech">
+                            {{#each technologies}}
+                            <span class="tech-chip">{{this}}</span>
+                            {{/each}}
+                        </div>
+                        {{/if}}
+                    </div>
+                    {{/each}}
+                </div>
+            </div>
+        </section>
+        {{/if}}
+
+        {{#if projects}}
+        <section id="projects">
+            <div class="reveal">
+                <div class="section-eyebrow">
+                    <span class="section-chip">{{@root.labels.projects}}</span>
+                </div>
+                <h2 class="section-title">Projetos<br><em>Selecionados</em></h2>
+                <div class="projects-mosaic">
+                    {{#each projects}}
+                    <div class="project-tile reveal">
+                        <p class="project-num">{{@index}}</p>
+                        <h3 class="project-name">{{name}}</h3>
+                        {{#if highlights}}
+                        <ul class="project-highlights">
+                            {{#each highlights}}
+                            <li>{{this}}</li>
+                            {{/each}}
+                        </ul>
+                        {{/if}}
+                        {{#if technologies}}
+                        <div class="exp-tech">
+                            {{#each technologies}}
+                            <span class="tech-chip">{{this}}</span>
+                            {{/each}}
+                        </div>
+                        {{/if}}
+                    </div>
+                    {{/each}}
+                </div>
+            </div>
+        </section>
+        {{/if}}
+    </div>
+
+    <footer>
+        <span class="footer-name">{{name}}</span>
+        <span class="footer-role">{{role}}</span>
+    </footer>
+
+    <script>
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) entry.target.classList.add('visible');
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+        document.querySelectorAll('.skills-cloud, .projects-mosaic').forEach(grid => {
+            [...grid.children].forEach((child, i) => {
+                child.style.transitionDelay = `${i * 0.05}s`;
+            });
+        });
+    </script>
+</body>
+
+</html>

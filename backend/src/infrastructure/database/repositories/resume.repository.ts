@@ -22,4 +22,8 @@ export class TypeOrmResumeRepository implements ResumeRepository {
             order: { createdAt: 'DESC' }
         }) as Resume[]
     }
+
+    async findById(id: string): Promise<Resume | null> {
+        return await this.ormRepo.findOneBy({ id }) as Resume;
+    }
 }

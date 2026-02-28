@@ -5,6 +5,7 @@ const { api } = useApi()
 
 export function usePdf() {
     const pdfUrl = ref<string | null>(null)
+    const pageUrl = ref<string | null>(null)
     const isGenerating = ref(false)
 
     async function setPublicPdfUrl(id: string) {
@@ -14,6 +15,10 @@ export function usePdf() {
 
         const pdfBlob = new Blob([response.data], { type: 'application/pdf' });
         pdfUrl.value = URL.createObjectURL(pdfBlob);
+    }
+
+    async function setPublicPageUrl(id: string) {
+        pageUrl.value = `${api.defaults.baseURL}/resume/page/${id}`;
     }
 
     function revoke() {
@@ -27,8 +32,10 @@ export function usePdf() {
 
     return {
         pdfUrl,
+        pageUrl,
         isGenerating,
         setPublicPdfUrl,
+        setPublicPageUrl,
         revoke
     }
 }

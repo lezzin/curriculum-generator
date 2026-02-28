@@ -13,7 +13,7 @@ const isOpen = ref(false)
 const shouldToggle = ref(false)
 const resume = computed(() => props.resume)
 
-const { setPublicPdfUrl, pdfUrl } = usePdf()
+const { setPublicPdfUrl, setPublicPageUrl, pageUrl, pdfUrl } = usePdf()
 
 function togglePrompt() {
     isOpen.value = !isOpen.value
@@ -36,8 +36,13 @@ const goToPdfUrl = async () => {
     window.open(pdfUrl.value, "_blank");
 };
 
+const goToPageUrl = async () => {
+    window.open(pageUrl.value!, "_blank");
+};
+
 onMounted(async () => {
     await setPublicPdfUrl(resume.value.id!)
+    setPublicPageUrl(resume.value.id!)
 })
 </script>
 
@@ -49,6 +54,10 @@ onMounted(async () => {
 
             <div class="flex items-center gap-3">
                 <RotateArrow :rotate="isOpen" v-if="shouldToggle" />
+
+                <BaseButton v-if="resume.id" @click.stop="goToPageUrl" size="sm" variant="outline">
+                    Página HTML
+                </BaseButton>
 
                 <BaseButton v-if="resume.id" @click.stop="goToPdfUrl" size="sm" variant="outline" :disabled="!pdfUrl">
                     PDF

@@ -7,6 +7,7 @@ import { CurrentUser } from 'src/infrastructure/auth/current-user.decorator';
 import { JwtAuthGuard } from 'src/infrastructure/auth/jwt-auth.guard';
 import { GenerateResumeDto } from './resume.dto';
 import { GeneratePdfUseCase } from 'src/application/use-cases/resume/generate-pdf.use-case';
+import { GetPageUseCase } from 'src/application/use-cases/resume/get-page.use-case';
 
 @UseGuards(JwtAuthGuard)
 @Controller('/resume')
@@ -15,6 +16,7 @@ export class ResumeController {
         private readonly generateResumeUseCase: GenerateResumeUseCase,
         private readonly getAllResumesUseCase: GetAllResumesUseCase,
         private readonly getPdfUseCase: GetPdfUseCase,
+        private readonly getPageUseCase: GetPageUseCase,
         private readonly generatePdfUseCase: GeneratePdfUseCase,
     ) { }
 
@@ -48,6 +50,19 @@ export class ResumeController {
         });
 
         stream.pipe(res);
+    }
+
+    @Get('/page/:id')
+    async getPageById(
+        @Param('id') id: string,
+        @Res() res: Response
+    ) {
+        const html = await this.getPageUseCase.execute(id);
+
+        return res
+            .status(200)
+            .type('text/html')
+            .send(html);
     }
 
     @Post('/pdf/generate')

@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{{name}} — {{role}}</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        :root {
+            --bg: #0f1115;
+            --surface: #16181d;
+            --border: #252830;
+            --text: #e8e8e8;
+            --muted: #8b8f98;
+            --accent: #4da3ff;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .layout {
+            display: grid;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 240px;
+            background: var(--surface);
+            border-right: 1px solid var(--border);
+            padding: 2rem 1.5rem;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar h1 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 0.2rem;
+        }
+
+        .sidebar p.role {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            color: var(--muted);
+            margin-bottom: 2rem;
+        }
+
+        .sidebar nav a {
+            display: block;
+            font-size: 0.75rem;
+            color: var(--muted);
+            text-decoration: none;
+            padding: 0.35rem 0;
+            transition: color 0.2s;
+        }
+
+        .sidebar nav a:hover {
+            color: var(--accent);
+        }
+
+        .sidebar .contacts {
+            margin-top: auto;
+            font-size: 0.65rem;
+        }
+
+        .sidebar .contacts a {
+            display: block;
+            color: var(--muted);
+            text-decoration: none;
+            margin-bottom: 0.4rem;
+        }
+
+        .sidebar .contacts a:hover {
+            color: var(--accent);
+        }
+
+        .main {
+            margin-left: 240px;
+            padding: 3rem 4rem;
+            max-width: 1100px;
+        }
+
+        .header {
+            margin-bottom: 3rem;
+        }
+
+        .header h2 {
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin-bottom: 0.6rem;
+        }
+
+        .header p {
+            color: var(--muted);
+            max-width: 600px;
+        }
+
+        .section {
+            margin-bottom: 3rem;
+        }
+
+        .section h3 {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            color: var(--muted);
+            margin-bottom: 1.2rem;
+        }
+
+        .skills-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .skill {
+            font-size: 0.7rem;
+            padding: 0.35rem 0.6rem;
+            border: 1px solid var(--border);
+            color: var(--muted);
+        }
+
+        .skill:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        .exp-item {
+            margin-bottom: 1.8rem;
+        }
+
+        .exp-header {
+            display: flex;
+            justify-content: space-between;
+            gap: 1rem;
+            margin-bottom: 0.4rem;
+        }
+
+        .exp-title {
+            font-weight: 600;
+        }
+
+        .exp-company {
+            color: var(--muted);
+            font-size: 0.75rem;
+        }
+
+        .exp-period {
+            font-size: 0.7rem;
+            color: var(--muted);
+            white-space: nowrap;
+        }
+
+        .exp-resp {
+            margin-left: 1rem;
+            margin-top: 0.4rem;
+        }
+
+        .exp-resp li {
+            margin-bottom: 0.3rem;
+            font-size: 0.85rem;
+            color: #cfcfcf;
+        }
+
+        .project {
+            border: 1px solid var(--border);
+            padding: 1.2rem;
+            margin-bottom: 1rem;
+            transition: border 0.2s;
+        }
+
+        .project:hover {
+            border-color: var(--accent);
+        }
+
+        .project h4 {
+            font-size: 1rem;
+            margin-bottom: 0.6rem;
+        }
+
+        .project ul {
+            margin-left: 1rem;
+        }
+
+        .project li {
+            font-size: 0.85rem;
+            margin-bottom: 0.3rem;
+            color: #cfcfcf;
+        }
+
+        @media (max-width: 900px) {
+            .layout {
+                grid-template-columns: 1fr;
+            }
+
+            .sidebar {
+                position: static;
+                width: 100%;
+                border-right: none;
+                border-bottom: 1px solid var(--border);
+            }
+
+            .main {
+                margin-left: 0;
+                padding: 2rem 1.5rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="layout">
+
+        <aside class="sidebar">
+            <div>
+                <h1>{{name}}</h1>
+                <p class="role">{{role}}</p>
+
+                <nav>
+                    {{#if skills}}<a href="#skills">{{@root.labels.skills}}</a>{{/if}}
+                    {{#if experiences}}<a href="#experience">{{@root.labels.experience}}</a>{{/if}}
+                    {{#if projects}}<a href="#projects">{{@root.labels.projects}}</a>{{/if}}
+                </nav>
+            </div>
+
+            {{#if contactsHtml}}
+            <div class="contacts">
+                {{{contactsHtml}}}
+            </div>
+            {{/if}}
+        </aside>
+
+        <main class="main">
+
+            <header class="header">
+                <h2>{{name}}</h2>
+                {{#if summary}}<p>{{summary}}</p>{{/if}}
+            </header>
+
+            {{#if skills}}
+            <section class="section" id="skills">
+                <h3>{{@root.labels.skills}}</h3>
+                <div class="skills-grid">
+                    {{#each skills}}
+                    <span class="skill">{{this}}</span>
+                    {{/each}}
+                </div>
+            </section>
+            {{/if}}
+
+            {{#if experiences}}
+            <section class="section" id="experience">
+                <h3>{{@root.labels.experience}}</h3>
+
+                {{#each experiences}}
+                <div class="exp-item">
+                    <div class="exp-header">
+                        <div>
+                            <div class="exp-title">{{title}}</div>
+                            <div class="exp-company">{{company}}</div>
+                        </div>
+                        <div class="exp-period">{{period}}</div>
+                    </div>
+
+                    {{#if responsibilities}}
+                    <ul class="exp-resp">
+                        {{#each responsibilities}}
+                        <li>{{this}}</li>
+                        {{/each}}
+                    </ul>
+                    {{/if}}
+                </div>
+                {{/each}}
+
+            </section>
+            {{/if}}
+
+            {{#if projects}}
+            <section class="section" id="projects">
+                <h3>{{@root.labels.projects}}</h3>
+
+                {{#each projects}}
+                <div class="project">
+                    <h4>{{name}}</h4>
+
+                    {{#if highlights}}
+                    <ul>
+                        {{#each highlights}}
+                        <li>{{this}}</li>
+                        {{/each}}
+                    </ul>
+                    {{/if}}
+                </div>
+                {{/each}}
+
+            </section>
+            {{/if}}
+
+        </main>
+    </div>
+
+</body>
+
+</html>
