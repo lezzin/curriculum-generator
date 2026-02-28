@@ -1,31 +1,26 @@
 FROM alpine:3.20 AS builder
 
-RUN apk add --no-cache \
-    nodejs \
-    npm \
-    git
+RUN apk add --no-cache nodejs npm
 
 WORKDIR /app
 
 COPY package*.json ./
 
-RUN npm install
+RUN --mount=type=cache,target=/root/.npm \
+    npm ci
 
 COPY . .
 
 RUN npm run build
 
+RUN --mount=type=cache,target=/root/.npm \
+    npm ci --omit=dev
+
 FROM alpine:3.20
 
-RUN apk add --no-cache \
-    nodejs \
-    npm \
-    chromium \
-    tzdata
+RUN apk add --no-cache nodejs chromium
 
-RUN cp /usr/share/zoneinfo/America/Sao_Paulo /etc/localtime \
-    && echo "America/Sao_Paulo" > /etc/timezone \
-    && apk del tzdata
+RUN echo "America/Sao_Paulo" > /etc/timezone
 
 WORKDIR /app
 
