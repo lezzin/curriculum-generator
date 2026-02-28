@@ -9,6 +9,7 @@ import { AuthController } from 'src/presentation/controllers/auth/auth.controlle
 import { LoginUseCase } from 'src/application/use-cases/auth/login.use-case';
 import { JwtAdapter } from 'src/infrastructure/auth/jwt.service';
 import { ConfigService } from '@nestjs/config';
+import type { StringValue } from "ms";
 
 @Module({
     imports: [
@@ -16,8 +17,8 @@ import { ConfigService } from '@nestjs/config';
         JwtModule.registerAsync({
             inject: [ConfigService],
             useFactory: (configService: ConfigService) => ({
-                secret: configService.getOrThrow<string>('JWT_SECRET'),
-                signOptions: { expiresIn: '1H' },
+                secret: configService.getOrThrow<string>('JWT_ACCESS_SECRET'),
+                signOptions: { expiresIn: configService.getOrThrow<StringValue>('JWT_ACCESS_EXPIRES_IN') },
             }),
         }),
     ],
