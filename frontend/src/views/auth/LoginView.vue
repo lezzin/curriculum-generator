@@ -11,7 +11,7 @@ import CardContainer from '../../components/ui/card/CardContainer.vue'
 import BaseButton from '../../components/ui/BaseButton.vue'
 import InputField from '../../components/ui/form/InputField.vue'
 import GoogleIcon from '../../components/icon/GoogleIcon.vue'
-import GithubIcon from '../../components/icon/GithubIcon.vue'
+import GitHubIcon from '../../components/icon/GitHubIcon.vue'
 
 import { authSchema, type AuthForm } from '../../components/validation/schemas/auth.schema'
 
@@ -50,9 +50,10 @@ const loginProvider = (provider: 'github' | 'google') => {
         <form class="space-y-5" @submit.prevent="login">
             <AppTitle title="Bem-vindo de volta 👋" subtitle="Entre na sua conta para continuar" />
 
-            <InputField label="Email" name="email" type="email" autocomplete="email" :disabled="loading" />
+            <InputField label="Email" name="email" type="email" autocomplete="email" :disabled="loading"
+                placeholder="Lezzin" />
             <InputField label="Senha" name="password" type="password" autocomplete="current-password"
-                :disabled="loading" />
+                placeholder="********" :disabled="loading" />
 
             <BaseButton type="submit" class="w-full" :loading="loading" :disabled="loading || redirecting">
                 Entrar
@@ -77,7 +78,7 @@ const loginProvider = (provider: 'github' | 'google') => {
 
             <BaseButton type="button" variant="outline" class="w-full" :disabled="loading || redirecting"
                 @click="loginProvider('github')">
-                <GithubIcon class="w-5 h-5 mr-2" />
+                <GitHubIcon class="w-5 h-5 mr-2" />
                 Continuar com GitHub
             </BaseButton>
 
