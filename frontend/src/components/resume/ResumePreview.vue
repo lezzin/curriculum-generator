@@ -64,7 +64,7 @@ onMounted(async () => {
 
                 <BaseDropdown>
                     <template #trigger="{ toggle, isOpen }">
-                        <BaseButton @click="toggle" aria-haspopup="true" :aria-expanded="isOpen" size="sm"
+                        <BaseButton @click.stop="toggle" aria-haspopup="true" :aria-expanded="isOpen" size="sm"
                             variant="outline">
                             Páginas
                             <RotateArrow :rotate="isOpen" />
