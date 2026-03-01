@@ -7,14 +7,8 @@ import TextAreaField from "../../components/ui/form/TextAreaField.vue"
 import SelectField from "../../components/ui/form/SelectField.vue"
 import AppTitle from "../../components/layout/AppTitle.vue"
 import { useToast } from "../../composables/useToast"
-
-const BASE_TEMPLATE_TYPES = {
-    DEFAULT: 'default',
-    CLASSIC: 'classic',
-    CONDENSED: 'condensed',
-} as const
-
-type BaseTemplateType = typeof BASE_TEMPLATE_TYPES[keyof typeof BASE_TEMPLATE_TYPES]
+import { BASE_TEMPLATE_TYPES, type BaseTemplateType } from "../../interfaces/resume.interfaces"
+import { capitalizeFirst } from "../../helper/string.helper"
 
 const { show } = useToast()
 
@@ -74,7 +68,7 @@ async function generateResume() {
         <SelectField label="Tipo de template" v-model="state.templateType" :error="errors.templateType">
             <option disabled value="">Selecione uma opção</option>
             <option v-for="type in templateTypes" :key="type" :value="type">
-                {{ type.toUpperCase() }}
+                {{ capitalizeFirst(type) }}
             </option>
         </SelectField>
     </div>

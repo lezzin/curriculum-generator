@@ -22,3 +22,11 @@ export function nullToEmpty<T extends Record<string, any>>(obj: T): T {
         ])
     ) as T
 }
+
+export function capitalizeFirst(str?: string) {
+    if (typeof str !== 'string' || str.length === 0) {
+        return '';
+    }
+
+    return str.charAt(0).toUpperCase() + str.slice(1);
+}

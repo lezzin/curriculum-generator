@@ -45,7 +45,7 @@ onBeforeUnmount(() => {
     </div>
 </template>
 
-<style scoped>
+<style scoped lang="postcss">
 .dropdown-enter-active,
 .dropdown-leave-active {
     transition: all 0.18s ease;
@@ -55,5 +55,9 @@ onBeforeUnmount(() => {
 .dropdown-leave-to {
     opacity: 0;
     transform: translateY(-6px) scale(0.98);
+}
+
+.dropdown-item {
+    @apply block w-full px-4 py-2 text-gray-600 hover:bg-gray-100 hover:text-black transition;
 }
 </style>

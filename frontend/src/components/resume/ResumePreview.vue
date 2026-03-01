@@ -1,11 +1,12 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from "vue"
 import { usePdf } from "../../composables/usePdf"
-import type { Resume } from "../../interfaces/resume.interfaces"
+import { BASE_TEMPLATE_TYPES, type BaseTemplateType, type Resume } from "../../interfaces/resume.interfaces"
 import BaseButton from "../ui/BaseButton.vue"
-import { toHumanReadableDate } from "../../helper/string.helper"
+import { capitalizeFirst, toHumanReadableDate } from "../../helper/string.helper"
 import CardContainer from "../ui/card/CardContainer.vue"
 import RotateArrow from "../icon/RotateArrow.vue"
+import BaseDropdown from "../ui/BaseDropdown.vue"
 
 const props = defineProps<{ resume: Resume }>()
 
@@ -14,6 +15,7 @@ const shouldToggle = ref(false)
 const resume = computed(() => props.resume)
 
 const { setPublicPdfUrl, setPublicPageUrl, pageUrl, pdfUrl } = usePdf()
+const templateTypes = computed(() => Object.values(BASE_TEMPLATE_TYPES))
 
 function togglePrompt() {
     isOpen.value = !isOpen.value
@@ -36,8 +38,9 @@ const goToPdfUrl = async () => {
     window.open(pdfUrl.value, "_blank");
 };
 
-const goToPageUrl = async () => {
-    window.open(pageUrl.value!, "_blank");
+const goToPageUrl = async (template: BaseTemplateType, callable: () => void) => {
+    window.open(`${pageUrl.value}/${template}`, "_blank");
+    callable()
 };
 
 onMounted(async () => {
@@ -55,9 +58,22 @@ onMounted(async () => {
             <div class="flex items-center gap-3">
                 <RotateArrow :rotate="isOpen" v-if="shouldToggle" />
 
-                <BaseButton v-if="resume.id" @click.stop="goToPageUrl" size="sm" variant="outline">
-                    Página HTML
-                </BaseButton>
+                <BaseDropdown>
+                    <template #trigger="{ toggle, isOpen }">
+                        <BaseButton @click="toggle" aria-haspopup="true" :aria-expanded="isOpen" size="sm"
+                            variant="outline">
+                            Páginas
+                            <RotateArrow :rotate="isOpen" />
+                        </BaseButton>
+                    </template>
+
+                    <template #default="{ close }">
+                        <BaseButton v-for="type in templateTypes" :key="type" :value="type"
+                            @click.stop="goToPageUrl(type, close)" size="sm" variant="ghost" class="dropdown-item">
+                            {{ capitalizeFirst(type) }}
+                        </BaseButton>
+                    </template>
+                </BaseDropdown>
 
                 <BaseButton v-if="resume.id" @click.stop="goToPdfUrl" size="sm" variant="outline" :disabled="!pdfUrl">
                     PDF
@@ -70,3 +86,9 @@ onMounted(async () => {
         </CardContainer>
     </div>
 </template>
+
+<style scoped lang="postcss">
+.dropdown-item {
+    @apply w-full px-4 py-2 text-gray-600 hover:bg-gray-100 hover:text-black transition;
+}
+</style>

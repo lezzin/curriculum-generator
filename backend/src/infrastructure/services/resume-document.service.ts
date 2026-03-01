@@ -43,8 +43,9 @@ export class ResumeDocumentService
 
         return template({
             ...resume,
+            ...user,
             labels,
-            contactsHtml: this.getContactHTML(user, userConfig),
+            contactsHtml: this.getContactHTML(user, userConfig, templateFolder),
         });
     }
 
@@ -111,7 +112,7 @@ export class ResumeDocumentService
         return Handlebars.compile(content);
     }
 
-    private getContactHTML(user: User, userConfig: UserConfig | null) {
+    private getContactHTML(user: User, userConfig: UserConfig | null, templateFolder: 'page' | 'pdf') {
         const contacts: string[] = [];
 
         if (user?.email)
@@ -129,6 +130,6 @@ export class ResumeDocumentService
         if (userConfig?.portfolio)
             contacts.push(`<a href="${userConfig.portfolio}">Portfólio</a>`);
 
-        return contacts.join(" | ");
+        return contacts.join((templateFolder === 'page') ? " " : " | ");
     }
 }

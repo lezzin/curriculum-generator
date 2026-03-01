@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{{title}}</title>
+
+  <style>
+    :root {
+      --bg: #0f172a;
+      --card: #1e293b;
+      --text: #f1f5f9;
+      --muted: #94a3b8;
+      --primary: #38bdf8;
+      --danger: #f87171;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 24px;
+    }
+
+    .card {
+      background: var(--card);
+      padding: 48px;
+      border-radius: 16px;
+      text-align: center;
+      max-width: 600px;
+      width: 100%;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    }
+
+    h1 {
+      font-size: 72px;
+      margin: 0 0 16px 0;
+      color: var(--danger);
+    }
+
+    p {
+      margin: 0 0 24px 0;
+      font-size: 18px;
+      color: var(--muted);
+    }
+
+    .actions {
+      margin-top: 24px;
+    }
+
+    a.button {
+      display: inline-block;
+      padding: 12px 20px;
+      border-radius: 8px;
+      background: var(--primary);
+      color: #0f172a;
+      text-decoration: none;
+      font-weight: 600;
+      transition: opacity 0.2s ease;
+    }
+
+    a.button:hover {
+      opacity: 0.85;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="card">
+    <h1>{{status}}</h1>
+
+    <p>{{message}}</p>
+
+    {{#if description}}
+    <p>{{description}}</p>
+    {{/if}}
+
+    <div class="actions">
+      {{#if frontendUrl}}
+      <a href="{{frontendUrl}}" class="button">
+        Ir para o painel
+      </a>
+      {{/if}}
+    </div>
+  </div>
+</body>
+
+</html>

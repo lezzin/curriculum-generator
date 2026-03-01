@@ -35,3 +35,11 @@ export interface Resume {
     }[]
     projects?: ResumeProject[]
 }
+
+export const BASE_TEMPLATE_TYPES = {
+    DEFAULT: 'default',
+    CLASSIC: 'classic',
+    CONDENSED: 'condensed',
+} as const
+
+export type BaseTemplateType = typeof BASE_TEMPLATE_TYPES[keyof typeof BASE_TEMPLATE_TYPES]

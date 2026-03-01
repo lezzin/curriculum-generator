@@ -1,13 +1,15 @@
-import { Body, Controller, Get, Param, Post, Res, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Header, Param, Post, Res, UseFilters, UseGuards } from '@nestjs/common';
 import type { Response } from 'express';
 import { GetPdfUseCase } from 'src/application/use-cases/resume/get-pdf.use-case';
 import { GenerateResumeUseCase } from 'src/application/use-cases/resume/generate-resume.use-case';
 import { GetAllResumesUseCase } from 'src/application/use-cases/resume/get-all-resumes.use-case';
 import { CurrentUser } from 'src/infrastructure/auth/current-user.decorator';
 import { JwtAuthGuard } from 'src/infrastructure/auth/jwt-auth.guard';
-import { GenerateResumeDto } from './resume.dto';
+import { GenerateResumeDto, GetPageParamsDto } from './resume.dto';
 import { GeneratePdfUseCase } from 'src/application/use-cases/resume/generate-pdf.use-case';
 import { GetPageUseCase } from 'src/application/use-cases/resume/get-page.use-case';
+import { HtmlExceptionFilter } from 'src/infrastructure/http/filters/html-exception.filter';
+import { IsPublic } from 'src/infrastructure/auth/is-public.decorator';
 
 @UseGuards(JwtAuthGuard)
 @Controller('/resume')
@@ -52,17 +54,12 @@ export class ResumeController {
         stream.pipe(res);
     }
 
-    @Get('/page/:id')
-    async getPageById(
-        @Param('id') id: string,
-        @Res() res: Response
-    ) {
-        const html = await this.getPageUseCase.execute(id);
-
-        return res
-            .status(200)
-            .type('text/html')
-            .send(html);
+    @IsPublic()
+    @UseFilters(HtmlExceptionFilter)
+    @Get('/page/:id/:template')
+    @Header('Content-Type', 'text/html')
+    async getPageById(@Param() params: GetPageParamsDto) {
+        return await this.getPageUseCase.execute(params);
     }
 
     @Post('/pdf/generate')

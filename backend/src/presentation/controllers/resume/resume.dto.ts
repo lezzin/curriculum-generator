@@ -1,4 +1,4 @@
-import { IsEnum, IsDefined, ValidateNested, IsString } from 'class-validator'
+import { IsEnum, IsDefined, ValidateNested, IsString, IsUUID, IsOptional } from 'class-validator'
 import { FocusArea, Language, Market, SelectedTemplate, TargetSeniority } from 'src/domain/shared/enums/resume.enums'
 import { Type } from 'class-transformer'
 
@@ -33,4 +33,13 @@ export class GenerateResumeDto {
     @ValidateNested()
     @Type(() => ResumeOptionsDto)
     options: ResumeOptionsDto
+}
+
+export class GetPageParamsDto {
+    @IsUUID()
+    id: string;
+
+    @IsOptional()
+    @IsEnum(SelectedTemplate, { message: 'Template inválido' })
+    template?: SelectedTemplate;
 }
