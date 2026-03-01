@@ -18,6 +18,7 @@ services:
       - DATABASE_HOST=host.docker.internal
       - REDIS_HOST=redis
       - MINIO_ENDPOINT=minio
+      - FRONTEND_URL=localhost
     depends_on:
       - redis
     networks:

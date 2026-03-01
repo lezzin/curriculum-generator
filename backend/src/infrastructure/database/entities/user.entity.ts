@@ -1,4 +1,5 @@
-import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, Table, UpdateDateColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, Table, UpdateDateColumn } from "typeorm";
+import { UserProviderEntity } from "./user-provider.entity";
 
 @Entity('users')
 export class UserEntity {
@@ -11,8 +12,17 @@ export class UserEntity {
     @Column('varchar')
     email: string;
 
-    @Column('text')
-    password: string;
+    @Column('varchar')
+    picture: string;
+
+    @Column({ type: 'text', nullable: true })
+    password?: string;
+
+    @OneToMany(() => UserProviderEntity, provider => provider.user, {
+        cascade: true,
+        eager: true,
+    })
+    providers: UserProviderEntity[]
 
     @CreateDateColumn({ name: 'created_at' })
     createdAt: Date;

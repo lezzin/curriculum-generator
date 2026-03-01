@@ -1,4 +1,4 @@
-import { UnauthorizedException } from '@nestjs/common';
+import { UnauthorizedException, UnprocessableEntityException } from '@nestjs/common';
 import * as bcrypt from 'bcryptjs';
 import { LoginInput } from 'src/application/models/login.input';
 import { UserRepository } from 'src/domain/repositories/user.repository';
@@ -16,6 +16,11 @@ export class LoginUseCase {
 
         if (!user) {
             throw new UnauthorizedException('Credenciais inválidas');
+        }
+
+        // TODO validar isso aqui
+        if (!user.password) {
+            throw new UnprocessableEntityException('Senha para usuário não encontrada');
         }
 
         const passwordMatch = await bcrypt.compare(body.password, user.password);

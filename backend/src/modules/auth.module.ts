@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 
-import { JwtStrategy } from '../infrastructure/auth/jwt.strategy';
+import { JwtStrategy } from '../infrastructure/auth/strategies/jwt.strategy';
 
 import { UserModule } from './user.module';
 import { UserRepository } from '../domain/repositories/user.repository';
@@ -10,6 +10,8 @@ import { LoginUseCase } from 'src/application/use-cases/auth/login.use-case';
 import { JwtAdapter } from 'src/infrastructure/auth/jwt.service';
 import { ConfigService } from '@nestjs/config';
 import type { StringValue } from "ms";
+import { SocialLoginUseCase } from 'src/application/use-cases/auth/social-login.use-case';
+import { GoogleStrategy } from 'src/infrastructure/auth/strategies/google.strategy';
 
 @Module({
     imports: [
@@ -27,6 +29,7 @@ import type { StringValue } from "ms";
         LoginUseCase,
         JwtAdapter,
         JwtStrategy,
+        GoogleStrategy,
         {
             provide: LoginUseCase,
             useFactory: (
@@ -36,6 +39,17 @@ import type { StringValue } from "ms";
                 return new LoginUseCase(userRepository, jwtAdapter);
             },
             inject: [UserRepository, JwtAdapter],
+        },
+        {
+            provide: SocialLoginUseCase,
+            useFactory: (
+                userRepository: UserRepository,
+                jwtAdapter: JwtAdapter,
+                configService: ConfigService
+            ) => {
+                return new SocialLoginUseCase(userRepository, jwtAdapter, configService);
+            },
+            inject: [UserRepository, JwtAdapter, ConfigService],
         },
     ],
 })
