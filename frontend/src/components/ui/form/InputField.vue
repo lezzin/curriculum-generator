@@ -1,44 +1,36 @@
 <script setup lang="ts">
-import { useAttrs } from 'vue'
+import { useField } from 'vee-validate'
+import { computed } from 'vue'
 
-defineProps<{
+const props = defineProps<{
     label: string
-    modelValue: string
+    name: string
+    type?: string
     placeholder?: string
-    disabled?: boolean
-    error?: string
+    disabled?: boolean,
+    helper?: string
 }>()
 
-defineOptions({
-    inheritAttrs: false
-})
+const { value, errorMessage, handleBlur } = useField(props.name)
 
-const attrs = useAttrs()
-
-const emit = defineEmits<{
-    (e: "update:modelValue", value: string): void
-}>()
-
-const handleInput = (event: Event) => {
-    const target = event.target as HTMLInputElement
-    emit("update:modelValue", target.value)
-}
+const inputType = computed(() => props.type ?? 'text')
 </script>
 
 <template>
-    <div class="flex flex-col gap-1">
-        <label class="text-sm font-medium">
+    <div class="form-control">
+        <label :for="name">
             {{ label }}
         </label>
 
-        <input v-bind="attrs" :value="modelValue" @input="handleInput" :placeholder="placeholder" :disabled="disabled"
-            :class="[
-                'p-2 border rounded-lg focus:outline-none focus:ring-2 disabled:opacity-50',
-                error ? 'border-red-500 focus:ring-red-500' : 'focus:ring-black'
-            ]" />
+        <input :id="name" :name="name" :type="inputType" v-model="value" :placeholder="placeholder" :disabled="disabled"
+            @blur="handleBlur" :class="errorMessage && 'error-field'" />
 
-        <p v-if="error" class="text-red-500 text-xs mt-1">
-            {{ error }}
+        <p v-if="helper" class="text-xs text-gray-500 mt-1">
+            {{ helper }}
+        </p>
+
+        <p v-if="errorMessage" class="error-text">
+            {{ errorMessage }}
         </p>
     </div>
 </template>

@@ -1,71 +1,53 @@
 <script setup lang="ts">
-import { onMounted, reactive, watch } from 'vue';
-import { useApi } from '../../composables/useApi';
-import { useToast } from '../../composables/useToast';
-import BaseButton from '../../components/ui/BaseButton.vue';
-import InputField from '../../components/ui/form/InputField.vue';
-import AppTitle from '../../components/layout/AppTitle.vue';
-import { useAuth } from '../../composables/useAuth';
-import { useAuthValidation } from '../../composables/useAuthValidation';
-import { useRouter } from 'vue-router';
-import CardContainer from '../../components/ui/card/CardContainer.vue';
+import { useForm } from 'vee-validate'
+import * as yup from 'yup'
+import { useRouter } from 'vue-router'
+import { useApi } from '../../composables/useApi'
+import { useToast } from '../../composables/useToast'
+import { useAuth } from '../../composables/useAuth'
+import AppTitle from '../../components/layout/AppTitle.vue'
+import CardContainer from '../../components/ui/card/CardContainer.vue'
+import BaseButton from '../../components/ui/BaseButton.vue'
+import InputField from '../../components/ui/form/InputField.vue'
 
-const state = reactive({
-    email: '',
-    password: '',
-});
+const authSchema = yup.object({
+    email: yup.string().email("Email inválido").required("Campo obrigatório"),
+    password: yup.string().required("Campo obrigatório").min(3, "Mínimo 3 caracteres")
+})
 
-const router = useRouter();
+const { handleSubmit } = useForm({
+    validationSchema: authSchema
+})
 
-const { errors, validateRequired, isFormValid } = useAuthValidation(state);
-const { user, checkAuth } = useAuth();
+const router = useRouter()
+const { request, api, loading } = useApi()
+const { show } = useToast()
+const { checkAuth } = useAuth()
 
-const { request, api, loading: isLoading } = useApi();
-const { show } = useToast();
-
-const login = async () => {
-    if (!isFormValid.value) return;
-
+const login = handleSubmit(async (form) => {
     try {
-        await request(() =>
-            api.post('/auth/login', {
-                email: state.email,
-                password: state.password,
-            })
-        );
-
-        show('Logado com sucesso!');
-        checkAuth();
-        router.push('/');
+        await request(() => api.post('/auth/login', form))
+        show('Logado com sucesso!')
+        checkAuth()
+        router.push('/')
     } catch (err: any) {
         show({
             message: err.message || 'Erro ao fazer login.',
             type: 'error',
         });
     }
-};
-
-watch(() => state.email, v => validateRequired('email', v));
-watch(() => state.password, v => validateRequired('password', v));
-
-onMounted(() => {
-    if (user.value) {
-        router.push('/');
-    }
 })
 </script>
 
 <template>
     <CardContainer class="max-w-lg mx-auto" size="lg">
-        <form class="space-y-4" @submit.prevent="login()">
+        <form class="space-y-4" @submit.prevent="login">
             <AppTitle title="Bem-vindo de volta!" subtitle="Faça login para continuar" />
 
-            <InputField label="Email" v-model="state.email" placeholder="Email" type="email" :error="errors.email" />
+            <InputField label="Email" name="email" type="email" />
+            <InputField label="Senha" name="password" type="password" />
 
-            <InputField label="Senha" v-model="state.password" type="password" placeholder="Senha"
-                :error="errors.password" />
-
-            <BaseButton type="submit" :disabled="!isFormValid || isLoading" :loading="isLoading" class="w-full">
+            <BaseButton type="submit" :disabled="loading" :loading="loading" class="w-full">
                 Login
             </BaseButton>
 

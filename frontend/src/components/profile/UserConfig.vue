@@ -1,12 +1,13 @@
 <script setup lang="ts">
-import { onMounted, reactive, ref, computed } from 'vue'
+import { onMounted, ref, computed } from 'vue'
 import CardContainer from '../../components/ui/card/CardContainer.vue'
 import { useApi } from '../../composables/useApi'
 import BaseButton from '../../components/ui/BaseButton.vue'
 import { useToast } from '../../composables/useToast'
 import InputField from '../ui/form/InputField.vue'
-import { useConfigValidation } from '../../composables/useConfigValidation'
 import { nullToEmpty } from '../../helper/string.helper'
+import * as yup from "yup";
+import { useForm } from 'vee-validate'
 
 interface UserConfig {
     linkedin: string
@@ -15,22 +16,47 @@ interface UserConfig {
     cellphone: string
 }
 
-const state = reactive<UserConfig>({
-    linkedin: "",
-    github: "",
-    portfolio: "",
-    cellphone: "",
+const configSchema = yup.object({
+    linkedin: yup
+        .string()
+        .url("Informe uma URL válida")
+        .nullable()
+        .notRequired(),
+
+    github: yup
+        .string()
+        .url("Informe uma URL válida")
+        .nullable()
+        .notRequired(),
+
+    portfolio: yup
+        .string()
+        .url("Informe uma URL válida")
+        .nullable()
+        .notRequired(),
+
+    cellphone: yup
+        .string()
+        .matches(
+            /^(?:\+55\s?)?(?:\(?\d{2}\)?\s?)?(?:9\d{4}|\d{4})-?\d{4}$/,
+            "Informe um celular válido"
+        )
+        .nullable()
+        .notRequired(),
+});
+
+const { handleSubmit, resetForm, values } = useForm({
+    validationSchema: configSchema
 })
 
 const userConfig = ref<UserConfig | null>(null)
 
 const { api, loading: isLoading } = useApi()
-const { errors, isFormValid, validateUrl, validatePhone } = useConfigValidation(state)
 const { show } = useToast()
 
 const completionPercentage = computed(() => {
-    const total = Object.keys(state).length
-    const filled = Object.values(state).filter(v => v?.trim()?.length > 0).length
+    const total = Object.keys(values).length
+    const filled = Object.values(values).filter(v => v?.trim()?.length > 0).length
     return Math.round((filled / total) * 100)
 })
 
@@ -38,32 +64,37 @@ const loadUserConfig = async () => {
     try {
         const { data } = await api.get('/user-config/all')
         const normalized = nullToEmpty(data)
-        Object.assign(state, normalized)
+
+        resetForm({
+            values: {
+                linkedin: normalized.linkedin,
+                github: normalized.github,
+                portfolio: normalized.portfolio,
+                cellphone: normalized.cellphone
+            }
+        })
+
         userConfig.value = data
-    } catch (err) {
-        console.error(err)
+    } catch (err: any) {
         show({
-            message: 'Erro ao carregar configurações.',
+            message: err.message || 'Erro ao carregar configurações.',
             type: 'error'
         })
     }
 }
 
-const upsertUserConfigData = async () => {
-    if (!isFormValid.value) return
-
+const upsertUserConfigData = handleSubmit(async (form) => {
     try {
-        await api.post('/user-config/upsert', { ...state })
+        await api.post('/user-config/upsert', form)
         await loadUserConfig()
         show('Informações atualizadas com sucesso!')
-    } catch (err) {
-        console.error(err)
+    } catch (err: any) {
         show({
-            message: 'Erro ao salvar configurações.',
+            message: err.message || 'Erro ao salvar configurações.',
             type: 'error'
         })
     }
-}
+})
 
 onMounted(loadUserConfig)
 </script>
@@ -89,40 +120,19 @@ onMounted(loadUserConfig)
 
         <form class="space-y-6" @submit.prevent="upsertUserConfigData">
             <div class="grid md:grid-cols-2 gap-4">
-                <div>
-                    <InputField label="Telefone" v-model="state.cellphone" :error="errors.cellphone"
-                        placeholder="(35) 99999-9999" @blur="validatePhone(state.cellphone)" />
-                    <p class="text-xs text-gray-500 mt-1">
-                        Número que poderá aparecer em seus documentos.
-                    </p>
-                </div>
+                <InputField label="Telefone" name="cellphone" placeholder="(35) 99999-9999"
+                    helper=" Número que poderá aparecer em seus documentos." />
 
-                <div>
-                    <InputField label="LinkedIn" v-model="state.linkedin" :error="errors.linkedin"
-                        placeholder="https://linkedin.com/in/seu-usuario"
-                        @blur="validateUrl('linkedin', state.linkedin)" />
-                    <p class="text-xs text-gray-500 mt-1">
-                        Link público do seu perfil profissional.
-                    </p>
-                </div>
+                <InputField label="LinkedIn" name="linkedin" placeholder=" https://linkedin.com/in/seu-usuario"
+                    helper="Link público do seu perfil profissional." />
             </div>
 
             <div class="grid md:grid-cols-2 gap-4">
-                <div>
-                    <InputField label="GitHub" v-model="state.github" :error="errors.github"
-                        placeholder="https://github.com/seu-usuario" @blur="validateUrl('github', state.github)" />
-                    <p class="text-xs text-gray-500 mt-1">
-                        Repositórios e projetos públicos.
-                    </p>
-                </div>
+                <InputField label="GitHub" name="github" placeholder="https://github.com/seu-usuario"
+                    helper=" Repositórios e projetos públicos." />
 
-                <div>
-                    <InputField label="Portfólio" v-model="state.portfolio" :error="errors.portfolio"
-                        placeholder="https://seuportfolio.com" @blur="validateUrl('portfolio', state.portfolio)" />
-                    <p class="text-xs text-gray-500 mt-1">
-                        Site pessoal ou página com seus trabalhos.
-                    </p>
-                </div>
+                <InputField label="Portfólio" name="portfolio" placeholder="https://seuportfolio.com"
+                    helper="Site pessoal ou página com seus trabalhos." />
             </div>
 
             <BaseButton type="submit" class="w-full" :disabled="isLoading" :loading="isLoading">

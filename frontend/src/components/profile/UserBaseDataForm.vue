@@ -1,11 +1,13 @@
 <script setup lang="ts">
-import { reactive, watch } from 'vue'
+import { watch } from 'vue'
 import { useApi } from '../../composables/useApi'
 import { useToast } from '../../composables/useToast'
 import BaseButton from '../../components/ui/BaseButton.vue'
 import InputField from '../../components/ui/form/InputField.vue'
 import TextAreaField from '../../components/ui/form/TextAreaField.vue'
 import BaseModal from '../ui/modal/BaseModal.vue'
+import * as yup from "yup"
+import { useForm, useFieldArray } from 'vee-validate'
 
 type Experience = {
     title: string; company: string; period: string
@@ -16,6 +18,8 @@ type Project = {
     name: string
     highlightsString: string; technologiesString: string
 }
+
+type BaseDataForm = yup.InferType<typeof baseDataSchema>
 
 const props = defineProps<{
     type: string | null
@@ -28,12 +32,57 @@ const emit = defineEmits(['close', 'saved', 'update:isOpen'])
 const { api, loading: isLoading } = useApi()
 const { show } = useToast()
 
-const state = reactive({
-    summary: '',
-    skillsString: '',
-    experiences: [] as Experience[],
-    projects: [] as Project[],
+const baseDataSchema = yup.object({
+    summary: yup
+        .string()
+        .min(10, 'Resumo muito curto')
+        .required('Resumo obrigatório'),
+
+    skillsString: yup.string(),
+
+    experiences: yup.array().of(
+        yup.object({
+            title: yup.string().required('Cargo obrigatório'),
+            company: yup.string().required('Empresa obrigatória'),
+            period: yup.string().required('Período obrigatório'),
+            responsibilitiesString: yup.string()
+                .min(3, 'Adicione ao menos uma responsabilidade'),
+            technologiesString: yup.string(),
+        })
+    ),
+
+    projects: yup.array().of(
+        yup.object({
+            name: yup.string().required('Nome obrigatório'),
+            highlightsString: yup
+                .string()
+                .min(3, 'Adicione ao menos um destaque'),
+            technologiesString: yup.string(),
+        })
+    ),
 })
+
+const { handleSubmit, resetForm } = useForm<BaseDataForm>({
+    validationSchema: baseDataSchema,
+    initialValues: {
+        summary: '',
+        skillsString: '',
+        experiences: [],
+        projects: [],
+    },
+})
+
+const {
+    fields: experienceFields,
+    push: pushExperience,
+    remove: removeExperience,
+} = useFieldArray('experiences')
+
+const {
+    fields: projectFields,
+    push: pushProject,
+    remove: removeProject,
+} = useFieldArray('projects')
 
 const newExperience = (): Experience => ({
     title: '', company: '', period: '',
@@ -45,33 +94,40 @@ const newProject = (): Project => ({
 })
 
 const initForm = () => {
-    state.summary = ''
-    state.skillsString = ''
-    state.experiences = []
-    state.projects = []
-
     if (!props.initialData) {
-        state.experiences.push(newExperience())
-        state.projects.push(newProject())
+        resetForm({
+            values: {
+                summary: '',
+                skillsString: '',
+                experiences: [newExperience()],
+                projects: [newProject()],
+            },
+        })
+
         return
     }
 
     try {
         const data = JSON.parse(props.initialData)
-        state.summary = data.summary ?? ''
-        state.skillsString = (data.skills ?? []).join(', ')
-        state.experiences = (data.experiences ?? []).map((e: any) => ({
-            ...e,
-            responsibilitiesString: (e.responsibilities ?? []).join('\n'),
-            technologiesString: (e.technologies ?? []).join(', '),
-        }))
-        state.projects = (data.projects ?? []).map((p: any) => ({
-            ...p,
-            highlightsString: (p.highlights ?? []).join('\n'),
-            technologiesString: (p.technologies ?? []).join(', '),
-        }))
+
+        resetForm({
+            values: {
+                summary: data.summary ?? '',
+                skillsString: (data.skills ?? []).join(', '),
+                experiences: (data.experiences ?? []).map((e: any) => ({
+                    ...e,
+                    responsibilitiesString: (e.responsibilities ?? []).join('\n'),
+                    technologiesString: (e.technologies ?? []).join(', '),
+                })),
+                projects: (data.projects ?? []).map((p: any) => ({
+                    ...p,
+                    highlightsString: (p.highlights ?? []).join('\n'),
+                    technologiesString: (p.technologies ?? []).join(', '),
+                })),
+            },
+        })
     } catch (err) {
-        console.error('Erro ao parsear initialData', err)
+        console.error(err)
     }
 }
 
@@ -83,28 +139,59 @@ const handleClose = () => {
     emit('update:isOpen', false)
 }
 
-const save = async () => {
-    const skills = state.skillsString.split(',').map(s => s.trim()).filter(Boolean)
+const save = handleSubmit(async (form) => {
+    const skills = form.skillsString
+        ?.split(',')
+        .map(s => s.trim())
+        .filter(Boolean)
 
-    const experiences = state.experiences.map(e => ({
-        title: e.title, company: e.company, period: e.period,
-        responsibilities: e.responsibilitiesString.split('\n').map(s => s.trim()).filter(Boolean),
-        technologies: e.technologiesString.split(',').map(s => s.trim()).filter(Boolean),
+    const experiences = form.experiences?.map(e => ({
+        title: e.title,
+        company: e.company,
+        period: e.period,
+        responsibilities: e.responsibilitiesString
+            ?.split('\n')
+            .map(s => s.trim())
+            .filter(Boolean),
+        technologies: e.technologiesString
+            ?.split(',')
+            .map(s => s.trim())
+            .filter(Boolean),
     }))
 
-    const projects = state.projects.map(p => ({
+    const projects = form.projects?.map(p => ({
         name: p.name,
-        highlights: p.highlightsString.split('\n').map(s => s.trim()).filter(Boolean),
-        technologies: p.technologiesString.split(',').map(s => s.trim()).filter(Boolean),
+        highlights: p.highlightsString
+            ?.split('\n')
+            .map(s => s.trim())
+            .filter(Boolean),
+        technologies: p.technologiesString
+            ?.split(',')
+            .map(s => s.trim())
+            .filter(Boolean),
     }))
 
-    const description = JSON.stringify({ summary: state.summary, skills, experiences, projects }, null, 2)
+    const description = JSON.stringify(
+        { summary: form.summary, skills, experiences, projects },
+        null,
+        2
+    )
 
-    await api.post('/base-data/upsert', { type: props.type, description })
-    show({ message: 'Dados salvos com sucesso', type: 'success' })
-    emit('saved')
-    emit('update:isOpen', false)
-}
+    try {
+        await api.post('/base-data/upsert', {
+            type: props.type,
+            description,
+        })
+
+        show('Dados salvos com sucesso')
+        emit('saved')
+        emit('update:isOpen', false)
+    } catch (err: any) {
+        show({
+            message: err.message ?? "Erro ao salvar configurações base."
+        })
+    }
+})
 
 const modalTitle = `Editar Base de ${props.type === 'resume' ? 'Currículo' : 'Proposta Freelance'}`
 </script>
@@ -112,31 +199,43 @@ const modalTitle = `Editar Base de ${props.type === 'resume' ? 'Currículo' : 'P
 <template>
     <BaseModal :isOpen="isOpen" :title="modalTitle" size="xl" @close="handleClose">
         <form @submit.prevent="save" id="save-base-data-form" class="space-y-4">
-            <TextAreaField label="Resumo Profissional" v-model="state.summary" :rows="4"
+            <TextAreaField name="summary" label="Resumo Profissional"
                 placeholder="3-4 linhas, resultados, tecnologias" />
-            <InputField label="Skills / Tecnologias (vírgula separada)" v-model="state.skillsString"
-                placeholder="Node.js, NestJS, PostgreSQL" />
+            <InputField name="skillsString" label="Skills" placeholder="Node.js, NestJS, PostgreSQL" />
 
-            <div v-for="(exp, i) in state.experiences" :key="i" class="border p-4 rounded-md space-y-2">
+            <div v-for="(field, i) in experienceFields" :key="field.key" class="border p-4 rounded-md space-y-2">
                 <h3 class="font-semibold">Experiência {{ i + 1 }}</h3>
-                <InputField label="Cargo" v-model="exp.title" />
-                <InputField label="Empresa" v-model="exp.company" />
-                <InputField label="Período" v-model="exp.period" placeholder="Jan 2020 - Dez 2022" />
-                <TextAreaField label="Responsabilidades (uma por linha)" v-model="exp.responsibilitiesString"
-                    :rows="3" />
-                <InputField label="Tecnologias (vírgula separada)" v-model="exp.technologiesString" />
+
+                <InputField :name="`experiences[${i}].title`" label="Cargo" />
+                <InputField :name="`experiences[${i}].company`" label="Empresa" />
+                <InputField :name="`experiences[${i}].period`" label="Período" />
+
+                <TextAreaField :name="`experiences[${i}].responsibilitiesString`" label="Responsabilidades" />
+
+                <InputField :name="`experiences[${i}].technologiesString`" label="Tecnologias" />
+
+                <BaseButton type="button" variant="ghost" @click="removeExperience(i)">
+                    Remover
+                </BaseButton>
             </div>
-            <BaseButton type="button" variant="ghost" @click="state.experiences.push(newExperience())">
+
+            <BaseButton type="button" variant="ghost" @click="pushExperience(newExperience())">
                 + Adicionar Experiência
             </BaseButton>
 
-            <div v-for="(proj, i) in state.projects" :key="i" class="border p-4 rounded-md space-y-2">
-                <h3 class="font-semibold">Projeto {{ i + 1 }}</h3>
-                <InputField label="Nome do projeto" v-model="proj.name" />
-                <TextAreaField label="Destaques (uma por linha)" v-model="proj.highlightsString" :rows="3" />
-                <InputField label="Tecnologias (vírgula separada)" v-model="proj.technologiesString" />
+            <div v-for="(field, i) in projectFields" :key="field.key" class="border p-4 rounded-md space-y-2">
+                <InputField :name="`projects[${i}].name`" label="Nome do projeto" />
+
+                <TextAreaField :name="`projects[${i}].highlightsString`" label="Destaques" />
+
+                <InputField :name="`projects[${i}].technologiesString`" label="Tecnologias" />
+
+                <BaseButton type="button" variant="ghost" @click="removeProject(i)">
+                    Remover
+                </BaseButton>
             </div>
-            <BaseButton type="button" variant="ghost" @click="state.projects.push(newProject())">
+
+            <BaseButton type="button" variant="ghost" @click="pushProject(newProject())">
                 + Adicionar Projeto
             </BaseButton>
         </form>

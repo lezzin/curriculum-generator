@@ -1,33 +1,37 @@
 <script setup lang="ts">
-import { reactive } from "vue"
 import BaseButton from "../../components/ui/BaseButton.vue"
 import AppTitle from "../../components/layout/AppTitle.vue"
 import TextAreaField from "../../components/ui/form/TextAreaField.vue"
-import { useFreelanceValidation } from "../../composables/useFreelanceValidation"
 import { useApi } from "../../composables/useApi"
 import { useToast } from "../../composables/useToast"
-
+import * as yup from "yup";
+import { useForm } from "vee-validate"
 const { show } = useToast()
 
-const state = reactive({
-    solicitationText: "",
-    error: "",
+const freelanceSchema = yup.object({
+    solicitationText: yup.string()
+        .required("Campo obrigatório")
+        .min(25, "Mínimo 25 caracteres")
+        .max(3000, "Máximo 3000 caracteres"),
 })
 
-const { api, loading: isSendingRequest, request } = useApi()
-const { errors, validateForm, isFormValid } = useFreelanceValidation(state)
+const { handleSubmit } = useForm({
+    validationSchema: freelanceSchema,
+    initialValues: {
+        solicitationText: ''
+    }
+})
 
-async function generateProposal() {
-    if (!validateForm()) return
+const { api, loading, request } = useApi()
 
+const generateProposal = handleSubmit(async (form) => {
     try {
         await request(async () => {
             const response = await api.post("/freelance/proposal/generate", {
-                solicitation: state.solicitationText,
+                solicitation: form.solicitationText,
             })
 
             show(response.data.message ?? "Solicitação de proposta enviada com sucesso!")
-            state.solicitationText = ""
         })
     } catch (err: any) {
         show({
@@ -35,24 +39,21 @@ async function generateProposal() {
             type: "error",
         })
     }
-}
+})
 </script>
 
 <template>
     <AppTitle title="Gerar Proposta Personalizada"
         subtitle="Crie uma proposta estratégica com base na solicitação recebida." />
 
-    <div class="space-y-4 mt-6">
-        <TextAreaField label="Descrição completa da solicitação" v-model="state.solicitationText" :rows="10"
-            placeholder="Cole aqui todos os detalhes da solicitação. Quanto mais informações, mais personalizada será a proposta."
-            :error="errors.solicitationText" />
+    <form class="space-y-10" @submit.prevent="generateProposal">
+        <div class="space-y-4">
+            <TextAreaField name="solicitationText" label="Descrição completa da solicitação" :rows="10"
+                placeholder="Cole aqui todos os detalhes da solicitação. Quanto mais informações, mais personalizada será a proposta." />
 
-        <BaseButton @click="generateProposal" :disabled="!isFormValid || isSendingRequest" :loading="isSendingRequest">
-            Gerar proposta personalizada
-        </BaseButton>
-
-        <p v-if="state.error" class="text-red-500 text-sm">
-            {{ state.error }}
-        </p>
-    </div>
+            <BaseButton type="submit" :disabled="loading" :loading="loading">
+                Gerar proposta personalizada
+            </BaseButton>
+        </div>
+    </form>
 </template>

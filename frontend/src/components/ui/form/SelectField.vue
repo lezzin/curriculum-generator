@@ -1,38 +1,29 @@
 <script setup lang="ts">
-defineProps<{
+import { useField } from 'vee-validate';
+
+const props = defineProps<{
     label: string
-    modelValue: string
+    name: string
     disabled?: boolean
-    error?: string
 }>()
 
-const emit = defineEmits<{
-    (e: "update:modelValue", value: string): void
-}>()
-
-const handleChange = (event: Event) => {
-    const target = event.target as HTMLSelectElement
-    emit("update:modelValue", target.value)
-}
+const { value, errorMessage, handleBlur } = useField(props.name)
 </script>
 
 <template>
-    <div class="flex flex-col gap-1">
-        <label class="text-sm font-medium">
+    <div class="form-control">
+        <label>
             {{ label }}
         </label>
 
-        <select :value="modelValue" @change="handleChange" :disabled="disabled" :class="[
-            'p-2 border rounded-lg focus:outline-none focus:ring-2 disabled:opacity-50',
-            error
-                ? 'border-red-500 focus:ring-red-500'
-                : 'focus:ring-black'
-        ]">
+        <select :id="name" :name="name" v-model="value" :disabled="disabled" @blur="handleBlur"
+            :class="errorMessage && 'error-field'">
+            <option value="" disabled>Selecione uma opção</option>
             <slot></slot>
         </select>
 
-        <p v-if="error" class="text-red-500 text-xs">
-            {{ error }}
+        <p v-if="errorMessage" class="error-text">
+            {{ errorMessage }}
         </p>
     </div>
 </template>

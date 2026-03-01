@@ -1,49 +1,58 @@
 <script setup lang="ts">
-import { computed, reactive } from "vue"
+import { computed } from "vue"
 import { useApi } from "../../composables/useApi"
-import { useResumeValidation } from "../../composables/useResumeValidation"
 import BaseButton from "../../components/ui/BaseButton.vue"
 import TextAreaField from "../../components/ui/form/TextAreaField.vue"
 import SelectField from "../../components/ui/form/SelectField.vue"
 import AppTitle from "../../components/layout/AppTitle.vue"
 import { useToast } from "../../composables/useToast"
-import { BASE_TEMPLATE_TYPES, type BaseTemplateType } from "../../interfaces/resume.interfaces"
+import { BASE_TEMPLATE_TYPES } from "../../interfaces/resume.interfaces"
 import { capitalizeFirst } from "../../helper/string.helper"
+import * as yup from 'yup';
+import { useForm } from "vee-validate"
 
 const { show } = useToast()
 
-const state = reactive({
-    jobText: "",
-    language: "PT",
-    seniority: "Junior",
-    focusArea: "Backend",
-    market: "Brazil",
-    templateType: BASE_TEMPLATE_TYPES.DEFAULT as BaseTemplateType,
+const resumeSchema = yup.object({
+    jobText: yup.string().required("Campo obrigatório").min(25, "Mínimo 25 caracteres").max(3000, "Máximo 3000 caracteres"),
+    language: yup.string().required("Campo obrigatório"),
+    seniority: yup.string().required("Campo obrigatório"),
+    focusArea: yup.string().required("Campo obrigatório"),
+    market: yup.string().required("Campo obrigatório"),
+    templateType: yup.string().required("Campo obrigatório"),
 })
 
-const { api, error, loading: isSendingRequest, request } = useApi()
-const { errors, validateJobText, isFormValid } = useResumeValidation(state)
+const { handleSubmit } = useForm({
+    validationSchema: resumeSchema,
+    initialValues: {
+        language: 'PT',
+        seniority: 'Junior',
+        focusArea: 'Backend',
+        market: 'Brazil',
+        templateType: 'default',
+        jobText: '',
+    }
+})
+
+const { api, loading, request } = useApi()
 
 const templateTypes = computed(() => Object.values(BASE_TEMPLATE_TYPES))
 
-async function generateResume() {
-    if (!validateJobText()) return
-
+const generateResume = handleSubmit(async (form) => {
     try {
         await request(async () => {
             const response = await api.post("/resume/generate", {
-                jobDescription: state.jobText,
+                jobDescription: form.jobText,
                 options: {
-                    language: state.language,
-                    targetSeniority: state.seniority,
-                    focusArea: state.focusArea,
-                    market: state.market,
-                    template: state.templateType
+                    language: form.language,
+                    targetSeniority: form.seniority,
+                    focusArea: form.focusArea,
+                    market: form.market,
+                    template: form.templateType
                 }
             })
 
             show(response.data.message ?? "Solicitação de currículo enviada com sucesso!")
-            state.jobText = ""
         });
     } catch (err: any) {
         show({
@@ -51,63 +60,57 @@ async function generateResume() {
             type: 'error',
         });
     }
-}
+})
 </script>
 
 <template>
     <AppTitle title="Gerar Currículo Personalizado"
         subtitle="Crie um currículo estratégico com base em uma vaga específica." />
 
-    <div class="grid md:grid-cols-2 gap-4">
-        <SelectField label="Idioma do currículo" v-model="state.language" :error="errors.language">
-            <option value="" disabled>Selecione o idioma</option>
-            <option value="PT">Português</option>
-            <option value="EN">Inglês</option>
-        </SelectField>
+    <form class="space-y-10" @submit.prevent="generateResume">
+        <div class="space-y-4">
+            <div class="grid md:grid-cols-2 gap-4">
+                <SelectField label="Idioma do currículo" name="language">
+                    <option value="PT">Português</option>
+                    <option value="EN">Inglês</option>
+                </SelectField>
 
-        <SelectField label="Tipo de template" v-model="state.templateType" :error="errors.templateType">
-            <option disabled value="">Selecione uma opção</option>
-            <option v-for="type in templateTypes" :key="type" :value="type">
-                {{ capitalizeFirst(type) }}
-            </option>
-        </SelectField>
-    </div>
+                <SelectField label="Tipo de template" name="templateType">
+                    <option v-for="type in templateTypes" :key="type" :value="type">
+                        {{ capitalizeFirst(type) }}
+                    </option>
+                </SelectField>
+            </div>
 
-    <div class="grid md:grid-cols-3 gap-4">
-        <SelectField label="Nível de senioridade" v-model="state.seniority" :error="errors.seniority">
-            <option value="" disabled>Selecione o nível</option>
-            <option value="Junior">Júnior</option>
-            <option value="Mid-level">Pleno</option>
-            <option value="Senior">Sênior</option>
-        </SelectField>
+            <div class="grid md:grid-cols-3 gap-4">
+                <SelectField label="Nível de senioridade" name="seniority">
+                    <option value="Junior">Júnior</option>
+                    <option value="Mid-level">Pleno</option>
+                    <option value="Senior">Sênior</option>
+                </SelectField>
 
-        <SelectField label="Área principal de atuação" v-model="state.focusArea" :error="errors.focusArea">
-            <option value="" disabled>Selecione a área</option>
-            <option value="Backend">Backend</option>
-            <option value="Fullstack">Full Stack</option>
-            <option value="Microservices">Microsserviços</option>
-            <option value="DevOps">DevOps</option>
-        </SelectField>
+                <SelectField label="Área principal de atuação" name="focusArea">
+                    <option value="Backend">Backend</option>
+                    <option value="Fullstack">Full Stack</option>
+                    <option value="Microservices">Microsserviços</option>
+                    <option value="DevOps">DevOps</option>
+                </SelectField>
 
-        <SelectField label="Mercado de destino" v-model="state.market" :error="errors.market">
-            <option value="" disabled>Selecione o mercado</option>
-            <option value="Brazil">Brasil</option>
-            <option value="US">Estados Unidos</option>
-            <option value="Europe">Europa</option>
-        </SelectField>
-    </div>
+                <SelectField label="Mercado de destino" name="market">
+                    <option value="Brazil">Brasil</option>
+                    <option value="US">Estados Unidos</option>
+                    <option value="Europe">Europa</option>
+                </SelectField>
+            </div>
 
-    <div class="space-y-4">
-        <TextAreaField label="Descrição completa da vaga" v-model="state.jobText" :rows="10"
-            placeholder="Cole aqui a descrição completa da vaga. Quanto mais detalhes, melhor será a personalização do currículo."
-            :error="errors.jobText" />
+            <div class="space-y-4">
+                <TextAreaField label="Descrição completa da vaga" name="jobText" :rows="10"
+                    placeholder="Cole aqui a descrição completa da vaga. Quanto mais detalhes, melhor será a personalização do currículo." />
 
-        <BaseButton @click="generateResume" :disabled="!isFormValid || isSendingRequest" :loading="isSendingRequest">
-            Gerar currículo personalizado
-        </BaseButton>
-
-        <p v-if="error" class="text-red-500 text-sm">
-            {{ error }}
-        </p>
-    </div>
+                <BaseButton type="submit" :disabled="loading" :loading="loading">
+                    Gerar currículo personalizado
+                </BaseButton>
+            </div>
+        </div>
+    </form>
 </template>

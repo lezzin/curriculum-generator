@@ -1,39 +1,37 @@
 <script setup lang="ts">
-import { onMounted, reactive, watch } from 'vue';
+import { onMounted } from 'vue';
 import { useApi } from '../../composables/useApi';
 import { useToast } from '../../composables/useToast';
 import BaseButton from '../../components/ui/BaseButton.vue';
 import InputField from '../../components/ui/form/InputField.vue';
 import AppTitle from '../../components/layout/AppTitle.vue';
 import { useAuth } from '../../composables/useAuth';
-import { useAuthValidation } from '../../composables/useAuthValidation';
 import { useRouter } from 'vue-router';
 import CardContainer from '../../components/ui/card/CardContainer.vue';
+import * as yup from 'yup';
+import { useForm } from 'vee-validate';
 
-const state = reactive({
-    email: '',
-    password: '',
-    username: '',
-});
+const signupSchema = yup.object({
+    name: yup.string().required("Campo obrigatório").min(3, "Mínimo 3 caracteres"),
+    email: yup.string().email("Email inválido").required("Campo obrigatório"),
+    password: yup.string().required("Campo obrigatório").min(3, "Mínimo 3 caracteres")
+})
+
+const { handleSubmit } = useForm({
+    validationSchema: signupSchema
+})
 
 const router = useRouter();
 
-const { errors, validateRequired, isFormValid } = useAuthValidation(state);
 const { user, checkAuth } = useAuth();
 
 const { request, api, loading: isLoading } = useApi();
 const { show } = useToast();
 
-const signup = async () => {
-    if (!isFormValid.value) return;
-
+const signup = handleSubmit(async (form) => {
     try {
         await request(() =>
-            api.post('/user/create', {
-                name: state.username,
-                email: state.email,
-                password: state.password,
-            })
+            api.post('/user/create', form)
         );
 
         show('Conta criada com sucesso!');
@@ -45,11 +43,7 @@ const signup = async () => {
             type: 'error',
         });
     }
-};
-
-watch(() => state.email, v => validateRequired('email', v));
-watch(() => state.password, v => validateRequired('password', v));
-watch(() => state.username, v => validateRequired('username', v));
+});
 
 onMounted(() => {
     if (user.value) {
@@ -63,15 +57,11 @@ onMounted(() => {
         <form class="space-y-4" @submit.prevent="signup()">
             <AppTitle title="Crie sua conta" subtitle="Preencha os dados abaixo" />
 
-            <InputField label="Nome de Usuário" v-model="state.username" placeholder="Nome de Usuário"
-                :error="errors.username" />
+            <InputField label="Nome de usuário" name="name" type="username" />
+            <InputField label="Email" name="email" type="email" />
+            <InputField label="Senha" name="password" type="password" />
 
-            <InputField label="Email" v-model="state.email" placeholder="Email" type="email" :error="errors.email" />
-
-            <InputField label="Senha" v-model="state.password" type="password" placeholder="Senha"
-                :error="errors.password" />
-
-            <BaseButton type="submit" :disabled="!isFormValid || isLoading" :loading="isLoading" class="w-full">
+            <BaseButton type="submit" :disabled="isLoading" :loading="isLoading" class="w-full">
                 Criar Conta
             </BaseButton>
 

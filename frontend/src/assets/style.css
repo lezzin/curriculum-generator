@@ -5,3 +5,29 @@
 html {
     scroll-behavior: smooth;
 }
+
+.form-control {
+    @apply flex flex-col gap-1;
+
+    >label {
+        @apply text-sm font-medium;
+    }
+
+    select,
+    textarea,
+    input {
+        @apply p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-black disabled:opacity-50
+    }
+
+    textarea {
+        @apply resize-none;
+    }
+
+    .error-field {
+        @apply border-red-500 focus:ring-red-500;
+    }
+
+    .error-text {
+        @apply text-red-500 text-xs
+    }
+}
