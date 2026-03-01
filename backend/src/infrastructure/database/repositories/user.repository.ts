@@ -17,7 +17,7 @@ export class TypeOrmUserRepository implements UserRepository {
     }
 
     async findByEmail(email: string): Promise<User | null> {
-        const entity = await this.ormRepo.findOne({ where: { email } });
+        const entity = await this.ormRepo.findOneBy({ email });
         if (!entity) return null;
 
         return new User(
@@ -29,7 +29,7 @@ export class TypeOrmUserRepository implements UserRepository {
     }
 
     async findById(id: string): Promise<User | null> {
-        const entity = await this.ormRepo.findOne({ where: { id } });
+        const entity = await this.ormRepo.findOneBy({ id });
         if (!entity) return null;
 
         return new User(
