@@ -1,66 +1,72 @@
 <script setup lang="ts">
-import { onMounted } from 'vue';
-import { useApi } from '../../composables/useApi';
-import { useToast } from '../../composables/useToast';
-import BaseButton from '../../components/ui/BaseButton.vue';
-import InputField from '../../components/ui/form/InputField.vue';
-import AppTitle from '../../components/layout/AppTitle.vue';
-import { useAuth } from '../../composables/useAuth';
-import { useRouter } from 'vue-router';
-import CardContainer from '../../components/ui/card/CardContainer.vue';
-import { useForm } from 'vee-validate';
-import { signupSchema, type SignUpForm } from '../../components/validation/schemas/signup.schema';
+import { watch } from 'vue'
+import { useForm } from 'vee-validate'
+import { useRouter } from 'vue-router'
+import { useApi } from '../../composables/useApi'
+import { useToast } from '../../composables/useToast'
+import { useAuth } from '../../composables/useAuth'
+
+import BaseButton from '../../components/ui/BaseButton.vue'
+import InputField from '../../components/ui/form/InputField.vue'
+import AppTitle from '../../components/layout/AppTitle.vue'
+import CardContainer from '../../components/ui/card/CardContainer.vue'
+
+import { signupSchema, type SignUpForm } from '../../components/validation/schemas/signup.schema'
 
 const { handleSubmit } = useForm<SignUpForm>({
     validationSchema: signupSchema
 })
 
-const router = useRouter();
-
-const { user, checkAuth } = useAuth();
-
-const { request, api, loading: isLoading } = useApi();
-const { show } = useToast();
+const router = useRouter()
+const { user, checkAuth } = useAuth()
+const { request, api, loading } = useApi()
+const { show } = useToast()
 
 const signup = handleSubmit(async (form) => {
     try {
         await request(() =>
             api.post('/user/create', form)
-        );
+        )
 
-        show('Conta criada com sucesso!');
-        checkAuth();
-        router.push('/');
+        await checkAuth()
+        router.replace('/')
     } catch (err: any) {
-        show({
-            message: err.message || 'Erro ao criar conta.',
-            type: 'error',
-        });
-    }
-});
+        const message =
+            err.response?.status === 409
+                ? 'Este email já está cadastrado.'
+                : 'Não foi possível criar sua conta. Tente novamente.'
 
-onMounted(() => {
-    if (user.value) {
-        router.push('/');
+        show({
+            message,
+            type: 'error'
+        })
     }
 })
+
+watch(user, (value) => {
+    if (value) {
+        router.replace('/')
+    }
+}, { immediate: true })
 </script>
 
 <template>
     <CardContainer class="max-w-lg mx-auto" size="lg">
-        <form class="space-y-4" @submit.prevent="signup()">
-            <AppTitle title="Crie sua conta" subtitle="Preencha os dados abaixo" />
+        <form class="space-y-5" @submit.prevent="signup">
+            <AppTitle title="Crie sua conta 🚀" subtitle="Leva menos de 1 minuto para começar" />
 
-            <InputField label="Nome de usuário" name="name" type="username" />
-            <InputField label="Email" name="email" type="email" />
-            <InputField label="Senha" name="password" type="password" />
+            <InputField label="Nome de usuário" name="name" type="text" autocomplete="username" :disabled="loading" />
+            <InputField label="Email" name="email" type="email" autocomplete="email" :disabled="loading" />
+            <InputField label="Senha" name="password" type="password" autocomplete="new-password" :disabled="loading" />
 
-            <BaseButton type="submit" :disabled="isLoading" :loading="isLoading" class="w-full">
-                Criar Conta
+            <BaseButton type="submit" class="w-full" :loading="loading" :disabled="loading">
+                Criar conta
             </BaseButton>
 
-            <router-link to="/auth/login" class="text-center block text-sm text-blue-500 hover:underline">
-                Já tem uma conta? Faça login
+            <router-link to="/auth/login"
+                class="text-center block text-sm text-gray-500 hover:text-blue-500 transition">
+                Já tem uma conta?
+                <span class="font-medium">Faça login</span>
             </router-link>
         </form>
     </CardContainer>

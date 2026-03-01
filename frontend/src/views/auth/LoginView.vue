@@ -1,16 +1,19 @@
 <script setup lang="ts">
+import { ref } from 'vue'
 import { useForm } from 'vee-validate'
 import { useRouter } from 'vue-router'
 import { useApi } from '../../composables/useApi'
 import { useToast } from '../../composables/useToast'
 import { useAuth } from '../../composables/useAuth'
+
 import AppTitle from '../../components/layout/AppTitle.vue'
 import CardContainer from '../../components/ui/card/CardContainer.vue'
 import BaseButton from '../../components/ui/BaseButton.vue'
 import InputField from '../../components/ui/form/InputField.vue'
-import { authSchema, type AuthForm } from '../../components/validation/schemas/auth.schema'
 import GoogleIcon from '../../components/icon/GoogleIcon.vue'
 import GithubIcon from '../../components/icon/GithubIcon.vue'
+
+import { authSchema, type AuthForm } from '../../components/validation/schemas/auth.schema'
 
 const { handleSubmit } = useForm<AuthForm>({
     validationSchema: authSchema
@@ -21,47 +24,66 @@ const { request, api, loading } = useApi()
 const { show } = useToast()
 const { checkAuth } = useAuth()
 
+const redirecting = ref(false)
+
 const login = handleSubmit(async (form) => {
     try {
         await request(() => api.post('/auth/login', form))
-        show('Logado com sucesso!')
-        checkAuth()
-        router.push('/')
+        await checkAuth()
+        router.replace('/')
     } catch (err: any) {
         show({
             message: err.message || 'Erro ao fazer login.',
-            type: 'error',
-        });
+            type: 'error'
+        })
     }
 })
 
 const loginProvider = (provider: 'github' | 'google') => {
-    window.location.href = `${api.defaults.baseURL}/auth/${provider}`
+    redirecting.value = true
+    window.location.assign(`${api.defaults.baseURL}/auth/${provider}`)
 }
 </script>
 
 <template>
     <CardContainer class="max-w-lg mx-auto" size="lg">
-        <form class="space-y-4" @submit.prevent="login">
-            <AppTitle title="Bem-vindo de volta!" subtitle="Faça login para continuar" />
+        <form class="space-y-5" @submit.prevent="login">
+            <AppTitle title="Bem-vindo de volta 👋" subtitle="Entre na sua conta para continuar" />
 
-            <InputField label="Email" name="email" type="email" />
-            <InputField label="Senha" name="password" type="password" />
+            <InputField label="Email" name="email" type="email" autocomplete="email" :disabled="loading" />
+            <InputField label="Senha" name="password" type="password" autocomplete="current-password"
+                :disabled="loading" />
 
-            <BaseButton type="button" variant="outline" class="w-full" @click="loginProvider('google')">
-                <GoogleIcon class="w-7 h-7" /> Login com Google
+            <BaseButton type="submit" class="w-full" :loading="loading" :disabled="loading || redirecting">
+                Entrar
             </BaseButton>
 
-            <BaseButton type="button" variant="outline" class="w-full" @click="loginProvider('github')">
-                <GithubIcon class="w-7 h-7" /> Login com GitHub
+            <div class="relative my-4">
+                <div class="absolute inset-0 flex items-center">
+                    <div class="w-full border-t border-gray-200"></div>
+                </div>
+                <div class="relative flex justify-center text-sm">
+                    <span class="bg-white px-2 text-gray-500">
+                        ou continue com
+                    </span>
+                </div>
+            </div>
+
+            <BaseButton type="button" variant="outline" class="w-full" :disabled="loading || redirecting"
+                @click="loginProvider('google')">
+                <GoogleIcon class="w-5 h-5 mr-2" />
+                Continuar com Google
             </BaseButton>
 
-            <BaseButton type="submit" :disabled="loading" :loading="loading" class="w-full">
-                Login
+            <BaseButton type="button" variant="outline" class="w-full" :disabled="loading || redirecting"
+                @click="loginProvider('github')">
+                <GithubIcon class="w-5 h-5 mr-2" />
+                Continuar com GitHub
             </BaseButton>
 
-            <router-link to="/auth/signup" class="text-center block text-sm text-blue-500 hover:underline">
-                Não tem uma conta? Cadastre-se
+            <router-link to="/auth/signup"
+                class="text-center block text-sm text-gray-500 hover:text-blue-500 transition">
+                Não tem uma conta? <span class="font-medium">Cadastre-se</span>
             </router-link>
         </form>
     </CardContainer>
