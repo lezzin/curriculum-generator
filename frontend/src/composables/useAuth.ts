@@ -1,10 +1,11 @@
 import { ref } from "vue"
 import { useApi } from "./useApi";
 
-type User = {
+export type User = {
     id: number;
     name: string;
     email: string;
+    picture: string;
 }
 
 const { request, api } = useApi()

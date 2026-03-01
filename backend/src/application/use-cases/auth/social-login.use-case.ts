@@ -41,7 +41,7 @@ export class SocialLoginUseCase {
         )
 
         user.addProvider(newProvider)
-        user = await this.userRepository.save(user)
+        user = await this.userRepository.create(user)
 
         return this.generateToken(user)
     }

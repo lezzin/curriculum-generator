@@ -5,6 +5,7 @@ import { UserEntity } from 'src/infrastructure/database/entities/user.entity';
 import { TypeOrmUserRepository } from 'src/infrastructure/database/repositories/user.repository';
 import { RegisterUserUseCase } from 'src/application/use-cases/user/register-user.use-case';
 import { UserController } from 'src/presentation/controllers/user/user.controller';
+import { GetUserUseCase } from 'src/application/use-cases/user/get-user.use-case';
 
 @Module({
     imports: [TypeOrmModule.forFeature([UserEntity])],
@@ -23,7 +24,16 @@ import { UserController } from 'src/presentation/controllers/user/user.controlle
             },
             inject: [UserRepository],
         },
+        {
+            provide: GetUserUseCase,
+            useFactory: (
+                userRepository: UserRepository,
+            ) => {
+                return new GetUserUseCase(userRepository);
+            },
+            inject: [UserRepository],
+        },
     ],
-    exports: [UserRepository],
+    exports: [UserRepository, GetUserUseCase],
 })
 export class UserModule { }

@@ -78,7 +78,7 @@ const menus = [
                             <button @click="toggle"
                                 class="flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-gray-100 transition"
                                 aria-haspopup="true" :aria-expanded="isOpen">
-                                <UserAvatar :name="user.name" size="sm" />
+                                <UserAvatar :user="user" size="sm" />
 
                                 <div class="text-left hidden sm:block">
                                     <p class="text-sm font-medium leading-none">

@@ -6,7 +6,7 @@ const { user } = useAuth()
 
 <template>
     <header class="flex items-center gap-4 mb-8 p-4 bg-gray-50 rounded-lg">
-        <UserAvatar v-if="user?.name" :name="user.name" />
+        <UserAvatar v-if="user?.id" :user="user" />
 
         <div class="flex flex-col">
             <p class="text-lg font-semibold">

@@ -20,12 +20,6 @@ export class TypeOrmUserRepository implements UserRepository {
         return this.toDomain(saved)
     }
 
-    async save(user: User): Promise<User> {
-        const entity = this.toOrmEntity(user)
-        const saved = await this.ormRepo.save(entity)
-        return this.toDomain(saved)
-    }
-
     async findByEmail(email: string): Promise<User | null> {
         const entity = await this.ormRepo.findOne({
             where: { email },

@@ -20,7 +20,9 @@ export class LoginUseCase {
 
         // TODO validar isso aqui
         if (!user.password) {
-            throw new UnprocessableEntityException('Senha para usuário não encontrada');
+            throw new UnauthorizedException(
+                'Este usuário utiliza login social. Use seu provedor ou defina uma senha.'
+            );
         }
 
         const passwordMatch = await bcrypt.compare(body.password, user.password);

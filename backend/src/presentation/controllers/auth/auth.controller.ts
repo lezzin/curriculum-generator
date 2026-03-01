@@ -7,12 +7,14 @@ import { LoginDto } from './auth.dto';
 import { cookieOptions } from 'src/domain/shared/config/cookie.config';
 import { AuthGuard } from '@nestjs/passport';
 import { SocialLoginUseCase } from 'src/application/use-cases/auth/social-login.use-case';
+import { GetUserUseCase } from 'src/application/use-cases/user/get-user.use-case';
 
 @Controller('auth')
 export class AuthController {
     constructor(
         private loginUseCase: LoginUseCase,
-        private socialLoginUseCase: SocialLoginUseCase
+        private socialLoginUseCase: SocialLoginUseCase,
+        private getUserUseCase: GetUserUseCase,
     ) { }
 
     @Post('login')
@@ -39,7 +41,7 @@ export class AuthController {
     @Get('me')
     @UseGuards(JwtAuthGuard)
     getMe(@CurrentUser() user: any) {
-        return user;
+        return this.getUserUseCase.execute(user)
     }
 
     @Get('google')

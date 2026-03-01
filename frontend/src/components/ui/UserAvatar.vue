@@ -1,35 +1,52 @@
 <script setup lang="ts">
-import { computed } from 'vue';
-import { getFirstLetter } from '../../helper/string.helper';
+import { computed } from 'vue'
+import { getFirstLetter } from '../../helper/string.helper'
+import type { User } from '../../composables/useAuth'
+
+type Size = 'sm' | 'md' | 'lg'
 
 interface Props {
-    name: string
+    user: User
     size?: Size
 }
-
-type Size = "sm" | "md" | "lg"
 
 const props = withDefaults(defineProps<Props>(), {
     size: 'md'
 })
 
-const sizeClasses = computed(() => {
-    const sizes: Record<Size, string> = {
-        lg: "w-16 h-16 text-lg",
-        md: "w-12 h-12 text-lg",
-        sm: "w-9 h-9 text-sm",
-    }
+const sizeMap: Record<Size, { container: string; text: string }> = {
+    lg: { container: 'w-16 h-16', text: 'text-xl' },
+    md: { container: 'w-12 h-12', text: 'text-lg' },
+    sm: { container: 'w-9 h-9', text: 'text-sm' }
+}
 
-    return sizes[props.size]
-})
+const containerClasses = computed(() => [
+    'rounded-full',
+    'overflow-hidden',
+    'flex',
+    'items-center',
+    'justify-center',
+    'bg-gray-900',
+    'text-white',
+    'font-semibold',
+    sizeMap[props.size].container,
+    sizeMap[props.size].text
+])
 
-const baseClasses = "rounded-full bg-gray-900 text-white flex items-center justify-center text-lg font-semibold"
+const altText = computed(
+    () => `Foto de perfil de ${props.user?.name ?? 'usuário'}`
+)
 
-const classes = computed(() => `${baseClasses} ${sizeClasses.value}`)
+const firstLetter = computed(() =>
+    getFirstLetter(props.user?.name ?? '')
+)
 </script>
 
 <template>
-    <div :class="classes">
-        {{ getFirstLetter(name) }}
+    <div :class="containerClasses">
+        <img v-if="user.picture" :src="user.picture" :alt="altText" class="w-full h-full object-cover" />
+        <span v-else>
+            {{ firstLetter }}
+        </span>
     </div>
 </template>
