@@ -3,7 +3,7 @@ import { onMounted, onBeforeUnmount } from 'vue'
 import CloseIcon from '../../icon/CloseIcon.vue'
 
 interface Props {
-    modelValue: boolean
+    isOpen: boolean
     title?: string
     size?: 'sm' | 'md' | 'lg' | 'xl'
     persistent?: boolean
@@ -15,12 +15,14 @@ const props = withDefaults(defineProps<Props>(), {
 })
 
 const emit = defineEmits<{
-    (e: 'update:modelValue', value: boolean): void
+    (e: 'update:isOpen', value: boolean): void
+    (e: 'close'): void
 }>()
 
 const close = () => {
     if (props.persistent) return
-    emit('update:modelValue', false)
+    emit('update:isOpen', false)
+    emit('close')
 }
 
 const handleEsc = (e: KeyboardEvent) => {
@@ -46,7 +48,7 @@ const sizeClasses = {
 <template>
     <Teleport to="body">
         <Transition name="fade">
-            <div v-if="modelValue" class="fixed inset-0 z-50 flex items-center justify-center">
+            <div v-if="isOpen" class="fixed inset-0 z-50 flex items-center justify-center">
                 <div class="absolute inset-0 bg-black/40" @click="close" />
 
                 <Transition name="scale">

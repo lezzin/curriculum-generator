@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { reactive, ref, watch } from 'vue'
+import { reactive, watch } from 'vue'
 import { useApi } from '../../composables/useApi'
 import { useToast } from '../../composables/useToast'
 import BaseButton from '../../components/ui/BaseButton.vue'
@@ -27,8 +27,6 @@ const emit = defineEmits(['close', 'saved', 'update:isOpen'])
 
 const { api, loading: isLoading } = useApi()
 const { show } = useToast()
-
-const isOpenLocal = ref(false)
 
 const state = reactive({
     summary: '',
@@ -78,13 +76,11 @@ const initForm = () => {
 }
 
 watch(() => props.isOpen, val => {
-    isOpenLocal.value = val
     if (val) initForm()
 })
 
 const handleClose = () => {
     emit('update:isOpen', false)
-    emit('close')
 }
 
 const save = async () => {
@@ -107,14 +103,14 @@ const save = async () => {
     await api.post('/base-data/upsert', { type: props.type, description })
     show({ message: 'Dados salvos com sucesso', type: 'success' })
     emit('saved')
-    emit('close')
+    emit('update:isOpen', false)
 }
 
 const modalTitle = `Editar Base de ${props.type === 'resume' ? 'Currículo' : 'Proposta Freelance'}`
 </script>
 
 <template>
-    <BaseModal v-model="isOpenLocal" :title="modalTitle" size="xl">
+    <BaseModal :isOpen="isOpen" :title="modalTitle" size="xl" @close="handleClose">
         <form @submit.prevent="save" id="save-base-data-form" class="space-y-4">
             <TextAreaField label="Resumo Profissional" v-model="state.summary" :rows="4"
                 placeholder="3-4 linhas, resultados, tecnologias" />

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { reactive, ref, onMounted, nextTick } from 'vue'
+import { reactive, ref, onMounted } from 'vue'
 import { useApi } from '../../composables/useApi'
 import { useToast } from '../../composables/useToast'
 import BaseDataCard from './BaseDataCard.vue'
@@ -37,16 +37,22 @@ const loadBaseData = async () => {
 }
 
 const openForm = (type: BaseType) => {
-    isModalOpen.value = false
     editingType.value = type
-    nextTick(() => {
-        isModalOpen.value = true
-    })
+    isModalOpen.value = true
 }
 
 const removeBaseData = async (type: BaseType) => {
-    await api.post('/base-data/remove', { type })
-    baseData[type] = null
+    try {
+        await api.post('/base-data/remove', { type })
+        baseData[type] = null
+        show({ message: 'Base removida com sucesso.', type: 'success' })
+    } catch {
+        show({ message: 'Erro ao remover base.', type: 'error' })
+    }
+}
+
+const handleSaved = async () => {
+    await loadBaseData()
 }
 
 onMounted(loadBaseData)
@@ -54,12 +60,13 @@ onMounted(loadBaseData)
 
 <template>
     <UserBaseDataForm v-model:isOpen="isModalOpen" :type="editingType" :initialData="baseData[editingType]"
-        @saved="loadBaseData" @close="isModalOpen = false" />
+        @saved="handleSaved" />
 
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         <BaseDataCard title="Base de Informações para Currículos"
             description="Essas informações servirão como contexto principal para gerar seus currículos automaticamente."
             :content="baseData.resume" @edit="openForm('resume')" @remove="removeBaseData('resume')" />
+
         <BaseDataCard title="Base para Propostas Freelance"
             description="Utilizada como contexto para gerar propostas personalizadas para clientes."
             :content="baseData['freelance-proposal']" @edit="openForm('freelance-proposal')"
