@@ -29,14 +29,14 @@ export class TypeOrmBaseDataRepository implements BaseDataRepository {
         return await this.ormRepo.findBy({ userId }) as BaseData[];
     }
 
-    async findDescriptionByUserAndType(userId: string, type: BaseDataType): Promise<string> {
+    async findDescriptionByUserAndType(userId: string, type: BaseDataType): Promise<string | null> {
         const entity = await this.ormRepo.findOne({
             where: { userId, type },
             select: ['description']
         })
 
         if (!entity) {
-            throw new NotFoundException('Erro ao obter conteúdo do dado base')
+            return null
         }
 
         return entity.description;

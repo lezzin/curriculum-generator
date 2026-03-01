@@ -25,7 +25,10 @@ export class ProposalGenerationUseCase {
         const { solicitation, userId } = body;
 
         const baseData = await this.baseDataRepository.findDescriptionByUserAndType(userId, BaseDataType.FREELANCE_PROPOSAL)
-        if (!baseData) return;
+        if (!baseData) {
+            this.sseService.sendEvent(userId, 'message', 'Ops! Não encontramos informações base para gerar a proposta. Por favor, cadastre seus dados primeiro.');
+            return;
+        }
 
         const promptKey = generateHash(solicitation)
 

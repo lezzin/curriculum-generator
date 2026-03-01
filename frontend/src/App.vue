@@ -20,6 +20,13 @@ const { api } = useApi();
 const setupSSE = () => {
   sseService.init(api);
 
+  sseService.on('message', (value: string) => {
+    show({
+      message: value,
+      type: 'info'
+    });
+  });
+
   sseService.on<Resume>('resume-generated', () => {
     if (route.name !== 'ResumeHistory') {
       show({

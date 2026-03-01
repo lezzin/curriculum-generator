@@ -31,10 +31,16 @@ export class ResumeGenerationUseCase {
         const { userId, jobDescription, options } = body;
 
         const baseData = await this.baseDataRepository.findDescriptionByUserAndType(userId, BaseDataType.RESUME)
-        if (!baseData) return;
+        if (!baseData) {
+            this.sseService.sendEvent(userId, 'message', 'Ops! Não encontramos informações base para gerar o currículo. Por favor, cadastre seus dados primeiro.');
+            return;
+        }
 
         const userData = await this.userRepository.findById(userId)
-        if (!userData) return;
+        if (!userData) {
+            this.sseService.sendEvent(userId, 'message', 'Usuário não encontrado. Confirme se o ID está correto ou faça login novamente.');
+            return;
+        }
 
         const promptKey = generateHash(jobDescription)
 
