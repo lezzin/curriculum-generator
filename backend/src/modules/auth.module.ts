@@ -12,6 +12,7 @@ import { ConfigService } from '@nestjs/config';
 import type { StringValue } from "ms";
 import { SocialLoginUseCase } from 'src/application/use-cases/auth/social-login.use-case';
 import { GoogleStrategy } from 'src/infrastructure/auth/strategies/google.strategy';
+import { GithubStrategy } from 'src/infrastructure/auth/strategies/github.strategy';
 
 @Module({
     imports: [
@@ -30,6 +31,7 @@ import { GoogleStrategy } from 'src/infrastructure/auth/strategies/google.strate
         JwtAdapter,
         JwtStrategy,
         GoogleStrategy,
+        GithubStrategy,
         {
             provide: LoginUseCase,
             useFactory: (

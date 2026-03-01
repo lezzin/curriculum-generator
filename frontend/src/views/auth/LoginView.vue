@@ -10,6 +10,7 @@ import BaseButton from '../../components/ui/BaseButton.vue'
 import InputField from '../../components/ui/form/InputField.vue'
 import { authSchema, type AuthForm } from '../../components/validation/schemas/auth.schema'
 import GoogleIcon from '../../components/icon/GoogleIcon.vue'
+import GithubIcon from '../../components/icon/GithubIcon.vue'
 
 const { handleSubmit } = useForm<AuthForm>({
     validationSchema: authSchema
@@ -34,8 +35,8 @@ const login = handleSubmit(async (form) => {
     }
 })
 
-const loginGoogle = () => {
-    window.location.href = `${api.defaults.baseURL}/auth/google`
+const loginProvider = (provider: 'github' | 'google') => {
+    window.location.href = `${api.defaults.baseURL}/auth/${provider}`
 }
 </script>
 
@@ -47,8 +48,12 @@ const loginGoogle = () => {
             <InputField label="Email" name="email" type="email" />
             <InputField label="Senha" name="password" type="password" />
 
-            <BaseButton type="button" variant="outline" class="w-full" @click="loginGoogle">
+            <BaseButton type="button" variant="outline" class="w-full" @click="loginProvider('google')">
                 <GoogleIcon class="w-7 h-7" /> Login com Google
+            </BaseButton>
+
+            <BaseButton type="button" variant="outline" class="w-full" @click="loginProvider('github')">
+                <GithubIcon class="w-7 h-7" /> Login com GitHub
             </BaseButton>
 
             <BaseButton type="submit" :disabled="loading" :loading="loading" class="w-full">

@@ -58,4 +58,21 @@ export class AuthController {
 
         return res.redirect(redirect_url)
     }
+
+    @Get('github')
+    @UseGuards(AuthGuard('github'))
+    async githubAuth() { }
+
+    @Get('github/callback')
+    @UseGuards(AuthGuard('github'))
+    async githubCallback(@Req() req: any, @Res() res: Response) {
+        const { access_token, redirect_url } = await this.socialLoginUseCase.execute(req?.user)
+
+        res.cookie('authToken', access_token, {
+            ...cookieOptions,
+            maxAge: 15 * 60 * 1000,
+        });
+
+        return res.redirect(redirect_url)
+    }
 }
