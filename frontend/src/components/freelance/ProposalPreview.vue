@@ -5,9 +5,11 @@ import BaseButton from "../ui/BaseButton.vue"
 import { toHumanReadableDate } from "../../helper/string.helper";
 import CardContainer from "../ui/card/CardContainer.vue";
 
-const props = defineProps<{
+interface Props {
     proposal: MarketplaceProposal
-}>()
+}
+
+const props = defineProps<Props>()
 
 const copied = ref(false)
 const editableText = ref("")

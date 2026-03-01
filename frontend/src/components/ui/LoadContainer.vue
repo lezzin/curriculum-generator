@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import LoadSpinner from '../icon/LoadSpinner.vue';
 
-defineProps<{
+interface Props {
     loading: boolean
-}>()
+}
+
+defineProps<Props>()
 </script>
 
 <template>

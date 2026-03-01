@@ -9,15 +9,17 @@ interface Props {
     persistent?: boolean
 }
 
+interface Emits {
+    (e: 'update:isOpen', value: boolean): void
+    (e: 'close'): void
+}
+
 const props = withDefaults(defineProps<Props>(), {
     size: 'md',
     persistent: false,
 })
 
-const emit = defineEmits<{
-    (e: 'update:isOpen', value: boolean): void
-    (e: 'close'): void
-}>()
+const emit = defineEmits<Emits>()
 
 const close = () => {
     if (props.persistent) return

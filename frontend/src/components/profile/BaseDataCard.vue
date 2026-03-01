@@ -2,16 +2,19 @@
 import CardContainer from '../../components/ui/card/CardContainer.vue'
 import BaseButton from '../../components/ui/BaseButton.vue'
 
-defineProps<{
+interface Props {
     title: string
     description: string
     content: string | null
-}>()
+}
 
-defineEmits<{
+type Emits = {
     (e: 'edit'): void
     (e: 'remove'): void
-}>()
+}
+
+defineProps<Props>()
+defineEmits<Emits>()
 </script>
 
 <template>

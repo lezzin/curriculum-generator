@@ -8,7 +8,11 @@ import CardContainer from "../ui/card/CardContainer.vue"
 import RotateArrow from "../icon/RotateArrow.vue"
 import BaseDropdown from "../ui/BaseDropdown.vue"
 
-const props = defineProps<{ resume: Resume }>()
+interface Props {
+    resume: Resume
+}
+
+const props = defineProps<Props>()
 
 const isOpen = ref(false)
 const shouldToggle = ref(false)

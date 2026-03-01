@@ -8,16 +8,10 @@ import AppTitle from '../../components/layout/AppTitle.vue';
 import { useAuth } from '../../composables/useAuth';
 import { useRouter } from 'vue-router';
 import CardContainer from '../../components/ui/card/CardContainer.vue';
-import * as yup from 'yup';
 import { useForm } from 'vee-validate';
+import { signupSchema, type SignUpForm } from '../../components/validation/schemas/signup.schema';
 
-const signupSchema = yup.object({
-    name: yup.string().required("Campo obrigatório").min(3, "Mínimo 3 caracteres"),
-    email: yup.string().email("Email inválido").required("Campo obrigatório"),
-    password: yup.string().required("Campo obrigatório").min(3, "Mínimo 3 caracteres")
-})
-
-const { handleSubmit } = useForm({
+const { handleSubmit } = useForm<SignUpForm>({
     validationSchema: signupSchema
 })
 

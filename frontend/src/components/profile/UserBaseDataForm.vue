@@ -6,8 +6,14 @@ import BaseButton from '../../components/ui/BaseButton.vue'
 import InputField from '../../components/ui/form/InputField.vue'
 import TextAreaField from '../../components/ui/form/TextAreaField.vue'
 import BaseModal from '../ui/modal/BaseModal.vue'
-import * as yup from "yup"
 import { useForm, useFieldArray } from 'vee-validate'
+import { baseDataSchema, INITIAL_VALUES, type BaseDataForm } from '../validation/schemas/base-data.schema'
+
+interface Props {
+    type: string | null
+    initialData: string | null
+    isOpen: boolean
+}
 
 type Experience = {
     title: string; company: string; period: string
@@ -19,57 +25,16 @@ type Project = {
     highlightsString: string; technologiesString: string
 }
 
-type BaseDataForm = yup.InferType<typeof baseDataSchema>
-
-const props = defineProps<{
-    type: string | null
-    initialData: string | null
-    isOpen: boolean
-}>()
+const props = defineProps<Props>()
 
 const emit = defineEmits(['close', 'saved', 'update:isOpen'])
 
 const { api, loading: isLoading } = useApi()
 const { show } = useToast()
 
-const baseDataSchema = yup.object({
-    summary: yup
-        .string()
-        .min(10, 'Resumo muito curto')
-        .required('Resumo obrigatório'),
-
-    skillsString: yup.string(),
-
-    experiences: yup.array().of(
-        yup.object({
-            title: yup.string().required('Cargo obrigatório'),
-            company: yup.string().required('Empresa obrigatória'),
-            period: yup.string().required('Período obrigatório'),
-            responsibilitiesString: yup.string()
-                .min(3, 'Adicione ao menos uma responsabilidade'),
-            technologiesString: yup.string(),
-        })
-    ),
-
-    projects: yup.array().of(
-        yup.object({
-            name: yup.string().required('Nome obrigatório'),
-            highlightsString: yup
-                .string()
-                .min(3, 'Adicione ao menos um destaque'),
-            technologiesString: yup.string(),
-        })
-    ),
-})
-
 const { handleSubmit, resetForm } = useForm<BaseDataForm>({
     validationSchema: baseDataSchema,
-    initialValues: {
-        summary: '',
-        skillsString: '',
-        experiences: [],
-        projects: [],
-    },
+    initialValues: INITIAL_VALUES,
 })
 
 const {

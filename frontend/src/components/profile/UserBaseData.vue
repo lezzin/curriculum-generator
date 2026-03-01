@@ -5,11 +5,11 @@ import { useToast } from '../../composables/useToast'
 import BaseDataCard from './BaseDataCard.vue'
 import UserBaseDataForm from './UserBaseDataForm.vue'
 
-type BaseType = 'resume' | 'freelance-proposal'
+type UserBaseType = 'resume' | 'freelance-proposal'
 
-type BaseDataItem = {
+type UserBaseDataItem = {
     id: string
-    type: BaseType
+    type: UserBaseType
     description: string
     userId: string
     createdAt: string
@@ -18,17 +18,17 @@ type BaseDataItem = {
 const { api } = useApi()
 const { show } = useToast()
 
-const baseData = reactive<Record<BaseType, string | null>>({
+const baseData = reactive<Record<UserBaseType, string | null>>({
     resume: null,
     'freelance-proposal': null,
 })
 
 const isModalOpen = ref(false)
-const editingType = ref<BaseType>('resume')
+const editingType = ref<UserBaseType>('resume')
 
 const loadBaseData = async () => {
     try {
-        const { data } = await api.get<BaseDataItem[]>('/base-data/all')
+        const { data } = await api.get<UserBaseDataItem[]>('/base-data/all')
         baseData.resume = data.find(d => d.type === 'resume')?.description ?? null
         baseData['freelance-proposal'] = data.find(d => d.type === 'freelance-proposal')?.description ?? null
     } catch {
@@ -36,12 +36,12 @@ const loadBaseData = async () => {
     }
 }
 
-const openForm = (type: BaseType) => {
+const openForm = (type: UserBaseType) => {
     editingType.value = type
     isModalOpen.value = true
 }
 
-const removeBaseData = async (type: BaseType) => {
+const removeBaseData = async (type: UserBaseType) => {
     try {
         await api.post('/base-data/remove', { type })
         baseData[type] = null

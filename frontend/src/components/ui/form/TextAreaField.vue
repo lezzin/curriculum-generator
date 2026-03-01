@@ -1,18 +1,19 @@
 <script setup lang="ts">
 import { useField } from 'vee-validate'
-import { DESCRIPTION_LENGTH } from '../../../constants/app.constants'
 
-const props = withDefaults(
-    defineProps<{
-        label: string
-        name: string
-        placeholder?: string
-        rows?: number
-        disabled?: boolean
-        showLength?: boolean
-    }>(),
+interface Props {
+    label: string
+    name: string
+    placeholder?: string
+    rows?: number
+    disabled?: boolean
+    showLength?: boolean,
+    maxLength?: number
+}
+
+const props = withDefaults(defineProps<Props>(),
     {
-        showLength: true
+        showLength: false
     }
 )
 
@@ -34,7 +35,7 @@ const { value, errorMessage, handleBlur } = useField<string>(props.name)
             </p>
 
             <small v-if="showLength" class="text-gray-700 ms-auto">
-                {{ value?.length ?? 0 }}/{{ DESCRIPTION_LENGTH.max }}
+                {{ value?.length ?? 0 }}/{{ maxLength }}
             </small>
         </div>
     </div>

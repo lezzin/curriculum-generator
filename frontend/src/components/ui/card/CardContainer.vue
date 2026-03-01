@@ -4,11 +4,12 @@ import { computed } from 'vue';
 type Variant = "default" | "text"
 type Size = "sm" | "md" | "lg"
 
-const props = withDefaults(
-    defineProps<{
-        variant?: Variant,
-        size?: Size
-    }>(),
+interface Props {
+    variant?: Variant,
+    size?: Size
+}
+
+const props = withDefaults(defineProps<Props>(),
     {
         variant: 'default',
         size: 'md'
@@ -18,28 +19,25 @@ const props = withDefaults(
 const baseClasses = "rounded-lg shadow-sm border"
 
 const variantClasses = computed(() => {
-    switch (props.variant) {
-        case "text":
-            return "text-sm leading-relaxed bg-zinc-50 text-zinc-700 border-zinc-200 whitespace-pre-wrap"
-        default:
-            return ""
+    const variants: Record<Variant, string> = {
+        "text": "text-sm leading-relaxed bg-zinc-50 text-zinc-700 border-zinc-200 whitespace-pre-wrap",
+        "default": ""
     }
+
+    return variants[props.variant]
 })
 
 const sizeClasses = computed(() => {
-    switch (props.size) {
-        case "sm":
-            return "p-4"
-        case "lg":
-            return "p-8"
-        default:
-            return "p-6"
+    const sizes: Record<Size, string> = {
+        sm: "p-4",
+        md: "p-6",
+        lg: "p-8",
     }
+
+    return sizes[props.size]
 })
 
-const classes = computed(() =>
-    `${baseClasses} ${variantClasses.value} ${sizeClasses.value}`
-)
+const classes = computed(() => `${baseClasses} ${variantClasses.value} ${sizeClasses.value}`)
 </script>
 
 <template>

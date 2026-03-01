@@ -6,8 +6,8 @@ import BaseButton from '../../components/ui/BaseButton.vue'
 import { useToast } from '../../composables/useToast'
 import InputField from '../ui/form/InputField.vue'
 import { nullToEmpty } from '../../helper/string.helper'
-import * as yup from "yup";
 import { useForm } from 'vee-validate'
+import { userConfigSchema, type UserConfigForm } from '../validation/schemas/user-config.schema'
 
 interface UserConfig {
     linkedin: string
@@ -16,37 +16,8 @@ interface UserConfig {
     cellphone: string
 }
 
-const configSchema = yup.object({
-    linkedin: yup
-        .string()
-        .url("Informe uma URL válida")
-        .nullable()
-        .notRequired(),
-
-    github: yup
-        .string()
-        .url("Informe uma URL válida")
-        .nullable()
-        .notRequired(),
-
-    portfolio: yup
-        .string()
-        .url("Informe uma URL válida")
-        .nullable()
-        .notRequired(),
-
-    cellphone: yup
-        .string()
-        .matches(
-            /^(?:\+55\s?)?(?:\(?\d{2}\)?\s?)?(?:9\d{4}|\d{4})-?\d{4}$/,
-            "Informe um celular válido"
-        )
-        .nullable()
-        .notRequired(),
-});
-
-const { handleSubmit, resetForm, values } = useForm({
-    validationSchema: configSchema
+const { handleSubmit, resetForm, values } = useForm<UserConfigForm>({
+    validationSchema: userConfigSchema
 })
 
 const userConfig = ref<UserConfig | null>(null)
@@ -56,7 +27,7 @@ const { show } = useToast()
 
 const completionPercentage = computed(() => {
     const total = Object.keys(values).length
-    const filled = Object.values(values).filter(v => v?.trim()?.length > 0).length
+    const filled = Object.values(values).filter(v => v?.trim()?.length || 0 > 0).length
     return Math.round((filled / total) * 100)
 })
 

@@ -2,16 +2,18 @@
 import { useField } from 'vee-validate'
 import { computed } from 'vue'
 
-const props = defineProps<{
+interface Props {
     label: string
     name: string
     type?: string
     placeholder?: string
     disabled?: boolean,
     helper?: string
-}>()
+}
 
-const { value, errorMessage, handleBlur } = useField(props.name)
+const props = defineProps<Props>()
+
+const { value, errorMessage, handleBlur } = useField<string>(props.name)
 
 const inputType = computed(() => props.type ?? 'text')
 </script>

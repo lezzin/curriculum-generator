@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { useForm } from 'vee-validate'
-import * as yup from 'yup'
 import { useRouter } from 'vue-router'
 import { useApi } from '../../composables/useApi'
 import { useToast } from '../../composables/useToast'
@@ -9,13 +8,9 @@ import AppTitle from '../../components/layout/AppTitle.vue'
 import CardContainer from '../../components/ui/card/CardContainer.vue'
 import BaseButton from '../../components/ui/BaseButton.vue'
 import InputField from '../../components/ui/form/InputField.vue'
+import { authSchema, type AuthForm } from '../../components/validation/schemas/auth.schema'
 
-const authSchema = yup.object({
-    email: yup.string().email("Email inválido").required("Campo obrigatório"),
-    password: yup.string().required("Campo obrigatório").min(3, "Mínimo 3 caracteres")
-})
-
-const { handleSubmit } = useForm({
+const { handleSubmit } = useForm<AuthForm>({
     validationSchema: authSchema
 })
 

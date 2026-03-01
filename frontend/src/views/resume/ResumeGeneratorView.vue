@@ -8,30 +8,14 @@ import AppTitle from "../../components/layout/AppTitle.vue"
 import { useToast } from "../../composables/useToast"
 import { BASE_TEMPLATE_TYPES } from "../../interfaces/resume.interfaces"
 import { capitalizeFirst } from "../../helper/string.helper"
-import * as yup from 'yup';
 import { useForm } from "vee-validate"
+import { INITIAL_VALUES, MAX_LENGTH, resumeSchema, type ResumeForm } from "../../components/validation/schemas/resume.schema"
 
 const { show } = useToast()
 
-const resumeSchema = yup.object({
-    jobText: yup.string().required("Campo obrigatório").min(25, "Mínimo 25 caracteres").max(3000, "Máximo 3000 caracteres"),
-    language: yup.string().required("Campo obrigatório"),
-    seniority: yup.string().required("Campo obrigatório"),
-    focusArea: yup.string().required("Campo obrigatório"),
-    market: yup.string().required("Campo obrigatório"),
-    templateType: yup.string().required("Campo obrigatório"),
-})
-
-const { handleSubmit } = useForm({
+const { handleSubmit } = useForm<ResumeForm>({
     validationSchema: resumeSchema,
-    initialValues: {
-        language: 'PT',
-        seniority: 'Junior',
-        focusArea: 'Backend',
-        market: 'Brazil',
-        templateType: 'default',
-        jobText: '',
-    }
+    initialValues: INITIAL_VALUES
 })
 
 const { api, loading, request } = useApi()
@@ -104,7 +88,8 @@ const generateResume = handleSubmit(async (form) => {
             </div>
 
             <div class="space-y-4">
-                <TextAreaField label="Descrição completa da vaga" name="jobText" :rows="10"
+                <TextAreaField label="Descrição completa da vaga" name="jobText" :rows="10" :max-length="MAX_LENGTH"
+                    :show-length="true"
                     placeholder="Cole aqui a descrição completa da vaga. Quanto mais detalhes, melhor será a personalização do currículo." />
 
                 <BaseButton type="submit" :disabled="loading" :loading="loading">

@@ -1,13 +1,15 @@
 <script setup lang="ts">
 import { useField } from 'vee-validate';
 
-const props = defineProps<{
+interface Props {
     label: string
     name: string
     disabled?: boolean
-}>()
+}
 
-const { value, errorMessage, handleBlur } = useField(props.name)
+const props = defineProps<Props>()
+
+const { value, errorMessage, handleBlur } = useField<string>(props.name)
 </script>
 
 <template>

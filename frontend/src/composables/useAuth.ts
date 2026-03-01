@@ -17,7 +17,7 @@ export function useAuth() {
 
         try {
             const response = await request(() => api.get("/auth/me"));
-            user.value = response.data;
+            user.value = response?.data;
         } catch (err: any) {
             user.value = null;
         } finally {

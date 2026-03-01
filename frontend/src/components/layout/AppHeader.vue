@@ -37,9 +37,9 @@ const menus = [
 </script>
 
 <template>
-    <header class="bg-white/80 backdrop-blur-md border-b sticky top-0 z-50">
-        <AppContainer class="px-8 py-2">
-            <nav class="flex items-center justify-between text-sm font-medium">
+    <header class="bg-white/80 backdrop-blur-md border-b sticky top-0 z-50 h-[68px]">
+        <AppContainer class="px-8 py-2 h-full">
+            <nav class="flex items-center justify-between text-sm font-medium h-[inherit]">
                 <div class="flex items-center gap-8">
                     <router-link to="/" class="text-gray-600 hover:text-black transition"
                         :class="{ 'text-black font-semibold': route.path === '/' }">
@@ -84,7 +84,7 @@ const menus = [
                                     <p class="text-sm font-medium leading-none">
                                         {{ user.name }}
                                     </p>
-                                    <p class="text-xs text-gray-500 leading-none">
+                                    <p class="text-xs text-gray-500 leading-none mt-0.5">
                                         Minha conta
                                     </p>
                                 </div>
