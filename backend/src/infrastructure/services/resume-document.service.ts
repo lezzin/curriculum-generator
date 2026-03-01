@@ -41,6 +41,10 @@ export class ResumeDocumentService
         const template = this.loadTemplate(resume.template, templateFolder);
         const labels = SECTION_LABELS[resume.language] ?? SECTION_LABELS[Language.PT];
 
+        Handlebars.registerHelper('add', function (value: number, increment: number) {
+            return value + increment;
+        });
+
         return template({
             ...resume,
             ...user,
