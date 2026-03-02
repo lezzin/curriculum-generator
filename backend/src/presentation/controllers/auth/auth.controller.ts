@@ -90,9 +90,8 @@ export class AuthController {
 
   @Get('me')
   @UseGuards(JwtAuthGuard)
-  getMe(@CurrentUser() user: any) {
-    console.log(user);
-    return this.getUserUseCase.execute(user);
+  getMe(@CurrentUser('id') userId: string) {
+    return this.getUserUseCase.execute({ userId });
   }
 
   @Get('google')

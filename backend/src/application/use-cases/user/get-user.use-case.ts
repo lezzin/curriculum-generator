@@ -5,6 +5,6 @@ export class GetUserUseCase {
   constructor(private readonly userRepository: UserRepository) { }
 
   async execute(body: GetUserInput) {
-    return await this.userRepository.findById(body.sub);
+    return await this.userRepository.findById(body.userId);
   }
 }
