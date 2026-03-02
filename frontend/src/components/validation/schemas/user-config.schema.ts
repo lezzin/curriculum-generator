@@ -3,15 +3,31 @@ import * as yup from "yup";
 export const userConfigSchema = yup.object({
     linkedin: yup
         .string()
-        .url("Informe uma URL válida")
         .nullable()
-        .notRequired(),
+        .notRequired()
+        .test("is-linkedin", "Informe uma URL válida do LinkedIn", (value) => {
+            if (!value) return true
+            try {
+                const url = new URL(value)
+                return url.hostname.includes("linkedin.com")
+            } catch {
+                return false
+            }
+        }),
 
     github: yup
         .string()
-        .url("Informe uma URL válida")
         .nullable()
-        .notRequired(),
+        .notRequired()
+        .test("is-github", "Informe uma URL válida do GitHub", (value) => {
+            if (!value) return true
+            try {
+                const url = new URL(value)
+                return url.hostname.includes("github.com")
+            } catch {
+                return false
+            }
+        }),
 
     portfolio: yup
         .string()
