@@ -36,4 +36,4 @@ import { UserConfigModule } from './modules/user-config.module';
     UserConfigModule,
   ],
 })
-export class AppModule { }
+export class AppModule {}

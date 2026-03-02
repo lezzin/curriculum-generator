@@ -3,12 +3,12 @@ import { StorageRepository } from 'src/domain/repositories/storage.repository';
 import { MinIOStorageService } from '../storage/minio-storage.service';
 
 @Module({
-    providers: [
-        {
-            provide: StorageRepository,
-            useClass: MinIOStorageService,
-        },
-    ],
-    exports: [StorageRepository],
+  providers: [
+    {
+      provide: StorageRepository,
+      useClass: MinIOStorageService,
+    },
+  ],
+  exports: [StorageRepository],
 })
-export class StorageModule { }
+export class StorageModule {}

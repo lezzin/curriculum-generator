@@ -1,4 +1,4 @@
 export type GeminiPrompt = {
-    prompt: string
-    discordData: string[] | null
-}
+  prompt: string;
+  discordData: string[] | null;
+};

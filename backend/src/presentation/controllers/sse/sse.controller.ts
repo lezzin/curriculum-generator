@@ -7,10 +7,10 @@ import type { Response } from 'express';
 @UseGuards(JwtAuthGuard)
 @Controller('events')
 export class SseController {
-    constructor(private readonly sseService: SseService) { }
+  constructor(private readonly sseService: SseService) {}
 
-    @Get('connect')
-    connect(@CurrentUser('id') userId: string, @Res() res: Response) {
-        this.sseService.registerClient(userId, res);
-    }
+  @Get('connect')
+  connect(@CurrentUser('id') userId: string, @Res() res: Response) {
+    this.sseService.registerClient(userId, res);
+  }
 }

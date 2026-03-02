@@ -1,5 +1,5 @@
-import { GenerateProposalInput } from "../models/generate-proposal.input";
+import { GenerateProposalInput } from '../models/generate-proposal.input';
 
 export interface ProposalQueue {
-    addGenerateProposalJob(data: GenerateProposalInput): Promise<void>;
+  addGenerateProposalJob(data: GenerateProposalInput): Promise<void>;
 }

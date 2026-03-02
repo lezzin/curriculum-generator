@@ -21,64 +21,65 @@ import { BaseDataRepository } from 'src/domain/repositories/base-data.repository
 import { SseService } from 'src/infrastructure/services/sse.service';
 
 @Module({
-    imports: [
-        TypeOrmModule.forFeature([FreelanceProposalEntity]),
-        BaseDataModule,
-        BullMQModule,
-        SseModule,
-        CacheModule,
-        BullModule.registerQueue({
-            name: 'freelance.queue'
-        })
-    ],
-    controllers: [FreelanceController],
-    providers: [
-        {
-            provide: FreelanceProposalRepository,
-            useClass: TypeOrmFreelanceProposalRepository,
-        },
+  imports: [
+    TypeOrmModule.forFeature([FreelanceProposalEntity]),
+    BaseDataModule,
+    BullMQModule,
+    SseModule,
+    CacheModule,
+    BullModule.registerQueue({
+      name: 'freelance.queue',
+    }),
+  ],
+  controllers: [FreelanceController],
+  providers: [
+    {
+      provide: FreelanceProposalRepository,
+      useClass: TypeOrmFreelanceProposalRepository,
+    },
+    GeminiService,
+    DiscordService,
+    BullMQProposalQueue,
+    FreelanceProcessor,
+    {
+      provide: GenerateProposalUseCase,
+      useFactory: (proposalQueue: BullMQProposalQueue) =>
+        new GenerateProposalUseCase(proposalQueue),
+      inject: [BullMQProposalQueue],
+    },
+    {
+      provide: GetAllProposalsUseCase,
+      useFactory: (
+        freelanceProposalRepository: FreelanceProposalRepository,
+        cache: CacheRepository,
+      ) => new GetAllProposalsUseCase(freelanceProposalRepository, cache),
+      inject: [FreelanceProposalRepository, CacheRepository],
+    },
+    {
+      provide: ProposalGenerationUseCase,
+      useFactory: (
+        freelanceProposalRepository: FreelanceProposalRepository,
+        baseDataRepository: BaseDataRepository,
+        geminiService: GeminiService,
+        sseService: SseService,
+        cache: CacheRepository,
+      ) =>
+        new ProposalGenerationUseCase(
+          freelanceProposalRepository,
+          baseDataRepository,
+          geminiService,
+          sseService,
+          cache,
+        ),
+      inject: [
+        FreelanceProposalRepository,
+        BaseDataRepository,
         GeminiService,
-        DiscordService,
-        BullMQProposalQueue,
-        FreelanceProcessor,
-        {
-            provide: GenerateProposalUseCase,
-            useFactory: (proposalQueue: BullMQProposalQueue) =>
-                new GenerateProposalUseCase(proposalQueue),
-            inject: [BullMQProposalQueue],
-        },
-        {
-            provide: GetAllProposalsUseCase,
-            useFactory: (freelanceProposalRepository: FreelanceProposalRepository, cache: CacheRepository) =>
-                new GetAllProposalsUseCase(freelanceProposalRepository, cache),
-            inject: [FreelanceProposalRepository, CacheRepository],
-        },
-        {
-            provide: ProposalGenerationUseCase,
-            useFactory: (
-                freelanceProposalRepository: FreelanceProposalRepository,
-                baseDataRepository: BaseDataRepository,
-                geminiService: GeminiService,
-                sseService: SseService,
-                cache: CacheRepository,
-            ) =>
-                new ProposalGenerationUseCase(
-                    freelanceProposalRepository,
-                    baseDataRepository,
-                    geminiService,
-                    sseService,
-                    cache,
-                ),
-            inject: [
-                FreelanceProposalRepository,
-                BaseDataRepository,
-                GeminiService,
-                SseService,
-                CacheRepository,
-            ],
-        },
-
-    ],
-    exports: [GenerateProposalUseCase],
+        SseService,
+        CacheRepository,
+      ],
+    },
+  ],
+  exports: [GenerateProposalUseCase],
 })
-export class FreelanceModule { }
+export class FreelanceModule {}

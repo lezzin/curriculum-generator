@@ -1,4 +1,4 @@
 export interface GetUserInput {
-    sub: string
-    email: string
+  sub: string;
+  email: string;
 }

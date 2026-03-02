@@ -4,13 +4,11 @@ import { CreateUserDto } from './user.dto';
 
 @Controller('user')
 export class UserController {
-    constructor(private registerUserUseCase: RegisterUserUseCase) { }
+  constructor(private registerUserUseCase: RegisterUserUseCase) {}
 
-    @Post('create')
-    async signUp(
-        @Body() body: CreateUserDto,
-    ) {
-        await this.registerUserUseCase.execute(body);
-        return { message: 'Usuário criado com sucesso!' };
-    }
+  @Post('create')
+  async signUp(@Body() body: CreateUserDto) {
+    await this.registerUserUseCase.execute(body);
+    return { message: 'Usuário criado com sucesso!' };
+  }
 }

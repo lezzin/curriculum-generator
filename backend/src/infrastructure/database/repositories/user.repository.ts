@@ -1,103 +1,98 @@
-import { Injectable } from '@nestjs/common'
-import { Repository } from 'typeorm'
-import { InjectRepository } from '@nestjs/typeorm'
-import { UserRepository } from 'src/domain/repositories/user.repository'
-import { UserEntity } from '../entities/user.entity'
-import { UserProviderEntity } from '../entities/user-provider.entity'
-import { User } from 'src/domain/entities/user.entity'
-import { UserProvider } from 'src/domain/entities/user-provider.entity'
+import { Injectable } from '@nestjs/common';
+import { Repository } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
+import { UserRepository } from 'src/domain/repositories/user.repository';
+import { UserEntity } from '../entities/user.entity';
+import { UserProviderEntity } from '../entities/user-provider.entity';
+import { User } from 'src/domain/entities/user.entity';
+import { UserProvider } from 'src/domain/entities/user-provider.entity';
 
 @Injectable()
 export class TypeOrmUserRepository implements UserRepository {
-    constructor(
-        @InjectRepository(UserEntity)
-        private ormRepo: Repository<UserEntity>,
-    ) { }
+  constructor(
+    @InjectRepository(UserEntity)
+    private ormRepo: Repository<UserEntity>,
+  ) {}
 
-    async create(user: User): Promise<User> {
-        const entity = this.toOrmEntity(user)
-        const saved = await this.ormRepo.save(entity)
-        return this.toDomain(saved)
+  async create(user: User): Promise<User> {
+    const entity = this.toOrmEntity(user);
+    const saved = await this.ormRepo.save(entity);
+    return this.toDomain(saved);
+  }
+
+  async findByEmail(email: string): Promise<User | null> {
+    const entity = await this.ormRepo.findOne({
+      where: { email },
+      relations: ['providers'],
+    });
+
+    if (!entity) return null;
+    return this.toDomain(entity);
+  }
+
+  async findById(id: string): Promise<User | null> {
+    const entity = await this.ormRepo.findOne({
+      where: { id },
+      relations: ['providers'],
+    });
+
+    if (!entity) return null;
+    return this.toDomain(entity);
+  }
+
+  async findByProvider(
+    provider: string,
+    providerId: string,
+  ): Promise<User | null> {
+    const entity = await this.ormRepo
+      .createQueryBuilder('user')
+      .leftJoinAndSelect('user.providers', 'provider')
+      .where('provider.provider = :provider', { provider })
+      .andWhere('provider.providerId = :providerId', { providerId })
+      .getOne();
+
+    if (!entity) return null;
+    return this.toDomain(entity);
+  }
+
+  private toDomain(entity: UserEntity): User {
+    const user = new User(
+      entity.id,
+      entity.name,
+      entity.email,
+      entity.picture,
+      entity.password,
+    );
+
+    if (entity.providers) {
+      entity.providers.forEach((p) => {
+        user.addProvider(
+          new UserProvider(p.id, p.userId, p.provider, p.providerId),
+        );
+      });
     }
 
-    async findByEmail(email: string): Promise<User | null> {
-        const entity = await this.ormRepo.findOne({
-            where: { email },
-            relations: ['providers'],
-        })
+    return user;
+  }
 
-        if (!entity) return null
-        return this.toDomain(entity)
-    }
+  private toOrmEntity(user: User): UserEntity {
+    const entity = new UserEntity();
 
-    async findById(id: string): Promise<User | null> {
-        const entity = await this.ormRepo.findOne({
-            where: { id },
-            relations: ['providers'],
-        })
+    entity.id = user.id;
+    entity.name = user.name;
+    entity.email = user.email;
+    entity.password = user.password;
+    entity.picture = user.picture;
 
-        if (!entity) return null
-        return this.toDomain(entity)
-    }
+    entity.providers = user.getProviders().map((p) => {
+      const provider = new UserProviderEntity();
+      provider.id = p.id;
+      provider.provider = p.provider;
+      provider.providerId = p.providerId;
+      provider.userId = p.userId;
+      return provider;
+    });
 
-    async findByProvider(
-        provider: string,
-        providerId: string,
-    ): Promise<User | null> {
-        const entity = await this.ormRepo
-            .createQueryBuilder('user')
-            .leftJoinAndSelect('user.providers', 'provider')
-            .where('provider.provider = :provider', { provider })
-            .andWhere('provider.providerId = :providerId', { providerId })
-            .getOne()
-
-        if (!entity) return null
-        return this.toDomain(entity)
-    }
-
-    private toDomain(entity: UserEntity): User {
-        const user = new User(
-            entity.id,
-            entity.name,
-            entity.email,
-            entity.picture,
-            entity.password,
-        )
-
-        if (entity.providers) {
-            entity.providers.forEach(p => {
-                user.addProvider(
-                    new UserProvider(
-                        p.id,
-                        p.userId,
-                        p.provider,
-                        p.providerId,
-                    ),
-                )
-            })
-        }
-
-        return user
-    }
-
-    private toOrmEntity(user: User): UserEntity {
-        const entity = new UserEntity()
-
-        entity.id = user.id
-        entity.name = user.name
-        entity.email = user.email
-        entity.password = user.password
-        entity.picture = user.picture
-
-        entity.providers = user.getProviders().map(p => {
-            const provider = new UserProviderEntity()
-            provider.id = p.id
-            provider.provider = p.provider
-            provider.providerId = p.providerId
-            provider.userId = p.userId
-            return provider
-        })
-
-        return entity
-    }
+    return entity;
+  }
 }

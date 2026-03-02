@@ -8,21 +8,21 @@ import { GenerateProposalDto } from './freelance.dto';
 @UseGuards(JwtAuthGuard)
 @Controller('/freelance')
 export class FreelanceController {
-    constructor(
-        private readonly generateProposalUseCase: GenerateProposalUseCase,
-        private readonly getAllProposalsUseCase: GetAllProposalsUseCase,
-    ) { }
+  constructor(
+    private readonly generateProposalUseCase: GenerateProposalUseCase,
+    private readonly getAllProposalsUseCase: GetAllProposalsUseCase,
+  ) {}
 
-    @Post('/proposal/generate')
-    async generateProposal(
-        @Body() body: GenerateProposalDto,
-        @CurrentUser('id') userId: string
-    ) {
-        return await this.generateProposalUseCase.execute({ ...body, userId });
-    }
+  @Post('/proposal/generate')
+  async generateProposal(
+    @Body() body: GenerateProposalDto,
+    @CurrentUser('id') userId: string,
+  ) {
+    return await this.generateProposalUseCase.execute({ ...body, userId });
+  }
 
-    @Get('/proposal/all')
-    async getAllProposals(@CurrentUser('id') userId: any) {
-        return await this.getAllProposalsUseCase.getAll(userId);
-    }
+  @Get('/proposal/all')
+  async getAllProposals(@CurrentUser('id') userId: any) {
+    return await this.getAllProposalsUseCase.getAll(userId);
+  }
 }

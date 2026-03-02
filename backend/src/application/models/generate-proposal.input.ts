@@ -1,4 +1,4 @@
 export interface GenerateProposalInput {
-    userId: string
-    solicitation: string
+  userId: string;
+  solicitation: string;
 }

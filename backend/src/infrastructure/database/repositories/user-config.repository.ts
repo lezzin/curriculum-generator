@@ -7,16 +7,16 @@ import { UserConfigEntity } from '../entities/user-config.entity';
 
 @Injectable()
 export class TypeOrmUserConfigRepository implements UserConfigRepository {
-    constructor(
-        @InjectRepository(UserConfigEntity)
-        private ormRepo: Repository<UserConfigEntity>,
-    ) { }
+  constructor(
+    @InjectRepository(UserConfigEntity)
+    private ormRepo: Repository<UserConfigEntity>,
+  ) {}
 
-    async upsert(userConfig: UserConfig): Promise<void> {
-        await this.ormRepo.upsert({ ...userConfig }, ["userId"]);
-    }
+  async upsert(userConfig: UserConfig): Promise<void> {
+    await this.ormRepo.upsert({ ...userConfig }, ['userId']);
+  }
 
-    async findByUserId(userId: string): Promise<UserConfig | null> {
-        return await this.ormRepo.findOne({ where: { userId } })
-    }
+  async findByUserId(userId: string): Promise<UserConfig | null> {
+    return await this.ormRepo.findOne({ where: { userId } });
+  }
 }

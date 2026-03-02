@@ -30,108 +30,110 @@ import { UserModule } from './user.module';
 import { GetPageUseCase } from 'src/application/use-cases/resume/get-page.use-case';
 
 @Module({
-    imports: [
-        TypeOrmModule.forFeature([ResumeEntity]),
-        BaseDataModule,
-        BullMQModule,
-        StorageModule,
-        SseModule,
-        CacheModule,
-        UserModule,
-        UserConfigModule,
-        BullModule.registerQueue({
-            name: 'resume.queue'
-        })
-    ],
-    controllers: [ResumeController],
-    providers: [
-        {
-            provide: ResumeRepository,
-            useClass: TypeOrmResumeRepository,
-        },
+  imports: [
+    TypeOrmModule.forFeature([ResumeEntity]),
+    BaseDataModule,
+    BullMQModule,
+    StorageModule,
+    SseModule,
+    CacheModule,
+    UserModule,
+    UserConfigModule,
+    BullModule.registerQueue({
+      name: 'resume.queue',
+    }),
+  ],
+  controllers: [ResumeController],
+  providers: [
+    {
+      provide: ResumeRepository,
+      useClass: TypeOrmResumeRepository,
+    },
+    GeminiService,
+    ResumeDocumentService,
+    DiscordService,
+    BullMQResumeQueue,
+    ResumeProcessor,
+    {
+      provide: GeneratePdfUseCase,
+      useFactory: (pdfService: ResumeDocumentService) =>
+        new GeneratePdfUseCase(pdfService),
+      inject: [ResumeDocumentService],
+    },
+    {
+      provide: GetPdfUseCase,
+      useFactory: (pdfService: ResumeDocumentService) =>
+        new GetPdfUseCase(pdfService),
+      inject: [ResumeDocumentService],
+    },
+    {
+      provide: GenerateResumeUseCase,
+      useFactory: (resumeQueue: BullMQResumeQueue) =>
+        new GenerateResumeUseCase(resumeQueue),
+      inject: [BullMQResumeQueue],
+    },
+    {
+      provide: GetAllResumesUseCase,
+      useFactory: (
+        resumeRepository: ResumeRepository,
+        cache: CacheRepository,
+      ) => new GetAllResumesUseCase(resumeRepository, cache),
+      inject: [ResumeRepository, CacheRepository],
+    },
+    {
+      provide: ResumeGenerationUseCase,
+      useFactory: (
+        resumeRepository: ResumeRepository,
+        baseDataRepository: BaseDataRepository,
+        geminiService: GeminiService,
+        userConfigRepository: UserConfigRepository,
+        userRepository: UserRepository,
+        pdfService: ResumeDocumentService,
+        sseService: SseService,
+        cache: CacheRepository,
+      ) =>
+        new ResumeGenerationUseCase(
+          resumeRepository,
+          baseDataRepository,
+          userConfigRepository,
+          userRepository,
+          geminiService,
+          pdfService,
+          sseService,
+          cache,
+        ),
+      inject: [
+        ResumeRepository,
+        BaseDataRepository,
         GeminiService,
+        UserConfigRepository,
+        UserRepository,
         ResumeDocumentService,
-        DiscordService,
-        BullMQResumeQueue,
-        ResumeProcessor,
-        {
-            provide: GeneratePdfUseCase,
-            useFactory: (pdfService: ResumeDocumentService) =>
-                new GeneratePdfUseCase(pdfService),
-            inject: [ResumeDocumentService],
-        },
-        {
-            provide: GetPdfUseCase,
-            useFactory: (pdfService: ResumeDocumentService) =>
-                new GetPdfUseCase(pdfService),
-            inject: [ResumeDocumentService],
-        },
-        {
-            provide: GenerateResumeUseCase,
-            useFactory: (resumeQueue: BullMQResumeQueue) =>
-                new GenerateResumeUseCase(resumeQueue),
-            inject: [BullMQResumeQueue],
-        },
-        {
-            provide: GetAllResumesUseCase,
-            useFactory: (resumeRepository: ResumeRepository, cache: CacheRepository) =>
-                new GetAllResumesUseCase(resumeRepository, cache),
-            inject: [ResumeRepository, CacheRepository],
-        },
-        {
-            provide: ResumeGenerationUseCase,
-            useFactory: (
-                resumeRepository: ResumeRepository,
-                baseDataRepository: BaseDataRepository,
-                geminiService: GeminiService,
-                userConfigRepository: UserConfigRepository,
-                userRepository: UserRepository,
-                pdfService: ResumeDocumentService,
-                sseService: SseService,
-                cache: CacheRepository,
-            ) =>
-                new ResumeGenerationUseCase(
-                    resumeRepository,
-                    baseDataRepository,
-                    userConfigRepository,
-                    userRepository,
-                    geminiService,
-                    pdfService,
-                    sseService,
-                    cache,
-                ),
-            inject: [
-                ResumeRepository,
-                BaseDataRepository,
-                GeminiService,
-                UserConfigRepository,
-                UserRepository,
-                ResumeDocumentService,
-                SseService,
-                CacheRepository,
-            ],
-        },
-        {
-            provide: GetPageUseCase,
-            useFactory: (
-                resumeDocumentService: ResumeDocumentService,
-                resumeRepository: ResumeRepository,
-                userConfigRepository: UserConfigRepository,
-                userRepository: UserRepository,
-            ) =>
-                new GetPageUseCase(
-                    resumeDocumentService,
-                    resumeRepository,
-                    userConfigRepository,
-                    userRepository,
-                ),
-            inject: [
-                ResumeDocumentService,
-                ResumeRepository,
-                UserConfigRepository,
-                UserRepository,
-            ],
-        },
-    ],
+        SseService,
+        CacheRepository,
+      ],
+    },
+    {
+      provide: GetPageUseCase,
+      useFactory: (
+        resumeDocumentService: ResumeDocumentService,
+        resumeRepository: ResumeRepository,
+        userConfigRepository: UserConfigRepository,
+        userRepository: UserRepository,
+      ) =>
+        new GetPageUseCase(
+          resumeDocumentService,
+          resumeRepository,
+          userConfigRepository,
+          userRepository,
+        ),
+      inject: [
+        ResumeDocumentService,
+        ResumeRepository,
+        UserConfigRepository,
+        UserRepository,
+      ],
+    },
+  ],
 })
-export class ResumeModule { }
+export class ResumeModule {}

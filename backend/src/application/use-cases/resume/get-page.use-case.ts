@@ -1,35 +1,42 @@
-import { NotFoundException } from "@nestjs/common";
-import { GetPageInput } from "src/application/models/get-page.input";
-import { ResumeRepository } from "src/domain/repositories/resume.repository";
-import { UserConfigRepository } from "src/domain/repositories/user-config.repository";
-import { UserRepository } from "src/domain/repositories/user.repository";
-import { ResumeDocumentService } from "src/infrastructure/services/resume-document.service";
+import { NotFoundException } from '@nestjs/common';
+import { GetPageInput } from 'src/application/models/get-page.input';
+import { ResumeRepository } from 'src/domain/repositories/resume.repository';
+import { UserConfigRepository } from 'src/domain/repositories/user-config.repository';
+import { UserRepository } from 'src/domain/repositories/user.repository';
+import { ResumeDocumentService } from 'src/infrastructure/services/resume-document.service';
 
 export class GetPageUseCase {
-    constructor(
-        private readonly resumeDocumentService: ResumeDocumentService,
-        private readonly resumeRepository: ResumeRepository,
-        private readonly userConfigRepository: UserConfigRepository,
-        private readonly userRepository: UserRepository,
-    ) { }
+  constructor(
+    private readonly resumeDocumentService: ResumeDocumentService,
+    private readonly resumeRepository: ResumeRepository,
+    private readonly userConfigRepository: UserConfigRepository,
+    private readonly userRepository: UserRepository,
+  ) {}
 
-    async execute(body: GetPageInput) {
-        const resume = await this.resumeRepository.findById(body.id)
-        if (!resume) {
-            return new NotFoundException('Currículo não encontrado!')
-        }
-
-        if (body?.template) {
-            resume.template = body.template
-        }
-
-        const user = await this.userRepository.findById(resume.userId);
-        if (!user) {
-            return new NotFoundException('Usuário não encontrado!')
-        }
-
-        const userConfig = await this.userConfigRepository.findByUserId(resume.userId)
-
-        return this.resumeDocumentService.generateResumeHtml(resume, user, userConfig, 'page');
+  async execute(body: GetPageInput) {
+    const resume = await this.resumeRepository.findById(body.id);
+    if (!resume) {
+      return new NotFoundException('Currículo não encontrado!');
     }
+
+    if (body?.template) {
+      resume.template = body.template;
+    }
+
+    const user = await this.userRepository.findById(resume.userId);
+    if (!user) {
+      return new NotFoundException('Usuário não encontrado!');
+    }
+
+    const userConfig = await this.userConfigRepository.findByUserId(
+      resume.userId,
+    );
+
+    return this.resumeDocumentService.generateResumeHtml(
+      resume,
+      user,
+      userConfig,
+      'page',
+    );
+  }
 }

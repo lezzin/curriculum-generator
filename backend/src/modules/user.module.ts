@@ -8,32 +8,28 @@ import { UserController } from 'src/presentation/controllers/user/user.controlle
 import { GetUserUseCase } from 'src/application/use-cases/user/get-user.use-case';
 
 @Module({
-    imports: [TypeOrmModule.forFeature([UserEntity])],
-    controllers: [UserController],
-    providers: [
-        {
-            provide: UserRepository,
-            useClass: TypeOrmUserRepository,
-        },
-        {
-            provide: RegisterUserUseCase,
-            useFactory: (
-                userRepository: UserRepository,
-            ) => {
-                return new RegisterUserUseCase(userRepository);
-            },
-            inject: [UserRepository],
-        },
-        {
-            provide: GetUserUseCase,
-            useFactory: (
-                userRepository: UserRepository,
-            ) => {
-                return new GetUserUseCase(userRepository);
-            },
-            inject: [UserRepository],
-        },
-    ],
-    exports: [UserRepository, GetUserUseCase],
+  imports: [TypeOrmModule.forFeature([UserEntity])],
+  controllers: [UserController],
+  providers: [
+    {
+      provide: UserRepository,
+      useClass: TypeOrmUserRepository,
+    },
+    {
+      provide: RegisterUserUseCase,
+      useFactory: (userRepository: UserRepository) => {
+        return new RegisterUserUseCase(userRepository);
+      },
+      inject: [UserRepository],
+    },
+    {
+      provide: GetUserUseCase,
+      useFactory: (userRepository: UserRepository) => {
+        return new GetUserUseCase(userRepository);
+      },
+      inject: [UserRepository],
+    },
+  ],
+  exports: [UserRepository, GetUserUseCase],
 })
-export class UserModule { }
+export class UserModule {}

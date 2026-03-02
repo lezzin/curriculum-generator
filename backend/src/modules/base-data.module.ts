@@ -9,41 +9,35 @@ import { RemoveBaseDataUseCase } from 'src/application/use-cases/base-data/remov
 import { GetAllBaseDataUseCase } from 'src/application/use-cases/base-data/get-all-base-data.use-case';
 
 @Module({
-    imports: [TypeOrmModule.forFeature([BaseDataEntity])],
-    controllers: [BaseDataController],
-    providers: [
-        {
-            provide: BaseDataRepository,
-            useClass: TypeOrmBaseDataRepository,
-        },
-        {
-            provide: UpsertBaseDataUseCase,
-            useFactory: (
-                baseDataRepository: BaseDataRepository,
-            ) => {
-                return new UpsertBaseDataUseCase(baseDataRepository);
-            },
-            inject: [BaseDataRepository],
-        },
-        {
-            provide: RemoveBaseDataUseCase,
-            useFactory: (
-                baseDataRepository: BaseDataRepository,
-            ) => {
-                return new RemoveBaseDataUseCase(baseDataRepository);
-            },
-            inject: [BaseDataRepository],
-        },
-        {
-            provide: GetAllBaseDataUseCase,
-            useFactory: (
-                baseDataRepository: BaseDataRepository,
-            ) => {
-                return new GetAllBaseDataUseCase(baseDataRepository);
-            },
-            inject: [BaseDataRepository],
-        },
-    ],
-    exports: [BaseDataRepository],
+  imports: [TypeOrmModule.forFeature([BaseDataEntity])],
+  controllers: [BaseDataController],
+  providers: [
+    {
+      provide: BaseDataRepository,
+      useClass: TypeOrmBaseDataRepository,
+    },
+    {
+      provide: UpsertBaseDataUseCase,
+      useFactory: (baseDataRepository: BaseDataRepository) => {
+        return new UpsertBaseDataUseCase(baseDataRepository);
+      },
+      inject: [BaseDataRepository],
+    },
+    {
+      provide: RemoveBaseDataUseCase,
+      useFactory: (baseDataRepository: BaseDataRepository) => {
+        return new RemoveBaseDataUseCase(baseDataRepository);
+      },
+      inject: [BaseDataRepository],
+    },
+    {
+      provide: GetAllBaseDataUseCase,
+      useFactory: (baseDataRepository: BaseDataRepository) => {
+        return new GetAllBaseDataUseCase(baseDataRepository);
+      },
+      inject: [BaseDataRepository],
+    },
+  ],
+  exports: [BaseDataRepository],
 })
-export class BaseDataModule { }
+export class BaseDataModule {}

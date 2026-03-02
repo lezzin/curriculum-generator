@@ -8,32 +8,28 @@ import { UpsertUserConfigUseCase } from 'src/application/use-cases/user-config/u
 import { GetByUserIdUserConfigUseCase } from 'src/application/use-cases/user-config/get-by-user-id.use-case';
 
 @Module({
-    imports: [TypeOrmModule.forFeature([UserConfigEntity])],
-    controllers: [UserConfigController],
-    providers: [
-        {
-            provide: UserConfigRepository,
-            useClass: TypeOrmUserConfigRepository,
-        },
-        {
-            provide: UpsertUserConfigUseCase,
-            useFactory: (
-                userConfigRepository: UserConfigRepository,
-            ) => {
-                return new UpsertUserConfigUseCase(userConfigRepository);
-            },
-            inject: [UserConfigRepository],
-        },
-        {
-            provide: GetByUserIdUserConfigUseCase,
-            useFactory: (
-                userConfigRepository: UserConfigRepository,
-            ) => {
-                return new GetByUserIdUserConfigUseCase(userConfigRepository);
-            },
-            inject: [UserConfigRepository],
-        },
-    ],
-    exports: [UserConfigRepository],
+  imports: [TypeOrmModule.forFeature([UserConfigEntity])],
+  controllers: [UserConfigController],
+  providers: [
+    {
+      provide: UserConfigRepository,
+      useClass: TypeOrmUserConfigRepository,
+    },
+    {
+      provide: UpsertUserConfigUseCase,
+      useFactory: (userConfigRepository: UserConfigRepository) => {
+        return new UpsertUserConfigUseCase(userConfigRepository);
+      },
+      inject: [UserConfigRepository],
+    },
+    {
+      provide: GetByUserIdUserConfigUseCase,
+      useFactory: (userConfigRepository: UserConfigRepository) => {
+        return new GetByUserIdUserConfigUseCase(userConfigRepository);
+      },
+      inject: [UserConfigRepository],
+    },
+  ],
+  exports: [UserConfigRepository],
 })
-export class UserConfigModule { }
+export class UserConfigModule {}
