@@ -7,10 +7,10 @@ import { JwtAdapter } from 'src/infrastructure/auth/jwt.service';
 
 export class SocialLoginUseCase {
   constructor(
-    private userRepository: UserRepository,
-    private jwtService: JwtAdapter,
-    private configService: ConfigService,
-  ) {}
+    private readonly userRepository: UserRepository,
+    private readonly jwtService: JwtAdapter,
+    private readonly configService: ConfigService,
+  ) { }
 
   async execute(input: SocialLoginInput) {
     const { provider, providerId, email, name, picture } = input;
@@ -19,14 +19,20 @@ export class SocialLoginUseCase {
       provider,
       providerId,
     );
+
     if (userByProvider) {
-      return this.generateToken(userByProvider);
+      return this.generateTokens(userByProvider);
     }
 
     let user = await this.userRepository.findByEmail(email);
 
     if (!user) {
-      user = new User(crypto.randomUUID(), name, email, picture);
+      user = new User(
+        crypto.randomUUID(),
+        name,
+        email,
+        picture,
+      );
 
       await this.userRepository.create(user);
     }
@@ -39,20 +45,31 @@ export class SocialLoginUseCase {
     );
 
     user.addProvider(newProvider);
-    user = await this.userRepository.create(user);
 
-    return this.generateToken(user);
+    await this.userRepository.update(user);
+
+    return this.generateTokens(user);
   }
 
-  private generateToken(user: User) {
-    const access_token = this.jwtService.sign({
+  private generateTokens(user: User) {
+    const accessToken = this.jwtService.signAccessToken({
       sub: user.id,
       email: user.email,
+      type: 'access_token',
+    });
+
+    const refreshToken = this.jwtService.signRefreshToken({
+      sub: user.id,
+      email: user.email,
+      type: 'refresh_token',
     });
 
     return {
-      access_token,
-      redirect_url: this.configService.getOrThrow('FRONTEND_URL'),
+      accessToken,
+      refreshToken,
+      accessTokenExpiration: this.jwtService.getAccessTokenExpirationMs(),
+      refreshTokenExpiration: this.jwtService.getRefreshTokenExpirationMs(),
+      redirectUrl: this.configService.getOrThrow<string>('FRONTEND_URL'),
     };
   }
 }

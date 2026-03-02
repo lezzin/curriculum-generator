@@ -1,21 +1,20 @@
 <script setup lang="ts">
 import { onMounted, onUnmounted, watch } from 'vue';
 import { useRoute } from 'vue-router';
-import { useAuth } from './composables/useAuth';
 import { useToast } from './composables/useToast';
 import { sseService } from './services/sse.service';
-import { useApi } from './composables/useApi';
 import type { Resume } from './interfaces/resume.interfaces';
 import type { MarketplaceProposal } from './interfaces/freelance.interfaces';
 import LoadContainer from './components/ui/LoadContainer.vue';
 import AppHeader from './components/layout/AppHeader.vue';
 import BaseToast from './components/ui/BaseToast.vue';
 import AppContainer from './components/layout/AppContainer.vue';
+import { api } from './services/api/api';
+import { useAuthStore } from './stores/auth';
 
 const route = useRoute();
-const { user, isAuthLoading } = useAuth();
+const authStore = useAuthStore();
 const { show } = useToast();
-const { api } = useApi();
 
 const setupSSE = () => {
   sseService.init(api);
@@ -49,13 +48,13 @@ const setupSSE = () => {
 };
 
 onMounted(async () => {
-  if (user.value) {
+  if (authStore.user) {
     setupSSE();
   }
 });
 
 watch(
-  () => user.value,
+  () => authStore.user,
   (newUser, oldUser) => {
     if (!oldUser && newUser) {
       setupSSE();
@@ -73,7 +72,7 @@ onUnmounted(() => {
 <template>
   <AppHeader />
 
-  <LoadContainer :loading="isAuthLoading">
+  <LoadContainer :loading="authStore.isAuthLoading">
     <AppContainer class="p-8 space-y-8">
       <router-view></router-view>
       <BaseToast />

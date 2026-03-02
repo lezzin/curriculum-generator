@@ -1,7 +1,7 @@
 import { ref, onUnmounted } from "vue"
 import { useApi } from "./useApi"
 
-const { api } = useApi()
+const { request, apiUrl } = useApi()
 
 export function usePdf() {
     const pdfUrl = ref<string | null>(null)
@@ -9,16 +9,21 @@ export function usePdf() {
     const isGenerating = ref(false)
 
     async function setPublicPdfUrl(id: string) {
-        const response = await api.get(`/resume/pdf/${id}`, {
+        const response = await request<BlobPart>('get', `/resume/pdf/${id}`, {
             responseType: 'arraybuffer',
         });
 
-        const pdfBlob = new Blob([response.data], { type: 'application/pdf' });
+        if (!response) {
+            pdfUrl.value = null;
+            return;
+        }
+
+        const pdfBlob = new Blob([response], { type: 'application/pdf' });
         pdfUrl.value = URL.createObjectURL(pdfBlob);
     }
 
     async function setPublicPageUrl(id: string) {
-        pageUrl.value = `${api.defaults.baseURL}/resume/page/${id}`;
+        pageUrl.value = `${apiUrl}/resume/page/${id}`;
     }
 
     function revoke() {

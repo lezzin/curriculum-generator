@@ -22,7 +22,7 @@ const { handleSubmit, resetForm, values } = useForm<UserConfigForm>({
 
 const userConfig = ref<UserConfig | null>(null)
 
-const { api, loading: isLoading } = useApi()
+const { request, loading: isLoading } = useApi()
 const { show } = useToast()
 
 const completionPercentage = computed(() => {
@@ -33,15 +33,15 @@ const completionPercentage = computed(() => {
 
 const loadUserConfig = async () => {
     try {
-        const { data } = await api.get('/user-config/all')
-        const normalized = nullToEmpty(data)
+        const data = await request<UserConfig>('get', '/user-config/all')
+        const normalized = data ? nullToEmpty(data) : null
 
         resetForm({
             values: {
-                linkedin: normalized.linkedin,
-                github: normalized.github,
-                portfolio: normalized.portfolio,
-                cellphone: normalized.cellphone
+                linkedin: normalized?.linkedin,
+                github: normalized?.github,
+                portfolio: normalized?.portfolio,
+                cellphone: normalized?.cellphone
             }
         })
 
@@ -56,7 +56,7 @@ const loadUserConfig = async () => {
 
 const upsertUserConfigData = handleSubmit(async (form) => {
     try {
-        await api.post('/user-config/upsert', form)
+        await request('post', '/user-config/upsert', form)
         await loadUserConfig()
         show('Informações atualizadas com sucesso!')
     } catch (err: any) {

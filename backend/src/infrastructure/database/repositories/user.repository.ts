@@ -12,7 +12,7 @@ export class TypeOrmUserRepository implements UserRepository {
   constructor(
     @InjectRepository(UserEntity)
     private ormRepo: Repository<UserEntity>,
-  ) {}
+  ) { }
 
   async create(user: User): Promise<User> {
     const entity = this.toOrmEntity(user);
@@ -55,6 +55,15 @@ export class TypeOrmUserRepository implements UserRepository {
     return this.toDomain(entity);
   }
 
+  async update(user: User): Promise<void> {
+    await this.ormRepo.save(this.toOrmEntity(user));
+  }
+
+  async findByRefreshToken(id: string, refreshToken: string): Promise<User | null> {
+    const entity = (await this.ormRepo.findOneBy({ id, refreshToken }));
+    return entity ? this.toDomain(entity) : null;
+  }
+
   private toDomain(entity: UserEntity): User {
     const user = new User(
       entity.id,
@@ -83,6 +92,7 @@ export class TypeOrmUserRepository implements UserRepository {
     entity.email = user.email;
     entity.password = user.password;
     entity.picture = user.picture;
+    entity.refreshToken = user.refreshToken;
 
     entity.providers = user.getProviders().map((p) => {
       const provider = new UserProviderEntity();

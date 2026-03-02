@@ -15,7 +15,7 @@ type UserBaseDataItem = {
     createdAt: string
 }
 
-const { api } = useApi()
+const { request } = useApi()
 const { show } = useToast()
 
 const baseData = reactive<Record<UserBaseType, string | null>>({
@@ -28,9 +28,9 @@ const editingType = ref<UserBaseType>('resume')
 
 const loadBaseData = async () => {
     try {
-        const { data } = await api.get<UserBaseDataItem[]>('/base-data/all')
-        baseData.resume = data.find(d => d.type === 'resume')?.description ?? null
-        baseData['freelance-proposal'] = data.find(d => d.type === 'freelance-proposal')?.description ?? null
+        const data = await request<UserBaseDataItem[]>('get', '/base-data/all')
+        baseData.resume = data?.find(d => d.type === 'resume')?.description ?? null
+        baseData['freelance-proposal'] = data?.find(d => d.type === 'freelance-proposal')?.description ?? null
     } catch {
         show({ message: 'Erro ao carregar dados base.', type: 'error' })
     }
@@ -43,7 +43,7 @@ const openForm = (type: UserBaseType) => {
 
 const removeBaseData = async (type: UserBaseType) => {
     try {
-        await api.post('/base-data/remove', { type })
+        await request('post', '/base-data/remove', { type })
         baseData[type] = null
         show({ message: 'Base removida com sucesso.', type: 'success' })
     } catch {

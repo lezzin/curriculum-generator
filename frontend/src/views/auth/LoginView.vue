@@ -1,10 +1,9 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useForm } from 'vee-validate'
-import { useRouter } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { useApi } from '../../composables/useApi'
 import { useToast } from '../../composables/useToast'
-import { useAuth } from '../../composables/useAuth'
 
 import AppTitle from '../../components/layout/AppTitle.vue'
 import CardContainer from '../../components/ui/card/CardContainer.vue'
@@ -14,23 +13,28 @@ import GoogleIcon from '../../components/icon/GoogleIcon.vue'
 import GitHubIcon from '../../components/icon/GitHubIcon.vue'
 
 import { authSchema, type AuthForm } from '../../components/validation/schemas/auth.schema'
+import { useAuthStore } from '../../stores/auth'
 
 const { handleSubmit } = useForm<AuthForm>({
     validationSchema: authSchema
 })
 
 const router = useRouter()
-const { request, api, loading } = useApi()
+const route = useRoute()
+
+const { request, loading, apiUrl } = useApi()
 const { show } = useToast()
-const { checkAuth } = useAuth()
+const authStore = useAuthStore()
 
 const redirecting = ref(false)
 
 const login = handleSubmit(async (form) => {
     try {
-        await request(() => api.post('/auth/login', form))
-        await checkAuth()
-        router.replace('/')
+        await request<string>('post', '/auth/login', form)
+        await authStore.checkAuth()
+
+        const redirect = route.query.redirect as string
+        router.push(redirect || { name: 'Home' })
     } catch (err: any) {
         show({
             message: err.message || 'Erro ao fazer login.',
@@ -41,7 +45,7 @@ const login = handleSubmit(async (form) => {
 
 const loginProvider = (provider: 'github' | 'google') => {
     redirecting.value = true
-    window.location.assign(`${api.defaults.baseURL}/auth/${provider}`)
+    window.location.assign(`${apiUrl}/auth/${provider}`)
 }
 </script>
 

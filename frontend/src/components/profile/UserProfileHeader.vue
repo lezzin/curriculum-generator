@@ -1,20 +1,20 @@
 <script setup lang="ts">
-import { useAuth } from '../../composables/useAuth'
+import { useAuthStore } from '../../stores/auth';
 import UserAvatar from '../ui/UserAvatar.vue'
-const { user } = useAuth()
+const authStore = useAuthStore()
 </script>
 
 <template>
     <header class="flex items-center gap-4 mb-8 p-4 bg-gray-50 rounded-lg">
-        <UserAvatar v-if="user?.id" :user="user" />
+        <UserAvatar v-if="authStore.user?.id" :user="authStore.user" />
 
         <div class="flex flex-col">
             <p class="text-lg font-semibold">
-                {{ user?.name }}
+                {{ authStore.user?.name }}
             </p>
 
             <p class="text-sm text-gray-600">
-                {{ user?.email }}
+                {{ authStore.user?.email }}
             </p>
 
             <p class="text-xs text-gray-500 mt-1">

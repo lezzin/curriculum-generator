@@ -15,17 +15,15 @@ const { handleSubmit } = useForm<FreelanceForm>({
     }
 })
 
-const { api, loading, request } = useApi()
+const { loading: isLoading, request } = useApi()
 
 const generateProposal = handleSubmit(async (form) => {
     try {
-        await request(async () => {
-            const response = await api.post("/freelance/proposal/generate", {
-                solicitation: form.solicitationText,
-            })
-
-            show(response.data.message ?? "Solicitação de proposta enviada com sucesso!")
+        const message = await request<string>('post', '/freelance/proposal/generate', {
+            solicitation: form.solicitationText,
         })
+
+        show(message ?? "Solicitação de proposta enviada com sucesso!")
     } catch (err: any) {
         show({
             message: err.message || "Ocorreu um erro ao enviar a solicitação. Tente novamente mais tarde.",
@@ -45,7 +43,7 @@ const generateProposal = handleSubmit(async (form) => {
                 :max-length="MAX_LENGTH" :show-length="true"
                 placeholder="Cole aqui todos os detalhes da solicitação. Quanto mais informações, mais personalizada será a proposta." />
 
-            <BaseButton type="submit" :disabled="loading" :loading="loading">
+            <BaseButton type="submit" :disabled="isLoading" :loading="isLoading">
                 Gerar proposta personalizada
             </BaseButton>
         </div>

@@ -3,6 +3,7 @@ import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { ConfigService } from '@nestjs/config';
 import { UserRepository } from 'src/domain/repositories/user.repository';
+import { AuthUserData } from 'src/domain/shared/interfaces/auth.interfaces';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
@@ -12,14 +13,18 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   ) {
     super({
       jwtFromRequest: ExtractJwt.fromExtractors([
-        (req) => req?.cookies?.authToken,
+        (req) => req?.cookies?.accessToken,
       ]),
       ignoreExpiration: false,
       secretOrKey: configService.getOrThrow<string>('JWT_ACCESS_SECRET'),
     });
   }
 
-  async validate(payload: any) {
+  async validate(payload: AuthUserData) {
+    if (payload.type !== 'access_token') {
+      throw new UnauthorizedException('Tipo de token inválido!')
+    }
+
     const user = await this.userRepository.findById(payload.sub);
 
     if (!user) {
@@ -27,7 +32,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     }
 
     return {
-      id: user.id,
+      sub: user.id,
       name: user.name,
       email: user.email,
     };

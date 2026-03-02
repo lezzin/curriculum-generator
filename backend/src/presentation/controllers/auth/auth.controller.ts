@@ -6,85 +6,155 @@ import {
   Get,
   UseGuards,
   Req,
+  UnauthorizedException,
 } from '@nestjs/common';
+import type { Request, Response } from 'express';
+import { AuthGuard } from '@nestjs/passport';
 import { LoginUseCase } from 'src/application/use-cases/auth/login.use-case';
-import type { Response } from 'express';
+import { RefreshUseCase } from 'src/application/use-cases/auth/refresh.use-case';
+import { SocialLoginUseCase } from 'src/application/use-cases/auth/social-login.use-case';
+import { GetUserUseCase } from 'src/application/use-cases/user/get-user.use-case';
 import { JwtAuthGuard } from 'src/infrastructure/auth/jwt-auth.guard';
 import { CurrentUser } from 'src/infrastructure/auth/current-user.decorator';
 import { LoginDto } from './auth.dto';
 import { cookieOptions } from 'src/domain/shared/config/cookie.config';
-import { AuthGuard } from '@nestjs/passport';
-import { SocialLoginUseCase } from 'src/application/use-cases/auth/social-login.use-case';
-import { GetUserUseCase } from 'src/application/use-cases/user/get-user.use-case';
 
 @Controller('auth')
 export class AuthController {
   constructor(
-    private loginUseCase: LoginUseCase,
-    private socialLoginUseCase: SocialLoginUseCase,
-    private getUserUseCase: GetUserUseCase,
-  ) {}
+    private readonly loginUseCase: LoginUseCase,
+    private readonly refreshUseCase: RefreshUseCase,
+    private readonly socialLoginUseCase: SocialLoginUseCase,
+    private readonly getUserUseCase: GetUserUseCase,
+  ) { }
 
   @Post('login')
   async login(
     @Body() body: LoginDto,
     @Res({ passthrough: true }) res: Response,
   ) {
-    const { access_token } = await this.loginUseCase.execute(body);
+    const {
+      accessToken,
+      refreshToken,
+      accessTokenExpiration,
+      refreshTokenExpiration,
+    } = await this.loginUseCase.execute(body);
 
-    res.cookie('authToken', access_token, {
-      ...cookieOptions,
-      maxAge: 15 * 60 * 1000,
-    });
+    this.setAuthCookies(
+      res,
+      accessToken,
+      accessTokenExpiration,
+      refreshToken,
+      refreshTokenExpiration,
+    );
 
     return { message: 'Login realizado com sucesso' };
   }
 
+  @Post('refresh')
+  async refresh(
+    @Req() req: Request,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    const refreshToken = req.cookies?.refreshToken;
+
+    if (!refreshToken) {
+      throw new UnauthorizedException('Refresh token não encontrado!')
+    }
+
+    const {
+      newAccessToken,
+      newRefreshToken,
+      newAccessTokenExpiration,
+      newRefreshTokenExpiration,
+    } = await this.refreshUseCase.execute({
+      refresh_token: refreshToken,
+    });
+
+    this.setAuthCookies(
+      res,
+      newAccessToken,
+      newAccessTokenExpiration,
+      newRefreshToken,
+      newRefreshTokenExpiration,
+    );
+
+    return { message: 'Token atualizado com sucesso' };
+  }
+
   @Post('logout')
   logout(@Res({ passthrough: true }) res: Response) {
-    res.clearCookie('authToken', cookieOptions);
-    return { message: 'Deslogado com sucesso!' };
+    this.clearAuthCookies(res);
+    return { message: 'Deslogado com sucesso' };
   }
 
   @Get('me')
   @UseGuards(JwtAuthGuard)
   getMe(@CurrentUser() user: any) {
+    console.log(user);
     return this.getUserUseCase.execute(user);
   }
 
   @Get('google')
   @UseGuards(AuthGuard('google'))
-  async googleAuth() {}
+  googleAuth() { }
 
   @Get('google/callback')
   @UseGuards(AuthGuard('google'))
-  async googleCallback(@Req() req: any, @Res() res: Response) {
-    const { access_token, redirect_url } =
-      await this.socialLoginUseCase.execute(req?.user);
-
-    res.cookie('authToken', access_token, {
-      ...cookieOptions,
-      maxAge: 15 * 60 * 1000,
-    });
-
-    return res.redirect(redirect_url);
+  async googleCallback(
+    @Req() req: Request,
+    @Res() res: Response,
+  ) {
+    return this.handleSocialCallback(req, res);
   }
 
   @Get('github')
   @UseGuards(AuthGuard('github'))
-  async githubAuth() {}
+  githubAuth() { }
 
   @Get('github/callback')
   @UseGuards(AuthGuard('github'))
-  async githubCallback(@Req() req: any, @Res() res: Response) {
-    const { access_token, redirect_url } =
-      await this.socialLoginUseCase.execute(req?.user);
+  async githubCallback(
+    @Req() req: Request,
+    @Res() res: Response,
+  ) {
+    return this.handleSocialCallback(req, res);
+  }
 
-    res.cookie('authToken', access_token, {
+  private async handleSocialCallback(
+    req: Request,
+    res: Response,
+  ) {
+    const { accessToken, accessTokenExpiration, redirectUrl, refreshToken, refreshTokenExpiration } =
+      await this.socialLoginUseCase.execute((req as any).user);
+
+    this.setAuthCookies(res, accessToken, accessTokenExpiration, refreshToken, refreshTokenExpiration);
+
+    return res.redirect(redirectUrl);
+  }
+
+  private setAuthCookies(
+    res: Response,
+    accessToken: string,
+    accessMaxAge: number,
+    refreshToken?: string,
+    refreshMaxAge?: number,
+  ) {
+    res.cookie('accessToken', accessToken, {
       ...cookieOptions,
-      maxAge: 15 * 60 * 1000,
+      maxAge: accessMaxAge,
     });
 
-    return res.redirect(redirect_url);
+    if (refreshToken && refreshMaxAge) {
+      res.cookie('refreshToken', refreshToken, {
+        ...cookieOptions,
+        maxAge: refreshMaxAge,
+      });
+    }
+  }
+
+  private clearAuthCookies(res: Response) {
+    res.clearCookie('accessToken', cookieOptions);
+    res.clearCookie('refreshToken', cookieOptions);
   }
 }

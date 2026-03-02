@@ -16,11 +16,15 @@ html {
     select,
     textarea,
     input {
-        @apply w-full h-10 px-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black disabled:opacity-50
+        @apply w-full h-10 px-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50
+    }
+
+    select {
+        @apply appearance-none;
     }
 
     textarea {
-        @apply resize-none h-auto;
+        @apply resize-none h-auto py-2;
     }
 
     .has-button-helper {

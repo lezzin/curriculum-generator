@@ -1,56 +1,39 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import ResumeGeneratorView from '../views/resume/ResumeGeneratorView.vue'
-import HomeView from '../views/HomeView.vue'
-import FreelanceView from '../views/freelance/FreelanceView.vue'
-import ResumeHistoryView from '../views/resume/ResumeHistoryView.vue'
-import FreelanceHistoryView from '../views/freelance/FreelanceHistoryView.vue'
-import { useAuth } from '../composables/useAuth'
-import LoginView from '../views/auth/LoginView.vue'
-import SignupView from '../views/auth/SignupView.vue'
-import ProfileView from '../views/auth/ProfileView.vue'
+import { publicRoutes } from './public.routes'
+import { privateRoutes } from './private.routes'
+import { useAuthStore } from '../stores/auth'
 
-const { checkAuth, user } = useAuth();
-
-const routes = [
-    { path: '/', name: 'Home', component: HomeView },
-    { path: '/auth/login', name: 'Login', component: LoginView },
-    { path: '/auth/signup', name: 'Signup', component: SignupView },
-    { path: '/auth/profile', name: 'Profile', component: ProfileView },
-
-    { path: '/resume', name: 'ResumeGenerator', component: ResumeGeneratorView },
-    { path: '/resume/history', name: 'ResumeHistory', component: ResumeHistoryView },
-
-    { path: '/freelance', name: 'Freelance', component: FreelanceView },
-    { path: '/freelance/history', name: 'FreelanceProposalHistory', component: FreelanceHistoryView },
-]
+const routes = [...publicRoutes, ...privateRoutes]
 
 export const router = createRouter({
     history: createWebHistory(),
     routes,
 })
 
-router.beforeEach(async (to) => {
-    const HOME_ROUTE = 'Home' as const;
-    const AUTH_ROUTES = ['Login', 'Signup'] as const;
+let authInitialized = false
 
-    const PUBLIC_ROUTES = [
-        HOME_ROUTE,
-        ...AUTH_ROUTES,
-    ] as const;
+router.beforeEach(async (to, from) => {
+    const authStore = useAuthStore()
 
-    if (!user.value) {
-        await checkAuth();
+    const isSameRoute = to.name === from.name
+    const isHashNavigation = !!to.hash && isSameRoute
+    if (isHashNavigation) return true
+
+    if (!authInitialized) {
+        await authStore.checkAuth()
+        authInitialized = true
     }
 
-    if (user.value && AUTH_ROUTES.includes(to.name as any)) {
-        return { name: HOME_ROUTE };
+    if (to.meta.requiresAuth && !authStore.user) {
+        return {
+            name: 'Login',
+            query: { redirect: to.fullPath },
+        }
     }
 
-    const authRequired = !PUBLIC_ROUTES.includes(to.name as any);
-
-    if (authRequired && !user.value) {
-        return { name: 'Login' };
+    if (to.meta.guestOnly && authStore.user) {
+        return { name: 'Home' }
     }
 
-    return true;
-});
+    return true
+})

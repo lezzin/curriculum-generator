@@ -20,26 +20,24 @@ const { handleSubmit, values } = useForm<ResumeForm>({
     initialValues: INITIAL_VALUES
 })
 
-const { api, loading, request } = useApi()
+const { loading: isLoading, request } = useApi()
 
 const isTemplatePreviewModalOpen = ref(false)
 
 const generateResume = handleSubmit(async (form) => {
     try {
-        await request(async () => {
-            const response = await api.post("/resume/generate", {
-                jobDescription: form.jobText,
-                options: {
-                    language: form.language,
-                    targetSeniority: form.seniority,
-                    focusArea: form.focusArea,
-                    market: form.market,
-                    template: form.templateType
-                }
-            })
+        const message = await request<string>('post', "/resume/generate", {
+            jobDescription: form.jobText,
+            options: {
+                language: form.language,
+                targetSeniority: form.seniority,
+                focusArea: form.focusArea,
+                market: form.market,
+                template: form.templateType
+            }
+        })
 
-            show(response.data.message ?? "Solicitação de currículo enviada com sucesso!")
-        });
+        show(message ?? "Solicitação de currículo enviada com sucesso!")
     } catch (err: any) {
         show({
             message: err.message || "Ocorreu um erro ao enviar a solicitação. Tente novamente mais tarde.",
@@ -110,7 +108,7 @@ const generateResume = handleSubmit(async (form) => {
                     :show-length="true"
                     placeholder="Cole aqui a descrição completa da vaga. Quanto mais detalhes, melhor será a personalização do currículo." />
 
-                <BaseButton type="submit" :disabled="loading" :loading="loading">
+                <BaseButton type="submit" :disabled="isLoading" :loading="isLoading">
                     Gerar currículo personalizado
                 </BaseButton>
             </div>

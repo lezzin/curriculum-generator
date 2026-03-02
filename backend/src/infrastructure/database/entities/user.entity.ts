@@ -20,11 +20,14 @@ export class UserEntity {
   @Column('varchar')
   email: string;
 
-  @Column('varchar')
-  picture: string;
+  @Column({ type: 'varchar', nullable: true })
+  picture?: string | null;
 
   @Column({ type: 'text', nullable: true })
-  password?: string;
+  password?: string | null;
+
+  @Column({ name: "refresh_token", type: 'text', nullable: true })
+  refreshToken?: string | null;
 
   @OneToMany(() => UserProviderEntity, (provider) => provider.user, {
     cascade: true,

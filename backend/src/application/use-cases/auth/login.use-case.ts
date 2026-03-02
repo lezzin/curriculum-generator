@@ -8,7 +8,7 @@ export class LoginUseCase {
   constructor(
     private userRepository: UserRepository,
     private jwtService: JwtAdapter,
-  ) {}
+  ) { }
 
   async execute(body: LoginInput) {
     const user = await this.userRepository.findByEmail(body.email);
@@ -29,13 +29,26 @@ export class LoginUseCase {
       throw new UnauthorizedException('Credenciais inválidas');
     }
 
-    const token = this.jwtService.sign({
+    const accessToken = this.jwtService.signAccessToken({
       sub: user.id,
       email: user.email,
+      type: 'access_token'
     });
 
+    const refreshToken = this.jwtService.signRefreshToken({
+      sub: user.id,
+      email: user.email,
+      type: 'refresh_token'
+    });
+
+    user.refreshToken = refreshToken;
+    await this.userRepository.update(user)
+
     return {
-      access_token: token,
+      accessToken,
+      refreshToken,
+      accessTokenExpiration: this.jwtService.getAccessTokenExpirationMs(),
+      refreshTokenExpiration: this.jwtService.getRefreshTokenExpirationMs(),
     };
   }
 }

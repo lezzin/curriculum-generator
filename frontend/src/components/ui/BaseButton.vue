@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed } from "vue"
-import { RouterLink } from "vue-router";
+import { RouterLink, type RouteLocationNamedRaw } from "vue-router";
 
 interface Props {
     variant?: Variant
@@ -8,7 +8,7 @@ interface Props {
     loading?: boolean
     disabled?: boolean
     as?: As
-    to?: string
+    to?: RouteLocationNamedRaw
     href?: string
     target?: string
 }

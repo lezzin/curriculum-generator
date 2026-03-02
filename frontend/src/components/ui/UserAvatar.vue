@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { getFirstLetter } from '../../helper/string.helper'
-import type { User } from '../../composables/useAuth'
+import type { User } from '../../stores/auth'
 
 type Size = 'sm' | 'md' | 'lg'
 

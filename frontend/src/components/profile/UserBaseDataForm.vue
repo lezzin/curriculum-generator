@@ -29,7 +29,7 @@ const props = defineProps<Props>()
 
 const emit = defineEmits(['close', 'saved', 'update:isOpen'])
 
-const { api, loading: isLoading } = useApi()
+const { request, loading: isLoading } = useApi()
 const { show } = useToast()
 
 const { handleSubmit, resetForm } = useForm<BaseDataForm>({
@@ -143,7 +143,7 @@ const save = handleSubmit(async (form) => {
     )
 
     try {
-        await api.post('/base-data/upsert', {
+        await request('post', '/base-data/upsert', {
             type: props.type,
             description,
         })

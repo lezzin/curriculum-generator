@@ -4,7 +4,6 @@ import { useForm } from 'vee-validate'
 import { useRouter } from 'vue-router'
 import { useApi } from '../../composables/useApi'
 import { useToast } from '../../composables/useToast'
-import { useAuth } from '../../composables/useAuth'
 
 import BaseButton from '../../components/ui/BaseButton.vue'
 import InputField from '../../components/ui/form/InputField.vue'
@@ -12,23 +11,21 @@ import AppTitle from '../../components/layout/AppTitle.vue'
 import CardContainer from '../../components/ui/card/CardContainer.vue'
 
 import { signupSchema, type SignUpForm } from '../../components/validation/schemas/signup.schema'
+import { useAuthStore } from '../../stores/auth'
 
 const { handleSubmit } = useForm<SignUpForm>({
     validationSchema: signupSchema
 })
 
 const router = useRouter()
-const { user, checkAuth } = useAuth()
-const { request, api, loading } = useApi()
+const authStore = useAuthStore()
+const { request, loading } = useApi()
 const { show } = useToast()
 
 const signup = handleSubmit(async (form) => {
     try {
-        await request(() =>
-            api.post('/user/create', form)
-        )
-
-        await checkAuth()
+        await request('post', '/user/create', form)
+        await authStore.checkAuth()
         router.replace('/')
     } catch (err: any) {
         const message =
@@ -43,11 +40,15 @@ const signup = handleSubmit(async (form) => {
     }
 })
 
-watch(user, (value) => {
-    if (value) {
-        router.replace('/')
-    }
-}, { immediate: true })
+watch(
+    () => authStore.user,
+    (value) => {
+        if (value) {
+            router.replace('/')
+        }
+    },
+    { immediate: true }
+)
 </script>
 
 <template>

@@ -13,21 +13,12 @@ import type { StringValue } from 'ms';
 import { SocialLoginUseCase } from 'src/application/use-cases/auth/social-login.use-case';
 import { GoogleStrategy } from 'src/infrastructure/auth/strategies/google.strategy';
 import { GithubStrategy } from 'src/infrastructure/auth/strategies/github.strategy';
+import { RefreshUseCase } from 'src/application/use-cases/auth/refresh.use-case';
 
 @Module({
   imports: [
     UserModule,
-    JwtModule.registerAsync({
-      inject: [ConfigService],
-      useFactory: (configService: ConfigService) => ({
-        secret: configService.getOrThrow<string>('JWT_ACCESS_SECRET'),
-        signOptions: {
-          expiresIn: configService.getOrThrow<StringValue>(
-            'JWT_ACCESS_EXPIRES_IN',
-          ),
-        },
-      }),
-    }),
+    JwtModule.register({}),
   ],
   controllers: [AuthController],
   providers: [
@@ -40,6 +31,13 @@ import { GithubStrategy } from 'src/infrastructure/auth/strategies/github.strate
       provide: LoginUseCase,
       useFactory: (userRepository: UserRepository, jwtAdapter: JwtAdapter) => {
         return new LoginUseCase(userRepository, jwtAdapter);
+      },
+      inject: [UserRepository, JwtAdapter],
+    },
+    {
+      provide: RefreshUseCase,
+      useFactory: (userRepository: UserRepository, jwtAdapter: JwtAdapter) => {
+        return new RefreshUseCase(userRepository, jwtAdapter);
       },
       inject: [UserRepository, JwtAdapter],
     },
@@ -60,4 +58,4 @@ import { GithubStrategy } from 'src/infrastructure/auth/strategies/github.strate
     },
   ],
 })
-export class AuthModule {}
+export class AuthModule { }

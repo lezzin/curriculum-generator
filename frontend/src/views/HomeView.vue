@@ -16,7 +16,7 @@ import BaseButton from "../components/ui/BaseButton.vue"
             </p>
 
             <div class="flex justify-center gap-4 pt-4">
-                <BaseButton size="lg" as="router-link" to="/resume">
+                <BaseButton size="lg" as="router-link" :to="{ name: 'ResumeGenerate' }">
                     Começar a Gerar
                 </BaseButton>
 
@@ -90,7 +90,7 @@ import BaseButton from "../components/ui/BaseButton.vue"
                 Gere conteúdos personalizados para cada oportunidade e aumente suas chances.
             </p>
 
-            <BaseButton size="lg" as="router-link" to="/resume">
+            <BaseButton size="lg" as="router-link" :to="{ name: 'ResumeGenerate' }">
                 Começar Agora
             </BaseButton>
         </div>

@@ -1,27 +1,28 @@
-import axios, { type AxiosInstance } from "axios"
 import { ref } from "vue"
-import { config } from "../config/variables.config"
 import { extractErrorMessage } from "../helper/error.helper"
+import { api } from "../services/api/api"
+
+const apiUrl = api.defaults.baseURL;
+
+type HttpMethod = 'get' | 'post' | 'put' | 'patch' | 'delete'
 
 export function useApi() {
     const loading = ref(false)
 
-    const api: AxiosInstance = axios.create({
-        baseURL: config.apiUrl,
-        withCredentials: true,
-        headers: {
-            "Content-Type": "application/json",
-        }
-    })
-
     async function request<T>(
-        callback: () => Promise<T>,
+        method: HttpMethod,
+        path: string,
+        params: any = null,
         useLoading = true
     ): Promise<T | null> {
         try {
             if (useLoading) loading.value = true
-            const result = await callback()
-            return result
+
+            const result = !!params
+                ? await api[method](path, params)
+                : await api[method](path)
+
+            return result.data as T
         } catch (err) {
             throw new Error(extractErrorMessage(err))
         } finally {
@@ -30,8 +31,8 @@ export function useApi() {
     }
 
     return {
-        api,
         loading,
+        apiUrl,
         request
     }
 }

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, reactive, ref } from 'vue'
+import { onMounted, reactive } from 'vue'
 import { useApi } from '../../composables/useApi'
 import { sseService } from '../../services/sse.service'
 import type { MarketplaceProposal } from '../../interfaces/freelance.interfaces'
@@ -7,22 +7,17 @@ import ProposalPreview from '../../components/freelance/ProposalPreview.vue'
 import AppTitle from '../../components/layout/AppTitle.vue'
 import LoadContainer from '../../components/ui/LoadContainer.vue'
 import { useToast } from '../../composables/useToast'
-import { useAuth } from '../../composables/useAuth'
+import { useAuthStore } from '../../stores/auth'
 
-const { api, request } = useApi()
-const { user } = useAuth()
+const { request, loading: isLoading } = useApi()
+const authStore = useAuthStore()
 const { show } = useToast()
 
 const proposalList = reactive<MarketplaceProposal[]>([])
-const isLoading = ref(true)
 
 async function getProposals() {
     try {
-        const data = await request(async () => {
-            const response = await api.get("/freelance/proposal/all")
-            return response.data as MarketplaceProposal[]
-        })
-
+        const data = await request<MarketplaceProposal[]>('get', '/freelance/proposal/all');
         proposalList.length = 0
         if (data) proposalList.push(...data)
     } catch (error: any) {
@@ -30,13 +25,11 @@ async function getProposals() {
             message: error.message || "Erro ao carregar propostas.",
             type: "error",
         })
-    } finally {
-        isLoading.value = false
     }
 }
 
 sseService.on<MarketplaceProposal>("proposal-generated", (data) => {
-    if (data.userId !== user.value?.id) return
+    if (data.userId !== authStore.user?.id) return
     proposalList.unshift(data)
 })
 
@@ -56,7 +49,7 @@ onMounted(getProposals)
             <p class="text-gray-500">
                 Você ainda não gerou nenhuma proposta personalizada.
             </p>
-            <router-link :to="{ name: 'Freelance' }" class="text-primary font-medium hover:underline">
+            <router-link :to="{ name: 'FreelanceProposalGenerate' }" class="text-primary font-medium hover:underline">
                 Criar minha primeira proposta
             </router-link>
         </div>

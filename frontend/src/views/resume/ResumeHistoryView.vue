@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, reactive, ref } from 'vue'
+import { onMounted, reactive } from 'vue'
 import { useApi } from '../../composables/useApi'
 import { sseService } from '../../services/sse.service'
 import type { Resume } from '../../interfaces/resume.interfaces'
@@ -7,22 +7,17 @@ import ResumePreview from '../../components/resume/ResumePreview.vue'
 import AppTitle from '../../components/layout/AppTitle.vue'
 import LoadContainer from '../../components/ui/LoadContainer.vue'
 import { useToast } from '../../composables/useToast'
-import { useAuth } from '../../composables/useAuth'
+import { useAuthStore } from '../../stores/auth'
 
-const { api, request } = useApi()
-const { user } = useAuth()
+const { request, loading: isLoading } = useApi()
+const authStore = useAuthStore()
 const { show } = useToast()
 
 const resumesList = reactive<Resume[]>([])
-const isLoading = ref(true)
 
 async function getResumes() {
     try {
-        const data = await request(async () => {
-            const response = await api.get("/resume/all")
-            return response.data as Resume[]
-        })
-
+        const data = await request<Resume[]>('get', "/resume/all");
         resumesList.length = 0
         if (data) resumesList.push(...data)
     } catch (error: any) {
@@ -30,13 +25,11 @@ async function getResumes() {
             message: error.message || "Erro ao carregar currículos.",
             type: "error",
         })
-    } finally {
-        isLoading.value = false
     }
 }
 
 sseService.on<Resume>("resume-generated", (data) => {
-    if (data.userId !== user.value?.id) return
+    if (data.userId !== authStore.user?.id) return
     resumesList.unshift(data)
 })
 
@@ -56,7 +49,7 @@ onMounted(getResumes)
                 Você ainda não gerou nenhum currículo personalizado.
             </p>
 
-            <router-link :to="{ name: 'ResumeGenerator' }" class="text-primary font-medium hover:underline">
+            <router-link :to="{ name: 'ResumeGenerate' }" class="text-primary font-medium hover:underline">
                 Criar meu primeiro currículo
             </router-link>
         </div>
