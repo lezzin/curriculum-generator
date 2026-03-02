@@ -19,13 +19,17 @@ import {
 export class ResumeDocumentService implements OnModuleInit, OnModuleDestroy {
   private browser: puppeteer.Browser;
 
-  constructor(private readonly storage: StorageRepository) {}
+  private readonly PUPPETEER_TIMEOUT = 60000 // 60S
+
+  private readonly PUPPETEER_CONFIG: puppeteer.LaunchOptions = {
+    headless: true,
+    args: ['--no-sandbox', '--disable-setuid-sandbox'],
+  }
+
+  constructor(private readonly storage: StorageRepository) { }
 
   async onModuleInit() {
-    this.browser = await puppeteer.launch({
-      headless: 'shell',
-      args: ['--no-sandbox', '--disable-setuid-sandbox'],
-    });
+    this.browser = await puppeteer.launch(this.PUPPETEER_CONFIG);
   }
 
   async onModuleDestroy() {
@@ -62,23 +66,29 @@ export class ResumeDocumentService implements OnModuleInit, OnModuleDestroy {
     user: User,
     userConfig: UserConfig | null,
   ): Promise<Buffer> {
+    await this.ensureBrowser();
+
     const html = this.generateResumeHtml(resume, user, userConfig, 'pdf');
 
     const page = await this.browser.newPage();
 
-    await page.setContent(html, {
-      waitUntil: 'networkidle0',
-    });
+    try {
+      await page.setContent(html, {
+        waitUntil: 'networkidle0',
+        timeout: this.PUPPETEER_TIMEOUT,
+      });
 
-    const pdf = await page.pdf({
-      format: 'A4',
-      printBackground: true,
-      preferCSSPageSize: true,
-    });
+      const pdf = await page.pdf({
+        format: 'A4',
+        printBackground: true,
+        preferCSSPageSize: true,
+        timeout: this.PUPPETEER_TIMEOUT,
+      });
 
-    await page.close();
-
-    return Buffer.from(pdf);
+      return Buffer.from(pdf);
+    } finally {
+      await page.close();
+    }
   }
 
   async generateAndStorePdf(
@@ -146,5 +156,11 @@ export class ResumeDocumentService implements OnModuleInit, OnModuleDestroy {
       contacts.push(`<a href="${userConfig.portfolio}">Portfólio</a>`);
 
     return contacts.join(templateFolder === 'page' ? ' ' : ' | ');
+  }
+
+  private async ensureBrowser() {
+    if (!this.browser || !this.browser.connected) {
+      this.browser = await puppeteer.launch(this.PUPPETEER_CONFIG);
+    }
   }
 }

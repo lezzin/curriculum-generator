@@ -20,6 +20,7 @@ import { GeneratePdfUseCase } from 'src/application/use-cases/resume/generate-pd
 import { GetPageUseCase } from 'src/application/use-cases/resume/get-page.use-case';
 import { HtmlExceptionFilter } from 'src/infrastructure/http/filters/html-exception.filter';
 import { IsPublic } from 'src/infrastructure/auth/is-public.decorator';
+import { Readable } from 'node:stream';
 
 @UseGuards(JwtAuthGuard)
 @Controller('/resume')
@@ -30,7 +31,7 @@ export class ResumeController {
     private readonly getPdfUseCase: GetPdfUseCase,
     private readonly getPageUseCase: GetPageUseCase,
     private readonly generatePdfUseCase: GeneratePdfUseCase,
-  ) {}
+  ) { }
 
   @Post('/generate')
   async generateResume(
@@ -48,10 +49,6 @@ export class ResumeController {
   @Get('/pdf/:id')
   async getPdfById(@Param('id') id: string, @Res() res: Response) {
     const stream = await this.getPdfUseCase.execute(id);
-
-    if (!stream) {
-      return null;
-    }
 
     res.set({
       'Content-Type': 'application/pdf',
