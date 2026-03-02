@@ -1,9 +1,8 @@
-import { UnauthorizedException, UnprocessableEntityException } from '@nestjs/common';
+import { UnauthorizedException } from '@nestjs/common';
 import * as bcrypt from 'bcryptjs';
 import { LoginInput } from 'src/application/models/login.input';
 import { UserRepository } from 'src/domain/repositories/user.repository';
 import { JwtAdapter } from 'src/infrastructure/auth/jwt.service';
-import { LoginDto } from 'src/presentation/controllers/auth/auth.dto';
 
 export class LoginUseCase {
     constructor(
@@ -18,7 +17,6 @@ export class LoginUseCase {
             throw new UnauthorizedException('Credenciais inválidas');
         }
 
-        // TODO validar isso aqui
         if (!user.password) {
             throw new UnauthorizedException(
                 'Este usuário utiliza login social. Use seu provedor ou defina uma senha.'
