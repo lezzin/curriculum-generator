@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { ref, computed, onMounted } from "vue"
+import { ref, computed, onMounted, capitalize } from "vue"
 import { usePdf } from "../../composables/usePdf"
 import { BASE_TEMPLATE_TYPES, type BaseTemplateType, type Resume } from "../../interfaces/resume.interfaces"
 import BaseButton from "../ui/BaseButton.vue"
-import { capitalizeFirst, toHumanReadableDate } from "../../helper/string.helper"
+import { toHumanReadableDate } from "../../helper/string.helper"
 import CardContainer from "../ui/card/CardContainer.vue"
 import RotateArrow from "../icon/RotateArrow.vue"
 import BaseDropdown from "../ui/BaseDropdown.vue"
@@ -74,7 +74,7 @@ onMounted(async () => {
                     <template #default="{ close }">
                         <BaseButton v-for="type in templateTypes" :key="type" :value="type"
                             @click.stop="goToPageUrl(type, close)" size="sm" variant="ghost" class="dropdown-item">
-                            {{ capitalizeFirst(type) }}
+                            {{ capitalize(type) }}
                         </BaseButton>
                     </template>
                 </BaseDropdown>

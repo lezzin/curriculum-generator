@@ -1,23 +1,34 @@
 import * as yup from "yup";
-import type { BaseTemplateType, FocusArea, Language, Market, Seniority } from "../../../interfaces/resume.interfaces";
+import { focusAreas, languages, markets, seniorities, templateTypes, type BaseTemplateType, type FocusArea, type Language, type Market, type Seniority } from "../../../interfaces/resume.interfaces";
 
 export const MAX_LENGTH = 3000;
 export const MIN_LENGTH = 25;
 
 export const resumeSchema = yup.object({
-    jobText: yup.string().required("Campo obrigatório")
+    jobText: yup.string()
+        .required("Campo obrigatório")
         .min(MIN_LENGTH, `Mínimo ${MIN_LENGTH} caracteres`)
         .max(MAX_LENGTH, `Máximo ${MAX_LENGTH} caracteres`),
 
-    language: yup.string().required("Campo obrigatório"),
+    language: yup.mixed<Language>()
+        .oneOf(languages, "Idioma inválido")
+        .required("Campo obrigatório"),
 
-    seniority: yup.string().required("Campo obrigatório"),
+    seniority: yup.mixed<Seniority>()
+        .oneOf(seniorities, "Senioridade inválida")
+        .required("Campo obrigatório"),
 
-    focusArea: yup.string().required("Campo obrigatório"),
+    focusArea: yup.mixed<FocusArea>()
+        .oneOf(focusAreas, "Área de atuação inválida")
+        .required("Campo obrigatório"),
 
-    market: yup.string().required("Campo obrigatório"),
+    market: yup.mixed<Market>()
+        .oneOf(markets, "Mercado inválido")
+        .required("Campo obrigatório"),
 
-    templateType: yup.string().required("Campo obrigatório"),
+    templateType: yup.mixed<BaseTemplateType>()
+        .oneOf(templateTypes, "Template inválido")
+        .required("Campo obrigatório"),
 })
 
 export type ResumeForm = yup.InferType<typeof resumeSchema>

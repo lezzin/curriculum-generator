@@ -16,11 +16,19 @@ html {
     select,
     textarea,
     input {
-        @apply p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-black disabled:opacity-50
+        @apply w-full h-10 px-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black disabled:opacity-50
     }
 
     textarea {
-        @apply resize-none;
+        @apply resize-none h-auto;
+    }
+
+    .has-button-helper {
+        @apply rounded-e-none border-r-0;
+
+        ~button {
+            @apply rounded-s-none;
+        }
     }
 
     .error-field {

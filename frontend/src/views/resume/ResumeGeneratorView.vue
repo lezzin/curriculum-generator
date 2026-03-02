@@ -1,26 +1,28 @@
 <script setup lang="ts">
-import { computed } from "vue"
+import { capitalize, ref } from "vue"
 import { useApi } from "../../composables/useApi"
 import BaseButton from "../../components/ui/BaseButton.vue"
 import TextAreaField from "../../components/ui/form/TextAreaField.vue"
 import SelectField from "../../components/ui/form/SelectField.vue"
 import AppTitle from "../../components/layout/AppTitle.vue"
 import { useToast } from "../../composables/useToast"
-import { BASE_TEMPLATE_TYPES } from "../../interfaces/resume.interfaces"
-import { capitalizeFirst } from "../../helper/string.helper"
 import { useForm } from "vee-validate"
 import { INITIAL_VALUES, MAX_LENGTH, resumeSchema, type ResumeForm } from "../../components/validation/schemas/resume.schema"
+import TemplatePreview from "../../components/resume/TemplatePreview.vue"
+import BaseModal from "../../components/ui/modal/BaseModal.vue"
+import { templateTypes } from "../../interfaces/resume.interfaces"
+import SearchIcon from "../../components/icon/SearchIcon.vue"
 
 const { show } = useToast()
 
-const { handleSubmit } = useForm<ResumeForm>({
+const { handleSubmit, values } = useForm<ResumeForm>({
     validationSchema: resumeSchema,
     initialValues: INITIAL_VALUES
 })
 
 const { api, loading, request } = useApi()
 
-const templateTypes = computed(() => Object.values(BASE_TEMPLATE_TYPES))
+const isTemplatePreviewModalOpen = ref(false)
 
 const generateResume = handleSubmit(async (form) => {
     try {
@@ -51,6 +53,16 @@ const generateResume = handleSubmit(async (form) => {
     <AppTitle title="Gerar Currículo Personalizado"
         subtitle="Crie um currículo estratégico com base em uma vaga específica." />
 
+    <BaseModal :is-open="isTemplatePreviewModalOpen" @close="isTemplatePreviewModalOpen = false">
+        <TemplatePreview :key="values.templateType" :template="values.templateType" />
+
+        <template #footer>
+            <div class="flex justify-end gap-2">
+                <BaseButton variant="ghost" @click="isTemplatePreviewModalOpen = false">Fechar</BaseButton>
+            </div>
+        </template>
+    </BaseModal>
+
     <form class="space-y-10" @submit.prevent="generateResume">
         <div class="space-y-4">
             <div class="grid md:grid-cols-2 gap-4">
@@ -61,8 +73,14 @@ const generateResume = handleSubmit(async (form) => {
 
                 <SelectField label="Tipo de template" name="templateType">
                     <option v-for="type in templateTypes" :key="type" :value="type">
-                        {{ capitalizeFirst(type) }}
+                        {{ capitalize(type) }}
                     </option>
+
+                    <template #button-helper>
+                        <BaseButton variant="outline" type="button" @click.stop="isTemplatePreviewModalOpen = true">
+                            <SearchIcon /> Exemplo
+                        </BaseButton>
+                    </template>
                 </SelectField>
             </div>
 

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useField } from 'vee-validate';
+import { computed, useSlots } from 'vue';
 
 interface Props {
     label: string
@@ -8,6 +9,7 @@ interface Props {
 }
 
 const props = defineProps<Props>()
+const hasButtonHelper = computed(() => !!useSlots()['button-helper']);
 
 const { value, errorMessage, handleBlur } = useField<string>(props.name)
 </script>
@@ -18,11 +20,17 @@ const { value, errorMessage, handleBlur } = useField<string>(props.name)
             {{ label }}
         </label>
 
-        <select :id="name" :name="name" v-model="value" :disabled="disabled" @blur="handleBlur"
-            :class="errorMessage && 'error-field'">
-            <option value="" disabled>Selecione uma opção</option>
-            <slot></slot>
-        </select>
+        <div class="flex items-center">
+            <select :id="name" :name="name" v-model="value" :disabled="disabled" @blur="handleBlur"
+                :class="[errorMessage && 'error-field', hasButtonHelper && 'has-button-helper']">
+                <option value="" disabled>Selecione uma opção</option>
+                <slot></slot>
+            </select>
+
+            <template v-if="$slots['button-helper']">
+                <slot name="button-helper"></slot>
+            </template>
+        </div>
 
         <p v-if="errorMessage" class="error-text">
             {{ errorMessage }}
