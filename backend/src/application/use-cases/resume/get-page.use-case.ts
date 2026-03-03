@@ -1,5 +1,5 @@
 import { NotFoundException } from '@nestjs/common';
-import { GetPageInput } from 'src/application/models/get-page.input';
+import { GetPageInput } from 'src/application/models/input/get-page.input';
 import { ResumeRepository } from 'src/domain/repositories/resume.repository';
 import { UserConfigRepository } from 'src/domain/repositories/user-config.repository';
 import { UserRepository } from 'src/domain/repositories/user.repository';
@@ -11,7 +11,7 @@ export class GetPageUseCase {
     private readonly resumeRepository: ResumeRepository,
     private readonly userConfigRepository: UserConfigRepository,
     private readonly userRepository: UserRepository,
-  ) {}
+  ) { }
 
   async execute(body: GetPageInput) {
     const resume = await this.resumeRepository.findById(body.id);

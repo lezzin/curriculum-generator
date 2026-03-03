@@ -1,5 +1,5 @@
 import { UnauthorizedException } from '@nestjs/common';
-import { RefreshInput } from 'src/application/models/refresh.input';
+import { RefreshInput } from 'src/application/models/input/refresh.input';
 import { UserRepository } from 'src/domain/repositories/user.repository';
 import { JwtAdapter } from 'src/infrastructure/auth/jwt.service';
 import * as bcrypt from 'bcryptjs';

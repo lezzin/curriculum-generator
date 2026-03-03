@@ -1,5 +1,5 @@
 import { randomUUID } from 'crypto';
-import { GenerateResumeInput } from 'src/application/models/generate-resume.input';
+import { GenerateResumeInput } from 'src/application/models/input/generate-resume.input';
 import { Resume } from 'src/domain/entities/resume.entity';
 import { BaseDataRepository } from 'src/domain/repositories/base-data.repository';
 import { CacheRepository } from 'src/domain/repositories/cache.repository';
@@ -31,7 +31,7 @@ export class ResumeGenerationUseCase {
     private readonly resumeDocumentService: ResumeDocumentService,
     private readonly sseService: SseService,
     private readonly cache: CacheRepository,
-  ) {}
+  ) { }
 
   async execute(body: GenerateResumeInput) {
     const { userId, jobDescription, options } = body;

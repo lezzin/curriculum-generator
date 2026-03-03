@@ -1,5 +1,5 @@
 import { randomUUID } from 'crypto';
-import { GenerateProposalInput } from 'src/application/models/generate-proposal.input';
+import { GenerateProposalInput } from 'src/application/models/input/generate-proposal.input';
 import { FreelanceProposal } from 'src/domain/entities/freelance-proposal.entity';
 import { BaseDataRepository } from 'src/domain/repositories/base-data.repository';
 import { CacheRepository } from 'src/domain/repositories/cache.repository';
@@ -22,7 +22,7 @@ export class ProposalGenerationUseCase {
     private readonly geminiService: GeminiService,
     private readonly sseService: SseService,
     private readonly cache: CacheRepository,
-  ) {}
+  ) { }
 
   async execute(body: GenerateProposalInput) {
     const { solicitation, userId } = body;

@@ -1,4 +1,4 @@
-import { GetUserInput } from 'src/application/models/get-user.input';
+import { GetUserInput } from 'src/application/models/input/get-user.input';
 import { GetUserOutput } from 'src/application/models/output/get-user.output';
 import { UserRepository } from 'src/domain/repositories/user.repository';
 

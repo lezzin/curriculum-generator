@@ -1,7 +1,7 @@
 import { ConflictException } from '@nestjs/common';
 import * as bcrypt from 'bcryptjs';
 import { randomUUID } from 'crypto';
-import { CreateUserInput } from 'src/application/models/create-user.input';
+import { CreateUserInput } from 'src/application/models/input/create-user.input';
 import { User } from 'src/domain/entities/user.entity';
 import { UserRepository } from 'src/domain/repositories/user.repository';
 

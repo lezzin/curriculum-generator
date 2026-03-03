@@ -1,5 +1,5 @@
 import { ConfigService } from '@nestjs/config';
-import { SocialLoginInput } from 'src/application/models/social-login.input';
+import { SocialLoginInput } from 'src/application/models/input/social-login.input';
 import { UserProvider } from 'src/domain/entities/user-provider.entity';
 import { User } from 'src/domain/entities/user.entity';
 import { UserRepository } from 'src/domain/repositories/user.repository';
