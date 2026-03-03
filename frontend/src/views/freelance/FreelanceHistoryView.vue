@@ -16,16 +16,15 @@ const { show } = useToast()
 const proposalList = reactive<MarketplaceProposal[]>([])
 
 async function getProposals() {
-    try {
-        const data = await request<MarketplaceProposal[]>('get', '/freelance/proposal/all');
+    const { data, error } = await request<MarketplaceProposal[]>('get', '/freelance/proposal/all');
+
+    if (!error) {
         proposalList.length = 0
         if (data) proposalList.push(...data)
-    } catch (error: any) {
-        show({
-            message: error.message || "Erro ao carregar propostas.",
-            type: "error",
-        })
+        return;
     }
+
+    show({ message: error, type: 'error' })
 }
 
 sseService.on<MarketplaceProposal>("proposal-generated", (data) => {

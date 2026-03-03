@@ -28,6 +28,16 @@ function isAuthError(error: AxiosError): boolean {
     return error.response?.status === 401;
 }
 
+function isAuthRequest(url?: string) {
+    if (!url) return false;
+    return url.endsWith("/auth/login") || url.endsWith("/auth/register");
+}
+
+function isRefreshRequest(url?: string) {
+    if (!url) return false;
+    return url.endsWith("/auth/refresh");
+}
+
 export function setupInterceptors(
     api: AxiosInstance,
     onRefreshFailed?: () => void
@@ -41,8 +51,11 @@ export function setupInterceptors(
                 return Promise.reject(error);
             }
 
-            const isRefreshRequest = originalRequest.url?.includes("/auth/refresh");
-            if (isRefreshRequest && isAuthError(error)) {
+            if (isAuthRequest(originalRequest.url)) {
+                return Promise.reject(error);
+            }
+
+            if (isRefreshRequest(originalRequest.url) && isAuthError(error)) {
                 isRefreshing = false;
                 processQueue(error);
                 onRefreshFailed?.();

@@ -7,15 +7,29 @@ export class UpsertUserConfigUseCase {
   constructor(private userConfigRepository: UserConfigRepository) { }
 
   async execute(body: UpsertUserConfigInput) {
-    await this.userConfigRepository.upsert(
-      new UserConfig(
-        randomUUID(),
-        body.userId,
-        body.linkedin,
-        body.github,
-        body.portfolio,
-        body.cellphone,
-      ),
+    const existing = await this.userConfigRepository.findByUserId(body.userId);
+
+    if (existing) {
+      existing.updateLinkedin(body.linkedin);
+      existing.updateGithub(body.github);
+      existing.updatePortfolio(body.portfolio);
+      existing.updateCellphone(body.cellphone);
+
+      await this.userConfigRepository.save(existing);
+      return;
+    }
+
+    const userConfig = new UserConfig(
+      randomUUID(),
+      new Date(),
+      new Date(),
+      body.userId,
+      body.linkedin,
+      body.github,
+      body.portfolio,
+      body.cellphone
     );
+
+    await this.userConfigRepository.save(userConfig);
   }
 }

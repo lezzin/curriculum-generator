@@ -3,6 +3,8 @@ import {
   Controller,
   Get,
   Header,
+  HttpCode,
+  HttpStatus,
   Param,
   Post,
   Res,
@@ -20,7 +22,6 @@ import { GeneratePdfUseCase } from 'src/application/use-cases/resume/generate-pd
 import { GetPageUseCase } from 'src/application/use-cases/resume/get-page.use-case';
 import { HtmlExceptionFilter } from 'src/infrastructure/http/filters/html-exception.filter';
 import { IsPublic } from 'src/infrastructure/auth/is-public.decorator';
-import { Readable } from 'node:stream';
 
 @UseGuards(JwtAuthGuard)
 @Controller('/resume')
@@ -34,11 +35,12 @@ export class ResumeController {
   ) { }
 
   @Post('/generate')
+  @HttpCode(HttpStatus.ACCEPTED)
   async generateResume(
     @Body() body: GenerateResumeDto,
     @CurrentUser('id') userId: string,
   ) {
-    return await this.generateResumeUseCase.execute({ ...body, userId });
+    await this.generateResumeUseCase.execute({ ...body, userId });
   }
 
   @Get('/all')
@@ -47,7 +49,10 @@ export class ResumeController {
   }
 
   @Get('/pdf/:id')
-  async getPdfById(@Param('id') id: string, @Res() res: Response) {
+  async getPdfById(
+    @Param('id') id: string,
+    @Res() res: Response
+  ) {
     const stream = await this.getPdfUseCase.execute(id);
 
     res.set({

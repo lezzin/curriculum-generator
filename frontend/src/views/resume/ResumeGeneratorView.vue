@@ -25,25 +25,18 @@ const { loading: isLoading, request } = useApi()
 const isTemplatePreviewModalOpen = ref(false)
 
 const generateResume = handleSubmit(async (form) => {
-    try {
-        const message = await request<string>('post', "/resume/generate", {
-            jobDescription: form.jobText,
-            options: {
-                language: form.language,
-                targetSeniority: form.seniority,
-                focusArea: form.focusArea,
-                market: form.market,
-                template: form.templateType
-            }
-        })
+    const { error } = await request<string>('post', "/resume/generate", {
+        jobDescription: form.jobText,
+        options: {
+            language: form.language,
+            targetSeniority: form.seniority,
+            focusArea: form.focusArea,
+            market: form.market,
+            template: form.templateType
+        }
+    })
 
-        show(message ?? "Solicitação de currículo enviada com sucesso!")
-    } catch (err: any) {
-        show({
-            message: err.message || "Ocorreu um erro ao enviar a solicitação. Tente novamente mais tarde.",
-            type: 'error',
-        });
-    }
+    show(error ? { message: error, type: "error", } : 'Solicitação enviada para processamento!')
 })
 </script>
 

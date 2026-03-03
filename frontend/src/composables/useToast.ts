@@ -47,7 +47,8 @@ function normalizeToast(input: ToastInput): Toast {
 }
 
 export function useToast() {
-    function show(input: ToastInput) {
+    function show(input: ToastInput | null) {
+        if (!input) return;
         const toast = normalizeToast(input)
 
         state.value.push(toast)

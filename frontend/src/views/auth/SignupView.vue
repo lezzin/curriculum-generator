@@ -23,21 +23,16 @@ const { request, loading } = useApi()
 const { show } = useToast()
 
 const signup = handleSubmit(async (form) => {
-    try {
-        await request('post', '/user/create', form)
-        await authStore.checkAuth()
-        router.replace('/')
-    } catch (err: any) {
-        const message =
-            err.response?.status === 409
-                ? 'Este email já está cadastrado.'
-                : 'Não foi possível criar sua conta. Tente novamente.'
+    const { error } = await request('post', '/auth/register', form)
 
-        show({
-            message,
-            type: 'error'
-        })
+    if (!error) {
+        await authStore.checkAuth();
+        router.replace('/');
+        show('Usuário registrado com sucesso!')
+        return;
     }
+
+    show({ message: error, type: 'error' })
 })
 
 watch(

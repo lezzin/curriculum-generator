@@ -36,7 +36,7 @@ export class ResumeGenerationUseCase {
   async execute(body: GenerateResumeInput) {
     const { userId, jobDescription, options } = body;
 
-    const baseData = await this.baseDataRepository.findDescriptionByUserAndType(
+    const baseData = await this.baseDataRepository.findByUserAndType(
       userId,
       BaseDataType.RESUME,
     );

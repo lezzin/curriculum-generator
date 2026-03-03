@@ -24,23 +24,22 @@ const route = useRoute()
 
 const { request, loading, apiUrl } = useApi()
 const { show } = useToast()
+
 const authStore = useAuthStore()
 
 const redirecting = ref(false)
 
 const login = handleSubmit(async (form) => {
-    try {
-        await request<string>('post', '/auth/login', form)
-        await authStore.checkAuth()
+    const { error } = await request<string>('post', '/auth/login', form)
 
+    if (!error) {
+        await authStore.checkAuth()
         const redirect = route.query.redirect as string
         router.push(redirect || { name: 'Home' })
-    } catch (err: any) {
-        show({
-            message: err.message || 'Erro ao fazer login.',
-            type: 'error'
-        })
+        return
     }
+
+    show({ message: error, type: 'error' })
 })
 
 const loginProvider = (provider: 'github' | 'google') => {

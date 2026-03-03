@@ -16,16 +16,15 @@ const { show } = useToast()
 const resumesList = reactive<Resume[]>([])
 
 async function getResumes() {
-    try {
-        const data = await request<Resume[]>('get', "/resume/all");
+    const { data, error } = await request<Resume[]>('get', "/resume/all");
+
+    if (!error) {
         resumesList.length = 0
         if (data) resumesList.push(...data)
-    } catch (error: any) {
-        show({
-            message: error.message || "Erro ao carregar currículos.",
-            type: "error",
-        })
+        return;
     }
+
+    show({ message: error, type: "error" })
 }
 
 sseService.on<Resume>("resume-generated", (data) => {

@@ -4,12 +4,10 @@ import { UserRepository } from '../domain/repositories/user.repository';
 import { UserEntity } from 'src/infrastructure/database/entities/user.entity';
 import { TypeOrmUserRepository } from 'src/infrastructure/database/repositories/user.repository';
 import { RegisterUserUseCase } from 'src/application/use-cases/user/register-user.use-case';
-import { UserController } from 'src/presentation/controllers/user/user.controller';
 import { GetUserUseCase } from 'src/application/use-cases/user/get-user.use-case';
 
 @Module({
   imports: [TypeOrmModule.forFeature([UserEntity])],
-  controllers: [UserController],
   providers: [
     {
       provide: UserRepository,
@@ -30,6 +28,6 @@ import { GetUserUseCase } from 'src/application/use-cases/user/get-user.use-case
       inject: [UserRepository],
     },
   ],
-  exports: [UserRepository, GetUserUseCase],
+  exports: [UserRepository, GetUserUseCase, RegisterUserUseCase],
 })
-export class UserModule {}
+export class UserModule { }

@@ -142,20 +142,19 @@ const save = handleSubmit(async (form) => {
         2
     )
 
-    try {
-        await request('post', '/base-data/upsert', {
-            type: props.type,
-            description,
-        })
+    const { error } = await request('post', '/base-data/upsert', {
+        type: props.type,
+        description,
+    })
 
+    if (!error) {
         show('Dados salvos com sucesso')
         emit('saved')
         emit('update:isOpen', false)
-    } catch (err: any) {
-        show({
-            message: err.message ?? "Erro ao salvar configurações base."
-        })
+        return
     }
+
+    show({ message: error, type: 'error' })
 })
 
 const modalTitle = `Editar Base de ${props.type === 'resume' ? 'Currículo' : 'Proposta Freelance'}`

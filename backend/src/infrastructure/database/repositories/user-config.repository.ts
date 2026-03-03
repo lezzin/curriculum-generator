@@ -10,13 +10,29 @@ export class TypeOrmUserConfigRepository implements UserConfigRepository {
   constructor(
     @InjectRepository(UserConfigEntity)
     private ormRepo: Repository<UserConfigEntity>,
-  ) {}
+  ) { }
 
-  async upsert(userConfig: UserConfig): Promise<void> {
+  async save(userConfig: UserConfig): Promise<void> {
     await this.ormRepo.upsert({ ...userConfig }, ['userId']);
   }
 
   async findByUserId(userId: string): Promise<UserConfig | null> {
-    return await this.ormRepo.findOne({ where: { userId } });
+    const entity = await this.ormRepo.findOne({ where: { userId } })
+    return entity ? this.toDomain(entity) : null;
+  }
+
+  private toDomain(entity: UserConfigEntity): UserConfig {
+    const userConfig = new UserConfig(
+      entity.id,
+      entity.createdAt,
+      entity.updatedAt,
+      entity.userId,
+      entity.linkedin,
+      entity.github,
+      entity.portfolio,
+      entity.cellphone
+    );
+
+    return userConfig;
   }
 }

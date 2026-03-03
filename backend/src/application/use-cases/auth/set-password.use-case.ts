@@ -19,7 +19,5 @@ export class SetPasswordUseCase {
 
         user.password = await bcrypt.hash(body.password, 10);
         await this.userRepository.update(user);
-
-        return { message: 'Senha definida com sucesso' };
     }
 }

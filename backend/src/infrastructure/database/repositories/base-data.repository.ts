@@ -11,9 +11,9 @@ export class TypeOrmBaseDataRepository implements BaseDataRepository {
   constructor(
     @InjectRepository(BaseDataEntity)
     private ormRepo: Repository<BaseDataEntity>,
-  ) {}
+  ) { }
 
-  async upsert(baseData: BaseData): Promise<void> {
+  async save(baseData: BaseData): Promise<void> {
     await this.ormRepo.upsert(
       {
         userId: baseData.userId,
@@ -29,22 +29,27 @@ export class TypeOrmBaseDataRepository implements BaseDataRepository {
   }
 
   async getAll(userId: string): Promise<BaseData[]> {
-    return (await this.ormRepo.findBy({ userId })) as BaseData[];
+    const entities = await this.ormRepo.findBy({ userId });
+    return entities.map(entity => this.toDomain(entity))
   }
 
-  async findDescriptionByUserAndType(
+  async findByUserAndType(
     userId: string,
     type: BaseDataType,
-  ): Promise<string | null> {
-    const entity = await this.ormRepo.findOne({
-      where: { userId, type },
-      select: ['description'],
-    });
+  ): Promise<BaseData | null> {
+    const entity = await this.ormRepo.findOneBy({ userId, type });
+    return entity ? this.toDomain(entity) : null
+  }
 
-    if (!entity) {
-      return null;
-    }
+  private toDomain(entity: BaseDataEntity): BaseData {
+    const baseData = new BaseData(
+      entity.id,
+      entity.description,
+      entity.userId,
+      entity.type,
+      entity.createdAt,
+    );
 
-    return entity.description;
+    return baseData;
   }
 }

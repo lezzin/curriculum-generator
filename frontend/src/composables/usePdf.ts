@@ -9,16 +9,16 @@ export function usePdf() {
     const isGenerating = ref(false)
 
     async function setPublicPdfUrl(id: string) {
-        const response = await request<BlobPart>('get', `/resume/pdf/${id}`, {
+        const { data } = await request<BlobPart>('get', `/resume/pdf/${id}`, {
             responseType: 'arraybuffer',
         });
 
-        if (!response) {
+        if (!data) {
             pdfUrl.value = null;
             return;
         }
 
-        const pdfBlob = new Blob([response], { type: 'application/pdf' });
+        const pdfBlob = new Blob([data], { type: 'application/pdf' });
         pdfUrl.value = URL.createObjectURL(pdfBlob);
     }
 

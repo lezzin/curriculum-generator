@@ -32,8 +32,9 @@ const completionPercentage = computed(() => {
 })
 
 const loadUserConfig = async () => {
-    try {
-        const data = await request<UserConfig>('get', '/user-config/all')
+    const { data, error } = await request<UserConfig>('get', '/user-config/all')
+
+    if (!error) {
         const normalized = data ? nullToEmpty(data) : null
 
         resetForm({
@@ -46,25 +47,22 @@ const loadUserConfig = async () => {
         })
 
         userConfig.value = data
-    } catch (err: any) {
-        show({
-            message: err.message || 'Erro ao carregar configurações.',
-            type: 'error'
-        })
+        return
     }
+
+    show({ message: error, type: 'error' })
 }
 
 const upsertUserConfigData = handleSubmit(async (form) => {
-    try {
-        await request('post', '/user-config/upsert', form)
+    const { error } = await request('post', '/user-config/upsert', form)
+
+    if (!error) {
         await loadUserConfig()
-        show('Informações atualizadas com sucesso!')
-    } catch (err: any) {
-        show({
-            message: err.message || 'Erro ao salvar configurações.',
-            type: 'error'
-        })
+        show('Dados de configuração adicionados/atualizados com sucesso!')
+        return;
     }
+
+    show({ message: error, type: 'error' })
 })
 
 onMounted(loadUserConfig)

@@ -6,6 +6,5 @@ export class GenerateResumeUseCase {
 
   async execute(body: GenerateResumeInput) {
     await this.resumeQueue.addGenerateResumeJob({ ...body });
-    return { message: 'Solicitação enviada para processamento!' };
   }
 }

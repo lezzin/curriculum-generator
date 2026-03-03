@@ -27,7 +27,7 @@ export class ProposalGenerationUseCase {
   async execute(body: GenerateProposalInput) {
     const { solicitation, userId } = body;
 
-    const baseData = await this.baseDataRepository.findDescriptionByUserAndType(
+    const baseData = await this.baseDataRepository.findByUserAndType(
       userId,
       BaseDataType.FREELANCE_PROPOSAL,
     );

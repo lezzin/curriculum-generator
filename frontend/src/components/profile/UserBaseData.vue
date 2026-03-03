@@ -13,6 +13,7 @@ type UserBaseDataItem = {
     description: string
     userId: string
     createdAt: string
+    updatedAt: string
 }
 
 const { request } = useApi()
@@ -27,13 +28,15 @@ const isModalOpen = ref(false)
 const editingType = ref<UserBaseType>('resume')
 
 const loadBaseData = async () => {
-    try {
-        const data = await request<UserBaseDataItem[]>('get', '/base-data/all')
+    const { data, error } = await request<UserBaseDataItem[]>('get', '/base-data/all')
+
+    if (!error) {
         baseData.resume = data?.find(d => d.type === 'resume')?.description ?? null
         baseData['freelance-proposal'] = data?.find(d => d.type === 'freelance-proposal')?.description ?? null
-    } catch {
-        show({ message: 'Erro ao carregar dados base.', type: 'error' })
+        return;
     }
+
+    show({ message: error, type: 'error' })
 }
 
 const openForm = (type: UserBaseType) => {
@@ -42,13 +45,15 @@ const openForm = (type: UserBaseType) => {
 }
 
 const removeBaseData = async (type: UserBaseType) => {
-    try {
-        await request('post', '/base-data/remove', { type })
+    const { error } = await request('post', '/base-data/remove', { type })
+
+    if (!error) {
         baseData[type] = null
         show({ message: 'Base removida com sucesso.', type: 'success' })
-    } catch {
-        show({ message: 'Erro ao remover base.', type: 'error' })
+        return
     }
+
+    show({ message: error, type: 'error' })
 }
 
 const handleSaved = async () => {

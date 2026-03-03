@@ -15,7 +15,7 @@ export class BaseDataEntity {
   description: string;
 
   @Column({ enum: BaseDataType, unique: true })
-  type: string;
+  type: BaseDataType;
 
   @Column({ name: 'user_id', unique: true })
   userId: string;

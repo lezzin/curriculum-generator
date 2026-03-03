@@ -15,15 +15,8 @@ const { handleSubmit } = useForm<SetPasswordForm>({
 });
 
 const submit = handleSubmit(async (form) => {
-    try {
-        await request('post', '/auth/set-password', form);
-        show('Senha definida com sucesso!');
-    } catch (err: any) {
-        show({
-            message: err.message || 'Erro ao salvar senha.',
-            type: 'error'
-        });
-    }
+    const { error } = await request('post', '/auth/set-password', form);
+    show(error ? { message: error, type: 'error' } : 'Senha definida com sucesso!');
 });
 </script>
 

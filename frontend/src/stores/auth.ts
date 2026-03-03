@@ -28,6 +28,7 @@ export const useAuthStore = defineStore('auth', () => {
     };
 
     const logout = async () => {
+        if (!user.value) return;
         await api.post('/auth/logout');
         user.value = null;
     };

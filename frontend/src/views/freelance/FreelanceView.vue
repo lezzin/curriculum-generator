@@ -18,18 +18,11 @@ const { handleSubmit } = useForm<FreelanceForm>({
 const { loading: isLoading, request } = useApi()
 
 const generateProposal = handleSubmit(async (form) => {
-    try {
-        const message = await request<string>('post', '/freelance/proposal/generate', {
-            solicitation: form.solicitationText,
-        })
+    const { error } = await request<string>('post', '/freelance/proposal/generate', {
+        solicitation: form.solicitationText,
+    })
 
-        show(message ?? "Solicitação de proposta enviada com sucesso!")
-    } catch (err: any) {
-        show({
-            message: err.message || "Ocorreu um erro ao enviar a solicitação. Tente novamente mais tarde.",
-            type: "error",
-        })
-    }
+    show(error ? { message: error, type: "error", } : 'Solicitação enviada para processamento!')
 })
 </script>
 

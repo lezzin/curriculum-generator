@@ -6,6 +6,5 @@ export class GenerateProposalUseCase {
 
   async execute(body: GenerateProposalInput) {
     await this.proposalQueue.addGenerateProposalJob({ ...body });
-    return { message: 'Solicitação enviada para processamento!' };
   }
 }

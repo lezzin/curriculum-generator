@@ -1,8 +1,8 @@
-import { ref } from "vue"
-import { extractErrorMessage } from "../helper/error.helper"
-import { api } from "../services/api/api"
+import { ref } from "vue";
+import { api } from "../services/api/api";
+import { extractErrorMessage } from "../helper/error.helper";
 
-const apiUrl = api.defaults.baseURL;
+const apiUrl = api.defaults.baseURL as string;
 
 type HttpMethod = 'get' | 'post' | 'put' | 'patch' | 'delete'
 
@@ -12,21 +12,18 @@ export function useApi() {
     async function request<T>(
         method: HttpMethod,
         path: string,
-        params: any = null,
+        params?: any,
         useLoading = true
-    ): Promise<T | null> {
+    ): Promise<{ data: T | null; error: string | null }> {
+        if (useLoading) loading.value = true;
+
         try {
-            if (useLoading) loading.value = true
-
-            const result = !!params
-                ? await api[method](path, params)
-                : await api[method](path)
-
-            return result.data as T
+            const result = params ? await api[method](path, params) : await api[method](path);
+            return { data: result.data as T, error: null };
         } catch (err) {
-            throw new Error(extractErrorMessage(err))
+            return { data: null, error: extractErrorMessage(err) };
         } finally {
-            if (useLoading) loading.value = false
+            if (useLoading) loading.value = false;
         }
     }
 
@@ -34,5 +31,5 @@ export function useApi() {
         loading,
         apiUrl,
         request
-    }
+    };
 }

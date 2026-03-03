@@ -12,7 +12,7 @@ export class RegisterUserUseCase {
     const user = await this.userRepository.findByEmail(body.email);
 
     if (user) {
-      throw new ConflictException('Email já está em uso');
+      throw new ConflictException('Não foi possível criar o usuário');
     }
 
     const hashedPassword = await bcrypt.hash(body.password, 10);
