@@ -5,4 +5,5 @@ export abstract class FreelanceProposalRepository {
     freelanceProposal: FreelanceProposal,
   ): Promise<FreelanceProposal>;
   abstract getAll(userId: string): Promise<FreelanceProposal[]>;
+  abstract remove(proposalId: string): Promise<void>;
 }

@@ -26,6 +26,12 @@ async function getProposals() {
     proposalList.value = data ?? []
 }
 
+const removeFromList = (proposalId: string) => {
+    proposalList.value = proposalList.value.filter(
+        proposal => proposal.id !== proposalId
+    )
+}
+
 sseService.on<MarketplaceProposal>("proposal-generated", (data) => {
     if (data.userId !== authStore.user?.id) return
     proposalList.value.unshift(data)
@@ -40,7 +46,8 @@ onMounted(getProposals)
 
     <LoadContainer :loading="isLoading">
         <div class="grid gap-4" v-if="proposalList.length > 0">
-            <ProposalPreview v-for="proposal in proposalList" :key="proposal.id" :proposal="proposal" />
+            <ProposalPreview v-for="proposal in proposalList" :key="proposal.id" :proposal="proposal"
+                @remove="() => removeFromList(proposal.id)" />
         </div>
 
         <div v-else class="text-center space-y-3">

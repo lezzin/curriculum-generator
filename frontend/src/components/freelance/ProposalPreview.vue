@@ -4,12 +4,22 @@ import type { MarketplaceProposal } from "../../interfaces/freelance.interfaces"
 import BaseButton from "../ui/BaseButton.vue"
 import { toHumanReadableDate } from "../../helper/string.helper";
 import CardContainer from "../ui/card/CardContainer.vue";
+import { useToast } from "../../composables/useToast";
+import { useApi } from "../../composables/useApi";
 
 interface Props {
     proposal: MarketplaceProposal
 }
 
+interface Emits {
+    (e: 'remove'): void
+}
+
 const props = defineProps<Props>()
+const emit = defineEmits<Emits>()
+
+const { show } = useToast();
+const { request, loading } = useApi()
 
 const copied = ref(false)
 const editableText = ref("")
@@ -41,6 +51,20 @@ function togglePrompt() {
     isOpen.value = !isOpen.value
 }
 
+const removeProposal = async () => {
+    const { error } = await request('post', '/freelance/proposal/remove', {
+        proposal_id: props.proposal.id
+    })
+
+    if (!error) {
+        show({ message: 'Proposta removida com sucesso.', type: 'success' })
+        emit('remove')
+        return
+    }
+
+    show({ message: error, type: 'error' })
+}
+
 async function copyProposal() {
     if (!editableText.value) return
 
@@ -63,9 +87,15 @@ async function copyProposal() {
                 {{ toHumanReadableDate(proposal.createdAt ?? "") }}
             </small>
 
-            <BaseButton @click="copyProposal" variant="outline" size="sm">
-                {{ copied ? "Copiado!" : "Copiar proposta" }}
-            </BaseButton>
+            <div class="flex items-center gap-3">
+                <BaseButton @click="copyProposal" variant="outline" size="sm">
+                    {{ copied ? "Copiado!" : "Copiar proposta" }}
+                </BaseButton>
+
+                <BaseButton @click.stop="removeProposal" size="sm" variant="destructive" :disabled="loading">
+                    Remover
+                </BaseButton>
+            </div>
         </div>
 
         <div class="space-y-1">

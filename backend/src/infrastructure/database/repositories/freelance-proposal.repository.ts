@@ -11,7 +11,7 @@ export class TypeOrmFreelanceProposalRepository implements FreelanceProposalRepo
   constructor(
     @InjectRepository(FreelanceProposalEntity)
     private ormRepo: Repository<FreelanceProposalEntity>,
-  ) {}
+  ) { }
 
   async create(
     freelanceProposal: FreelanceProposal,
@@ -24,5 +24,9 @@ export class TypeOrmFreelanceProposalRepository implements FreelanceProposalRepo
       where: { userId },
       order: { createdAt: 'DESC' },
     })) as FreelanceProposal[];
+  }
+
+  async remove(id: string): Promise<void> {
+    await this.ormRepo.delete(id)
   }
 }

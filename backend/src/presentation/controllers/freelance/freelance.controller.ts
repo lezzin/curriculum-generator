@@ -4,12 +4,14 @@ import { GetAllProposalsUseCase } from 'src/application/use-cases/freelance/get-
 import { CurrentUser } from 'src/infrastructure/auth/current-user.decorator';
 import { JwtAuthGuard } from 'src/infrastructure/auth/jwt-auth.guard';
 import { GenerateProposalDto } from './freelance.dto';
+import { RemoveProposalUseCase } from 'src/application/use-cases/freelance/remove-proposal.use-case';
 
 @UseGuards(JwtAuthGuard)
 @Controller('/freelance')
 export class FreelanceController {
   constructor(
     private readonly generateProposalUseCase: GenerateProposalUseCase,
+    private readonly removeProposalUseCase: RemoveProposalUseCase,
     private readonly getAllProposalsUseCase: GetAllProposalsUseCase,
   ) { }
 
@@ -20,6 +22,14 @@ export class FreelanceController {
     @CurrentUser('id') userId: string,
   ) {
     await this.generateProposalUseCase.execute({ ...body, userId });
+  }
+
+  @Post('/proposal/remove')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async remove(
+    @Body() body: { proposal_id: string },
+  ) {
+    await this.removeProposalUseCase.execute(body.proposal_id);
   }
 
   @Get('/proposal/all')

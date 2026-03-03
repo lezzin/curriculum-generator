@@ -19,6 +19,7 @@ import { CacheModule } from 'src/infrastructure/modules/cache.module';
 import { ProposalGenerationUseCase } from 'src/application/use-cases/freelance/proposal-generation.use-case';
 import { BaseDataRepository } from 'src/domain/repositories/base-data.repository';
 import { SseService } from 'src/infrastructure/services/sse.service';
+import { RemoveProposalUseCase } from 'src/application/use-cases/freelance/remove-proposal.use-case';
 
 @Module({
   imports: [
@@ -79,7 +80,14 @@ import { SseService } from 'src/infrastructure/services/sse.service';
         CacheRepository,
       ],
     },
+    {
+      provide: RemoveProposalUseCase,
+      useFactory: (
+        freelanceProposalRepository: FreelanceProposalRepository,
+      ) => new RemoveProposalUseCase(freelanceProposalRepository),
+      inject: [FreelanceProposalRepository],
+    },
   ],
   exports: [GenerateProposalUseCase],
 })
-export class FreelanceModule {}
+export class FreelanceModule { }
