@@ -26,7 +26,7 @@ export class UserEntity {
   @Column({ type: 'text', nullable: true })
   password?: string | null;
 
-  @Column({ name: "refresh_token", type: 'text', nullable: true })
+  @Column({ name: 'refresh_token', type: 'text', nullable: true })
   refreshToken?: string | null;
 
   @OneToMany(() => UserProviderEntity, (provider) => provider.user, {

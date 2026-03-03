@@ -8,5 +8,5 @@ export abstract class UserRepository {
     provider: string,
     providerId: string,
   ): Promise<User | null>;
-  abstract update(user: User): Promise<void>
+  abstract update(user: User): Promise<void>;
 }

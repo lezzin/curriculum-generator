@@ -19,14 +19,14 @@ import {
 export class ResumeDocumentService implements OnModuleInit, OnModuleDestroy {
   private browser: puppeteer.Browser;
 
-  private readonly PUPPETEER_TIMEOUT = 60000 // 60S
+  private readonly PUPPETEER_TIMEOUT = 60000; // 60S
 
   private readonly PUPPETEER_CONFIG: puppeteer.LaunchOptions = {
     headless: true,
     args: ['--no-sandbox', '--disable-setuid-sandbox'],
-  }
+  };
 
-  constructor(private readonly storage: StorageRepository) { }
+  constructor(private readonly storage: StorageRepository) {}
 
   async onModuleInit() {
     this.browser = await puppeteer.launch(this.PUPPETEER_CONFIG);

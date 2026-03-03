@@ -1,4 +1,10 @@
-import { FocusArea, Language, Market, SelectedTemplate, TargetSeniority } from "src/domain/shared/enums/resume.enums";
+import {
+  FocusArea,
+  Language,
+  Market,
+  SelectedTemplate,
+  TargetSeniority,
+} from 'src/domain/shared/enums/resume.enums';
 
 export interface ResumeOptions {
   language: Language;

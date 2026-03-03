@@ -7,7 +7,7 @@ export class BullMQProposalQueue implements ProposalQueue {
   constructor(
     @InjectQueue('freelance.queue')
     private readonly queue: Queue,
-  ) { }
+  ) {}
 
   async addGenerateProposalJob(data: GenerateProposalInput): Promise<void> {
     await this.queue.add('generate-proposal', data, {

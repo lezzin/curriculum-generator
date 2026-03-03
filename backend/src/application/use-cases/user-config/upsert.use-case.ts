@@ -4,7 +4,7 @@ import { UserConfig } from 'src/domain/entities/user.config.entity';
 import { UserConfigRepository } from 'src/domain/repositories/user-config.repository';
 
 export class UpsertUserConfigUseCase {
-  constructor(private userConfigRepository: UserConfigRepository) { }
+  constructor(private userConfigRepository: UserConfigRepository) {}
 
   async execute(body: UpsertUserConfigInput) {
     const existing = await this.userConfigRepository.findByUserId(body.userId);
@@ -27,7 +27,7 @@ export class UpsertUserConfigUseCase {
       body.linkedin,
       body.github,
       body.portfolio,
-      body.cellphone
+      body.cellphone,
     );
 
     await this.userConfigRepository.save(userConfig);

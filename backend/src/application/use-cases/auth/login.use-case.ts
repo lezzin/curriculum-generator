@@ -8,7 +8,7 @@ export class LoginUseCase {
   constructor(
     private userRepository: UserRepository,
     private jwtService: JwtAdapter,
-  ) { }
+  ) {}
 
   async execute(body: LoginInput) {
     const user = await this.userRepository.findByEmail(body.email);
@@ -32,17 +32,17 @@ export class LoginUseCase {
     const accessToken = this.jwtService.signAccessToken({
       sub: user.id,
       email: user.email,
-      type: 'access_token'
+      type: 'access_token',
     });
 
     const refreshToken = this.jwtService.signRefreshToken({
       sub: user.id,
       email: user.email,
-      type: 'refresh_token'
+      type: 'refresh_token',
     });
 
     user.refreshToken = await bcrypt.hash(refreshToken, 10);
-    await this.userRepository.update(user)
+    await this.userRepository.update(user);
 
     return {
       accessToken,

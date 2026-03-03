@@ -4,11 +4,11 @@ import { ResumeDocumentService } from 'src/infrastructure/services/resume-docume
 export class RemoveResumeUseCase {
   constructor(
     private readonly resumeRepository: ResumeRepository,
-    private readonly resumeDocumentService: ResumeDocumentService
-  ) { }
+    private readonly resumeDocumentService: ResumeDocumentService,
+  ) {}
 
   async execute(resumeId: string) {
     await this.resumeRepository.remove(resumeId);
-    await this.resumeDocumentService.deletePdfById(resumeId)
+    await this.resumeDocumentService.deletePdfById(resumeId);
   }
 }

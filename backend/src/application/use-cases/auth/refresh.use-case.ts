@@ -8,7 +8,7 @@ export class RefreshUseCase {
   constructor(
     private readonly userRepository: UserRepository,
     private readonly jwtService: JwtAdapter,
-  ) { }
+  ) {}
 
   async execute(body: RefreshInput) {
     const payload = this.jwtService.verifyRefreshToken(body.refresh_token);

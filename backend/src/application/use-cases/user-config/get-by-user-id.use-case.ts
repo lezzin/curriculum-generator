@@ -2,7 +2,7 @@ import { GetByUserIdUserConfigOutput } from 'src/application/models/output/get-b
 import { UserConfigRepository } from 'src/domain/repositories/user-config.repository';
 
 export class GetByUserIdUserConfigUseCase {
-  constructor(private userConfigRepository: UserConfigRepository) { }
+  constructor(private userConfigRepository: UserConfigRepository) {}
 
   async execute(userId: string): Promise<GetByUserIdUserConfigOutput | null> {
     const userConfigData = await this.userConfigRepository.findByUserId(userId);
@@ -18,7 +18,6 @@ export class GetByUserIdUserConfigUseCase {
       github: userConfigData?.github,
       linkedin: userConfigData?.linkedin,
       portfolio: userConfigData?.portfolio,
-    }
+    };
   }
 }
-

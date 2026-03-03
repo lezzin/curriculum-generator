@@ -5,5 +5,8 @@ export abstract class BaseDataRepository {
   abstract save(baseData: BaseData): Promise<void>;
   abstract remove(userId: string, type: BaseDataType): Promise<void>;
   abstract getAll(userId: string): Promise<BaseData[]>;
-  abstract findByUserAndType(userId: string, type: BaseDataType): Promise<BaseData | null>;
+  abstract findByUserAndType(
+    userId: string,
+    type: BaseDataType,
+  ): Promise<BaseData | null>;
 }

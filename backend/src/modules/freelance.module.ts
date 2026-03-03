@@ -82,12 +82,11 @@ import { GeminiService } from 'src/infrastructure/services/gemini/gemini.service
     },
     {
       provide: RemoveProposalUseCase,
-      useFactory: (
-        freelanceProposalRepository: FreelanceProposalRepository,
-      ) => new RemoveProposalUseCase(freelanceProposalRepository),
+      useFactory: (freelanceProposalRepository: FreelanceProposalRepository) =>
+        new RemoveProposalUseCase(freelanceProposalRepository),
       inject: [FreelanceProposalRepository],
     },
   ],
   exports: [GenerateProposalUseCase],
 })
-export class FreelanceModule { }
+export class FreelanceModule {}

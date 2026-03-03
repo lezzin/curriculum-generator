@@ -10,7 +10,7 @@ export class SocialLoginUseCase {
     private readonly userRepository: UserRepository,
     private readonly jwtService: JwtAdapter,
     private readonly configService: ConfigService,
-  ) { }
+  ) {}
 
   async execute(input: SocialLoginInput) {
     const { provider, providerId, email, name, picture } = input;
@@ -27,12 +27,7 @@ export class SocialLoginUseCase {
     let user = await this.userRepository.findByEmail(email);
 
     if (!user) {
-      user = new User(
-        crypto.randomUUID(),
-        name,
-        email,
-        picture,
-      );
+      user = new User(crypto.randomUUID(), name, email, picture);
 
       await this.userRepository.create(user);
     }

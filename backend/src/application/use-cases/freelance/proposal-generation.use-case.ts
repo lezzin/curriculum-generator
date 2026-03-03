@@ -11,7 +11,10 @@ import {
   generateHash,
   makeCacheKey,
 } from 'src/domain/shared/helpers/cache-key.helper';
-import { buildFreelanceProposalPrompt, FreelanceProposalResponse } from 'src/infrastructure/services/gemini/helpers/freelance-proposal.prompt';
+import {
+  buildFreelanceProposalPrompt,
+  FreelanceProposalResponse,
+} from 'src/infrastructure/services/gemini/helpers/freelance-proposal.prompt';
 import { SseService } from 'src/infrastructure/services/sse.service';
 import { GeminiService } from 'src/infrastructure/services/gemini/gemini.service';
 
@@ -22,7 +25,7 @@ export class ProposalGenerationUseCase {
     private readonly geminiService: GeminiService,
     private readonly sseService: SseService,
     private readonly cache: CacheRepository,
-  ) { }
+  ) {}
 
   async execute(body: GenerateProposalInput) {
     const { solicitation, userId } = body;
@@ -65,19 +68,23 @@ export class ProposalGenerationUseCase {
         proposal.bidAmount,
         proposal.deliveryDays,
         userId,
-        new Date()
+        new Date(),
       ),
     );
 
     await this.invalidateCaches(userId, promptKey);
-    this.sseService.sendEvent<ProposalItemOutput>(userId, 'proposal-generated', {
-      id: savedProposal.id,
-      bidAmount: savedProposal.bidAmount,
-      deliveryDays: savedProposal.deliveryDays,
-      message: savedProposal.message,
-      prompt: savedProposal.prompt,
-      createdAt: savedProposal.createdAt
-    });
+    this.sseService.sendEvent<ProposalItemOutput>(
+      userId,
+      'proposal-generated',
+      {
+        id: savedProposal.id,
+        bidAmount: savedProposal.bidAmount,
+        deliveryDays: savedProposal.deliveryDays,
+        message: savedProposal.message,
+        prompt: savedProposal.prompt,
+        createdAt: savedProposal.createdAt,
+      },
+    );
 
     return savedProposal;
   }

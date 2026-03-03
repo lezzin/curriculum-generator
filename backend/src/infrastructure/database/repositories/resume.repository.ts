@@ -10,7 +10,7 @@ export class TypeOrmResumeRepository implements ResumeRepository {
   constructor(
     @InjectRepository(ResumeEntity)
     private ormRepo: Repository<ResumeEntity>,
-  ) { }
+  ) {}
 
   async create(resume: Resume): Promise<Resume> {
     return (await this.ormRepo.save(resume)) as Resume;
@@ -28,6 +28,6 @@ export class TypeOrmResumeRepository implements ResumeRepository {
   }
 
   async remove(id: string): Promise<void> {
-    await this.ormRepo.delete(id)
+    await this.ormRepo.delete(id);
   }
 }

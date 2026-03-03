@@ -139,10 +139,10 @@ import { GeminiService } from 'src/infrastructure/services/gemini/gemini.service
       provide: RemoveResumeUseCase,
       useFactory: (
         resumeRepository: ResumeRepository,
-        pdfService: ResumeDocumentService) =>
-        new RemoveResumeUseCase(resumeRepository, pdfService),
+        pdfService: ResumeDocumentService,
+      ) => new RemoveResumeUseCase(resumeRepository, pdfService),
       inject: [ResumeRepository, ResumeDocumentService],
     },
   ],
 })
-export class ResumeModule { }
+export class ResumeModule {}

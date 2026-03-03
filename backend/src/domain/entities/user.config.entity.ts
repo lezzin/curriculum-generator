@@ -8,7 +8,7 @@ export class UserConfig {
     public github?: string,
     public portfolio?: string,
     public cellphone?: string,
-  ) { }
+  ) {}
 
   updateLinkedin(linkedin?: string) {
     this.linkedin = linkedin;

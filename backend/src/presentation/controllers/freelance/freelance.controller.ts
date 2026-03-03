@@ -1,4 +1,12 @@
-import { Body, Controller, Get, HttpCode, HttpStatus, Post, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  HttpCode,
+  HttpStatus,
+  Post,
+  UseGuards,
+} from '@nestjs/common';
 import { GenerateProposalUseCase } from 'src/application/use-cases/freelance/generate-proposal.use-case';
 import { GetAllProposalsUseCase } from 'src/application/use-cases/freelance/get-all-proposals.use-case';
 import { CurrentUser } from 'src/infrastructure/auth/current-user.decorator';
@@ -13,7 +21,7 @@ export class FreelanceController {
     private readonly generateProposalUseCase: GenerateProposalUseCase,
     private readonly removeProposalUseCase: RemoveProposalUseCase,
     private readonly getAllProposalsUseCase: GetAllProposalsUseCase,
-  ) { }
+  ) {}
 
   @Post('/proposal/generate')
   @HttpCode(HttpStatus.ACCEPTED)
@@ -26,9 +34,7 @@ export class FreelanceController {
 
   @Post('/proposal/remove')
   @HttpCode(HttpStatus.NO_CONTENT)
-  async remove(
-    @Body() body: { proposal_id: string },
-  ) {
+  async remove(@Body() body: { proposal_id: string }) {
     await this.removeProposalUseCase.execute(body.proposal_id);
   }
 

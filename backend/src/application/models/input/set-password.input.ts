@@ -1,4 +1,4 @@
 export interface SetPasswordInput {
-    userId: string
-    password: string
+  userId: string;
+  password: string;
 }

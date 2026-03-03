@@ -30,4 +30,4 @@ import { GetUserUseCase } from 'src/application/use-cases/user/get-user.use-case
   ],
   exports: [UserRepository, GetUserUseCase, RegisterUserUseCase],
 })
-export class UserModule { }
+export class UserModule {}

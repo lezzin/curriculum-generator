@@ -1,4 +1,13 @@
-import { Body, Controller, Get, HttpCode, HttpStatus, Post, Req, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  HttpCode,
+  HttpStatus,
+  Post,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
 import { GetAllBaseDataUseCase } from 'src/application/use-cases/base-data/get-all-base-data.use-case';
 import { RemoveBaseDataUseCase } from 'src/application/use-cases/base-data/remove-base-data.use-case';
 import { UpsertBaseDataUseCase } from 'src/application/use-cases/base-data/upsert-base-data.use-case';
@@ -14,7 +23,7 @@ export class BaseDataController {
     private readonly upsertBaseDataUseCase: UpsertBaseDataUseCase,
     private readonly removeBaseDataUseCase: RemoveBaseDataUseCase,
     private readonly getAllBaseDataUseCase: GetAllBaseDataUseCase,
-  ) { }
+  ) {}
 
   @Post('upsert')
   @HttpCode(HttpStatus.NO_CONTENT)

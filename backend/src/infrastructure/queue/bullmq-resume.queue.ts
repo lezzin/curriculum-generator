@@ -7,7 +7,7 @@ export class BullMQResumeQueue implements ResumeQueue {
   constructor(
     @InjectQueue('resume.queue')
     private readonly queue: Queue,
-  ) { }
+  ) {}
 
   async addGenerateResumeJob(data: GenerateResumeInput): Promise<void> {
     await this.queue.add('generate-resume', data, {

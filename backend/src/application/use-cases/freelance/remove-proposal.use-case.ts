@@ -2,8 +2,8 @@ import { FreelanceProposalRepository } from 'src/domain/repositories/freelance-p
 
 export class RemoveProposalUseCase {
   constructor(
-    private readonly freelanceProposalRepository: FreelanceProposalRepository
-  ) { }
+    private readonly freelanceProposalRepository: FreelanceProposalRepository,
+  ) {}
 
   async execute(resumeId: string) {
     await this.freelanceProposalRepository.remove(resumeId);

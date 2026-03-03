@@ -1,14 +1,14 @@
 export interface FreelanceProposalResponse {
-   message: string;
-   bidAmount: number;
-   deliveryDays: number;
+  message: string;
+  bidAmount: number;
+  deliveryDays: number;
 }
 
 export function buildFreelanceProposalPrompt(
-   baseData: any,
-   solicitation: string,
+  baseData: any,
+  solicitation: string,
 ): string {
-   return `
+  return `
 You are a senior Brazilian freelance marketplace strategist specialized in crafting high-conversion proposals for platforms like 99freelas.
 
 Your task is to generate a concise, persuasive, and personalized proposal message based on the provided solicitation description and the candidate's base freelance data.

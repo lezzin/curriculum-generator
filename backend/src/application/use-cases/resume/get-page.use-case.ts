@@ -11,7 +11,7 @@ export class GetPageUseCase {
     private readonly resumeRepository: ResumeRepository,
     private readonly userConfigRepository: UserConfigRepository,
     private readonly userRepository: UserRepository,
-  ) { }
+  ) {}
 
   async execute(body: GetPageInput) {
     const resume = await this.resumeRepository.findById(body.id);

@@ -4,7 +4,7 @@ import { BaseData } from 'src/domain/entities/base-data.entity';
 import { BaseDataRepository } from 'src/domain/repositories/base-data.repository';
 
 export class UpsertBaseDataUseCase {
-  constructor(private baseDataRepository: BaseDataRepository) { }
+  constructor(private baseDataRepository: BaseDataRepository) {}
 
   async execute(input: UpsertBaseDataInput): Promise<void> {
     const existing = await this.baseDataRepository.findByUserAndType(

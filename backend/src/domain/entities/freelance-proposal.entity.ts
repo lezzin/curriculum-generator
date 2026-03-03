@@ -7,5 +7,5 @@ export class FreelanceProposal {
     public deliveryDays: number,
     public userId: string,
     public readonly createdAt: Date,
-  ) { }
+  ) {}
 }

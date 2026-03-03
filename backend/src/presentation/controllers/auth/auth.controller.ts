@@ -32,7 +32,7 @@ export class AuthController {
     private readonly socialLoginUseCase: SocialLoginUseCase,
     private readonly getUserUseCase: GetUserUseCase,
     private readonly setPasswordUseCase: SetPasswordUseCase,
-  ) { }
+  ) {}
 
   @Post('login')
   @HttpCode(HttpStatus.NO_CONTENT)
@@ -71,7 +71,7 @@ export class AuthController {
     const refreshToken = req.cookies?.refreshToken;
 
     if (!refreshToken) {
-      throw new UnauthorizedException('Refresh token não encontrado!')
+      throw new UnauthorizedException('Refresh token não encontrado!');
     }
 
     const {
@@ -110,45 +110,47 @@ export class AuthController {
   @HttpCode(HttpStatus.NO_CONTENT)
   async setPassword(
     @Body() body: SetPasswordDto,
-    @CurrentUser('id') userId: string
+    @CurrentUser('id') userId: string,
   ) {
-    await this.setPasswordUseCase.execute({ userId, password: body.password })
+    await this.setPasswordUseCase.execute({ userId, password: body.password });
   }
 
   @Get('google')
   @UseGuards(AuthGuard('google'))
-  googleAuth() { }
+  googleAuth() {}
 
   @Get('google/callback')
   @UseGuards(AuthGuard('google'))
-  async googleCallback(
-    @Req() req: Request,
-    @Res() res: Response,
-  ) {
+  async googleCallback(@Req() req: Request, @Res() res: Response) {
     return this.handleSocialCallback(req, res);
   }
 
   @Get('github')
   @UseGuards(AuthGuard('github'))
-  githubAuth() { }
+  githubAuth() {}
 
   @Get('github/callback')
   @UseGuards(AuthGuard('github'))
-  async githubCallback(
-    @Req() req: Request,
-    @Res() res: Response,
-  ) {
+  async githubCallback(@Req() req: Request, @Res() res: Response) {
     return this.handleSocialCallback(req, res);
   }
 
-  private async handleSocialCallback(
-    req: Request,
-    res: Response,
-  ) {
-    const { accessToken, accessTokenExpiration, redirectUrl, refreshToken, refreshTokenExpiration } =
-      await this.socialLoginUseCase.execute((req as any).user);
+  private async handleSocialCallback(req: Request, res: Response) {
+    const {
+      accessToken,
+      accessTokenExpiration,
+      redirectUrl,
+      refreshToken,
+      refreshTokenExpiration,
+    } = await this.socialLoginUseCase.execute((req as any).user);
 
-    this.setAuthCookies(res, accessToken, accessTokenExpiration, refreshToken, refreshTokenExpiration);
+    this.setAuthCookies(
+      res,
+      accessToken,
+      accessTokenExpiration,
+      refreshToken,
+      refreshTokenExpiration,
+    );
 
     return res.redirect(redirectUrl);
   }

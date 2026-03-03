@@ -34,7 +34,7 @@ export class ResumeController {
     private readonly getPdfUseCase: GetPdfUseCase,
     private readonly getPageUseCase: GetPageUseCase,
     private readonly generatePdfUseCase: GeneratePdfUseCase,
-  ) { }
+  ) {}
 
   @Post('/generate')
   @HttpCode(HttpStatus.ACCEPTED)
@@ -47,9 +47,7 @@ export class ResumeController {
 
   @Post('/remove')
   @HttpCode(HttpStatus.NO_CONTENT)
-  async remove(
-    @Body() body: { resume_id: string },
-  ) {
+  async remove(@Body() body: { resume_id: string }) {
     await this.removeResumeUseCase.execute(body.resume_id);
   }
 
@@ -59,10 +57,7 @@ export class ResumeController {
   }
 
   @Get('/pdf/:id')
-  async getPdfById(
-    @Param('id') id: string,
-    @Res() res: Response
-  ) {
+  async getPdfById(@Param('id') id: string, @Res() res: Response) {
     const stream = await this.getPdfUseCase.execute(id);
 
     res.set({

@@ -10,7 +10,7 @@ export class User {
     public picture?: string | null,
     public password?: string | null,
     public refreshToken?: string | null,
-  ) { }
+  ) {}
 
   addProvider(provider: UserProvider) {
     const exists = this.providers.find((p) => p.provider === provider.provider);

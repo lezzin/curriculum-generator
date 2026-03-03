@@ -16,10 +16,7 @@ import { RefreshUseCase } from 'src/application/use-cases/auth/refresh.use-case'
 import { SetPasswordUseCase } from 'src/application/use-cases/auth/set-password.use-case';
 
 @Module({
-  imports: [
-    UserModule,
-    JwtModule.register({}),
-  ],
+  imports: [UserModule, JwtModule.register({})],
   controllers: [AuthController],
   providers: [
     LoginUseCase,
@@ -65,4 +62,4 @@ import { SetPasswordUseCase } from 'src/application/use-cases/auth/set-password.
     },
   ],
 })
-export class AuthModule { }
+export class AuthModule {}

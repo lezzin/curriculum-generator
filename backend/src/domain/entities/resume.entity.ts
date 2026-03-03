@@ -14,5 +14,5 @@ export class Resume {
     public projects: any,
     public userId: string,
     public readonly createdAt: Date,
-  ) { }
+  ) {}
 }

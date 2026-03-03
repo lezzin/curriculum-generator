@@ -1,4 +1,7 @@
-import { GetAllProposalsOutput, ProposalItemOutput } from 'src/application/models/output/get-all-proposals.output';
+import {
+  GetAllProposalsOutput,
+  ProposalItemOutput,
+} from 'src/application/models/output/get-all-proposals.output';
 import { FreelanceProposal } from 'src/domain/entities/freelance-proposal.entity';
 import { CacheRepository } from 'src/domain/repositories/cache.repository';
 import { FreelanceProposalRepository } from 'src/domain/repositories/freelance-proposal.repository';
@@ -9,7 +12,7 @@ export class GetAllProposalsUseCase {
   constructor(
     private readonly freelanceProposalRepository: FreelanceProposalRepository,
     private readonly cache: CacheRepository,
-  ) { }
+  ) {}
 
   async execute(userId: string): Promise<GetAllProposalsOutput> {
     const cacheKey = makeCacheKey(
@@ -35,7 +38,7 @@ export class GetAllProposalsUseCase {
       deliveryDays: proposal.deliveryDays,
       message: proposal.message,
       prompt: proposal.prompt,
-      createdAt: proposal.createdAt
+      createdAt: proposal.createdAt,
     };
   }
 }

@@ -1,4 +1,7 @@
-import { GetAllResumesOutput, ResumeItemOutput } from 'src/application/models/output/get-all-resumes.output';
+import {
+  GetAllResumesOutput,
+  ResumeItemOutput,
+} from 'src/application/models/output/get-all-resumes.output';
 import { Resume } from 'src/domain/entities/resume.entity';
 import { CacheRepository } from 'src/domain/repositories/cache.repository';
 import { ResumeRepository } from 'src/domain/repositories/resume.repository';
@@ -9,7 +12,7 @@ export class GetAllResumesUseCase {
   constructor(
     private readonly resumeRepository: ResumeRepository,
     private readonly cache: CacheRepository,
-  ) { }
+  ) {}
 
   async execute(userId: string): Promise<GetAllResumesOutput> {
     const cacheKey = makeCacheKey(REMEMBER_RESUMES_CACHE_PREFIX, userId);
@@ -29,7 +32,7 @@ export class GetAllResumesUseCase {
       id: resume.id,
       prompt: resume.prompt,
       template: resume.template,
-      createdAt: resume.createdAt
+      createdAt: resume.createdAt,
     };
   }
 }

@@ -1,4 +1,10 @@
-import { IsEmail, IsDefined, IsString, IsNotEmpty, IsStrongPassword } from 'class-validator';
+import {
+  IsEmail,
+  IsDefined,
+  IsString,
+  IsNotEmpty,
+  IsStrongPassword,
+} from 'class-validator';
 
 export class LoginDto {
   @IsDefined({ message: 'O email é obrigatório' })

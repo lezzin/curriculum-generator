@@ -29,7 +29,7 @@ export class ResumeGenerationUseCase {
     private readonly resumeDocumentService: ResumeDocumentService,
     private readonly sseService: SseService,
     private readonly cache: CacheRepository,
-  ) { }
+  ) {}
 
   async execute(body: GenerateResumeInput) {
     const { userId, jobDescription, options } = body;
@@ -82,7 +82,7 @@ export class ResumeGenerationUseCase {
         resume.experiences,
         resume.projects,
         userId,
-        new Date()
+        new Date(),
       ),
     );
 
@@ -98,7 +98,7 @@ export class ResumeGenerationUseCase {
       id: savedResume.id,
       prompt: savedResume.prompt,
       template: savedResume.template,
-      createdAt: savedResume.createdAt
+      createdAt: savedResume.createdAt,
     });
 
     return savedResume;
