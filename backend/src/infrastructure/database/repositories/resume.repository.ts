@@ -10,7 +10,7 @@ export class TypeOrmResumeRepository implements ResumeRepository {
   constructor(
     @InjectRepository(ResumeEntity)
     private ormRepo: Repository<ResumeEntity>,
-  ) {}
+  ) { }
 
   async create(resume: Resume): Promise<Resume> {
     return (await this.ormRepo.save(resume)) as Resume;
@@ -25,5 +25,9 @@ export class TypeOrmResumeRepository implements ResumeRepository {
 
   async findById(id: string): Promise<Resume | null> {
     return (await this.ormRepo.findOneBy({ id })) as Resume;
+  }
+
+  async remove(id: string): Promise<void> {
+    await this.ormRepo.delete(id)
   }
 }

@@ -10,16 +10,16 @@ export interface ResumeProject {
 }
 
 export interface Resume {
-    id?: string
-    userId?: string
-    createdAt?: string
-    prompt?: string
+    id: string
+    userId: string
+    createdAt: string
+    prompt: string
     name: string
     language: string
     role: string
     summary: string
     skills: string[]
-    experiences: {
+    experiences?: {
         title: string
         company: string
         period: string

@@ -22,6 +22,7 @@ import { GeneratePdfUseCase } from 'src/application/use-cases/resume/generate-pd
 import { GetPageUseCase } from 'src/application/use-cases/resume/get-page.use-case';
 import { HtmlExceptionFilter } from 'src/infrastructure/http/filters/html-exception.filter';
 import { IsPublic } from 'src/infrastructure/auth/is-public.decorator';
+import { RemoveResumeUseCase } from 'src/application/use-cases/resume/remove-resume.use-case';
 
 @UseGuards(JwtAuthGuard)
 @Controller('/resume')
@@ -29,6 +30,7 @@ export class ResumeController {
   constructor(
     private readonly generateResumeUseCase: GenerateResumeUseCase,
     private readonly getAllResumesUseCase: GetAllResumesUseCase,
+    private readonly removeResumeUseCase: RemoveResumeUseCase,
     private readonly getPdfUseCase: GetPdfUseCase,
     private readonly getPageUseCase: GetPageUseCase,
     private readonly generatePdfUseCase: GeneratePdfUseCase,
@@ -41,6 +43,14 @@ export class ResumeController {
     @CurrentUser('id') userId: string,
   ) {
     await this.generateResumeUseCase.execute({ ...body, userId });
+  }
+
+  @Post('/remove')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async remove(
+    @Body() body: { resume_id: string },
+  ) {
+    await this.removeResumeUseCase.execute(body.resume_id);
   }
 
   @Get('/all')

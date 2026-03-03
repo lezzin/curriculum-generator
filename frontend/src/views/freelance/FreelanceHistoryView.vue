@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, reactive } from 'vue'
+import { onMounted, ref } from 'vue'
 import { useApi } from '../../composables/useApi'
 import { sseService } from '../../services/sse.service'
 import type { MarketplaceProposal } from '../../interfaces/freelance.interfaces'
@@ -13,23 +13,22 @@ const { request, loading: isLoading } = useApi()
 const authStore = useAuthStore()
 const { show } = useToast()
 
-const proposalList = reactive<MarketplaceProposal[]>([])
+const proposalList = ref<MarketplaceProposal[]>([])
 
 async function getProposals() {
     const { data, error } = await request<MarketplaceProposal[]>('get', '/freelance/proposal/all');
 
-    if (!error) {
-        proposalList.length = 0
-        if (data) proposalList.push(...data)
-        return;
+    if (error) {
+        show({ message: error, type: 'error' })
+        return
     }
 
-    show({ message: error, type: 'error' })
+    proposalList.value = data ?? []
 }
 
 sseService.on<MarketplaceProposal>("proposal-generated", (data) => {
     if (data.userId !== authStore.user?.id) return
-    proposalList.unshift(data)
+    proposalList.value.unshift(data)
 })
 
 onMounted(getProposals)

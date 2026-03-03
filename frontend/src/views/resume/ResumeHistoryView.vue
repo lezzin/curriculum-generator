@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, reactive } from 'vue'
+import { onMounted, ref } from 'vue'
 import { useApi } from '../../composables/useApi'
 import { sseService } from '../../services/sse.service'
 import type { Resume } from '../../interfaces/resume.interfaces'
@@ -13,23 +13,28 @@ const { request, loading: isLoading } = useApi()
 const authStore = useAuthStore()
 const { show } = useToast()
 
-const resumesList = reactive<Resume[]>([])
+const resumesList = ref<Resume[]>([])
 
 async function getResumes() {
     const { data, error } = await request<Resume[]>('get', "/resume/all");
 
-    if (!error) {
-        resumesList.length = 0
-        if (data) resumesList.push(...data)
-        return;
+    if (error) {
+        show({ message: error, type: 'error' })
+        return
     }
 
-    show({ message: error, type: "error" })
+    resumesList.value = data ?? []
+}
+
+const removeFromList = (resumeId: string) => {
+    resumesList.value = resumesList.value.filter(
+        resume => resume.id !== resumeId
+    )
 }
 
 sseService.on<Resume>("resume-generated", (data) => {
     if (data.userId !== authStore.user?.id) return
-    resumesList.unshift(data)
+    resumesList.value.unshift(data)
 })
 
 onMounted(getResumes)
@@ -41,7 +46,8 @@ onMounted(getResumes)
 
     <LoadContainer :loading="isLoading">
         <div class="grid gap-4" v-if="resumesList.length > 0">
-            <ResumePreview v-for="resume in resumesList" :key="resume.id" :resume="resume" />
+            <ResumePreview v-for="resume in resumesList" :key="resume.id" :resume="resume"
+                @remove="() => removeFromList(resume.id)" />
         </div>
         <div v-else class="text-center space-y-3">
             <p class="text-gray-500">

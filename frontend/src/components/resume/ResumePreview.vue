@@ -7,17 +7,26 @@ import { toHumanReadableDate } from "../../helper/string.helper"
 import CardContainer from "../ui/card/CardContainer.vue"
 import RotateArrow from "../icon/RotateArrow.vue"
 import BaseDropdown from "../ui/BaseDropdown.vue"
+import { useToast } from "../../composables/useToast"
+import { useApi } from "../../composables/useApi"
 
 interface Props {
     resume: Resume
 }
 
+interface Emits {
+    (e: 'remove'): void
+}
+
 const props = defineProps<Props>()
+const emit = defineEmits<Emits>()
 
 const isOpen = ref(false)
 const shouldToggle = ref(false)
 const resume = computed(() => props.resume)
 
+const { show } = useToast();
+const { request, loading } = useApi()
 const { setPublicPdfUrl, setPublicPageUrl, pageUrl, pdfUrl } = usePdf()
 const templateTypes = computed(() => Object.values(BASE_TEMPLATE_TYPES))
 
@@ -46,6 +55,20 @@ const goToPageUrl = async (template: BaseTemplateType, callable: () => void) => 
     window.open(`${pageUrl.value}/${template}`, "_blank");
     callable()
 };
+
+const removeResume = async () => {
+    const { error } = await request('post', '/resume/remove', {
+        resume_id: props.resume.id
+    })
+
+    if (!error) {
+        show({ message: 'Currículo removido com sucesso.', type: 'success' })
+        emit('remove')
+        return
+    }
+
+    show({ message: error, type: 'error' })
+}
 
 onMounted(async () => {
     await setPublicPdfUrl(resume.value.id!)
@@ -79,8 +102,12 @@ onMounted(async () => {
                     </template>
                 </BaseDropdown>
 
-                <BaseButton v-if="resume.id" @click.stop="goToPdfUrl" size="sm" variant="outline" :disabled="!pdfUrl">
+                <BaseButton @click.stop="goToPdfUrl" size="sm" variant="outline" :disabled="!pdfUrl">
                     PDF
+                </BaseButton>
+
+                <BaseButton @click.stop="removeResume" size="sm" variant="destructive" :disabled="loading">
+                    Remover
                 </BaseButton>
             </div>
         </div>

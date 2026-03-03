@@ -115,6 +115,10 @@ export class ResumeDocumentService implements OnModuleInit, OnModuleDestroy {
     }
   }
 
+  async deletePdfById(id: string): Promise<void> {
+    await this.storage.removeFile('resumes', `${id}.pdf`);
+  }
+
   private loadTemplate(
     templateType: SelectedTemplate | undefined,
     folder: 'page' | 'pdf',

@@ -28,6 +28,7 @@ import { UserConfigModule } from './user-config.module';
 import { UserRepository } from 'src/domain/repositories/user.repository';
 import { UserModule } from './user.module';
 import { GetPageUseCase } from 'src/application/use-cases/resume/get-page.use-case';
+import { RemoveResumeUseCase } from 'src/application/use-cases/resume/remove-resume.use-case';
 
 @Module({
   imports: [
@@ -134,6 +135,14 @@ import { GetPageUseCase } from 'src/application/use-cases/resume/get-page.use-ca
         UserRepository,
       ],
     },
+    {
+      provide: RemoveResumeUseCase,
+      useFactory: (
+        resumeRepository: ResumeRepository,
+        pdfService: ResumeDocumentService) =>
+        new RemoveResumeUseCase(resumeRepository, pdfService),
+      inject: [ResumeRepository, ResumeDocumentService],
+    },
   ],
 })
-export class ResumeModule {}
+export class ResumeModule { }
