@@ -3,4 +3,5 @@ export interface GetUserOutput {
     name: string
     email: string
     picture?: string | null
+    onlyProvider: boolean
 }

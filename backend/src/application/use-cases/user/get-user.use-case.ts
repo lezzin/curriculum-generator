@@ -17,6 +17,7 @@ export class GetUserUseCase {
       name: user.name,
       email: user.email,
       picture: user.picture,
+      onlyProvider: user.password == null
     };
   }
 }

@@ -1,8 +1,9 @@
 import * as yup from "yup";
+import { passwordSchema } from "./base/password.schema";
 
 export const authSchema = yup.object({
     email: yup.string().email("Email inválido").required("Campo obrigatório"),
-    password: yup.string().required("Campo obrigatório").min(3, "Mínimo 3 caracteres")
+    password: passwordSchema
 })
 
 export type AuthForm = yup.InferType<typeof authSchema>

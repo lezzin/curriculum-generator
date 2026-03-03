@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import { getFirstLetter } from '../../helper/string.helper'
 import type { User } from '../../stores/auth'
 
@@ -40,13 +40,21 @@ const altText = computed(
 const firstLetter = computed(() =>
     getFirstLetter(props.user?.name ?? '')
 )
+
+const imageLoaded = ref(false)
+
+function onImageLoad() {
+    imageLoaded.value = true
+}
 </script>
 
 <template>
     <div :class="containerClasses">
-        <img v-if="user.picture" :src="user.picture" :alt="altText" class="w-full h-full object-cover" />
+        <img v-if="user.picture && imageLoaded" :src="user.picture" :alt="altText" class="w-full h-full object-cover" />
         <span v-else>
             {{ firstLetter }}
         </span>
+
+        <img v-if="user.picture && !imageLoaded" :src="user.picture" @load="onImageLoad" class="hidden" />
     </div>
 </template>

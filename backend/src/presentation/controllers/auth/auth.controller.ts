@@ -16,8 +16,9 @@ import { SocialLoginUseCase } from 'src/application/use-cases/auth/social-login.
 import { GetUserUseCase } from 'src/application/use-cases/user/get-user.use-case';
 import { JwtAuthGuard } from 'src/infrastructure/auth/jwt-auth.guard';
 import { CurrentUser } from 'src/infrastructure/auth/current-user.decorator';
-import { LoginDto } from './auth.dto';
+import { LoginDto, SetPasswordDto } from './auth.dto';
 import { cookieOptions } from 'src/domain/shared/config/cookie.config';
+import { SetPasswordUseCase } from 'src/application/use-cases/auth/set-password.use-case';
 
 @Controller('auth')
 export class AuthController {
@@ -26,6 +27,7 @@ export class AuthController {
     private readonly refreshUseCase: RefreshUseCase,
     private readonly socialLoginUseCase: SocialLoginUseCase,
     private readonly getUserUseCase: GetUserUseCase,
+    private readonly setPasswordUseCase: SetPasswordUseCase,
   ) { }
 
   @Post('login')
@@ -83,6 +85,7 @@ export class AuthController {
   }
 
   @Post('logout')
+  @UseGuards(JwtAuthGuard)
   logout(@Res({ passthrough: true }) res: Response) {
     this.clearAuthCookies(res);
     return { message: 'Deslogado com sucesso' };
@@ -92,6 +95,15 @@ export class AuthController {
   @UseGuards(JwtAuthGuard)
   getMe(@CurrentUser('id') userId: string) {
     return this.getUserUseCase.execute({ userId });
+  }
+
+  @Post('set-password')
+  @UseGuards(JwtAuthGuard)
+  async setPassword(
+    @Body() body: SetPasswordDto,
+    @CurrentUser('id') userId: string
+  ) {
+    return this.setPasswordUseCase.execute({ userId, password: body.password })
   }
 
   @Get('google')

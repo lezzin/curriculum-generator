@@ -9,11 +9,11 @@ import { AuthController } from 'src/presentation/controllers/auth/auth.controlle
 import { LoginUseCase } from 'src/application/use-cases/auth/login.use-case';
 import { JwtAdapter } from 'src/infrastructure/auth/jwt.service';
 import { ConfigService } from '@nestjs/config';
-import type { StringValue } from 'ms';
 import { SocialLoginUseCase } from 'src/application/use-cases/auth/social-login.use-case';
 import { GoogleStrategy } from 'src/infrastructure/auth/strategies/google.strategy';
 import { GithubStrategy } from 'src/infrastructure/auth/strategies/github.strategy';
 import { RefreshUseCase } from 'src/application/use-cases/auth/refresh.use-case';
+import { SetPasswordUseCase } from 'src/application/use-cases/auth/set-password.use-case';
 
 @Module({
   imports: [
@@ -55,6 +55,13 @@ import { RefreshUseCase } from 'src/application/use-cases/auth/refresh.use-case'
         );
       },
       inject: [UserRepository, JwtAdapter, ConfigService],
+    },
+    {
+      provide: SetPasswordUseCase,
+      useFactory: (userRepository: UserRepository) => {
+        return new SetPasswordUseCase(userRepository);
+      },
+      inject: [UserRepository],
     },
   ],
 })

@@ -1,4 +1,4 @@
-import { IsEmail, IsDefined, IsString } from 'class-validator';
+import { IsEmail, IsDefined, IsString, IsNotEmpty, IsStrongPassword } from 'class-validator';
 
 export class LoginDto {
   @IsDefined({ message: 'O email é obrigatório' })
@@ -7,5 +7,18 @@ export class LoginDto {
 
   @IsDefined({ message: 'A senha é obrigatória' })
   @IsString({ message: 'A senha deve ser um texto' })
+  password: string;
+}
+
+export class SetPasswordDto {
+  @IsNotEmpty({ message: 'A senha é obrigatória' })
+  @IsString({ message: 'A senha deve ser um texto' })
+  @IsStrongPassword({
+    minLength: 3,
+    minUppercase: 1,
+    minLowercase: 1,
+    minNumbers: 1,
+    minSymbols: 0,
+  })
   password: string;
 }
