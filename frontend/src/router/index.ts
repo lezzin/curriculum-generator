@@ -1,9 +1,20 @@
-import { createRouter, createWebHistory } from 'vue-router';
+import { createRouter, createWebHistory, type RouteRecordRaw } from 'vue-router';
 import { publicRoutes } from './public.routes';
 import { privateRoutes } from './private.routes';
 import { useAuthStore } from '../stores/auth';
+import NotFoundView from '../views/NotFoundView.vue';
 
-const routes = [...publicRoutes, ...privateRoutes];
+const routes: RouteRecordRaw[] = [
+  ...publicRoutes,
+  ...privateRoutes,
+  {
+    path: '/:pathMatch(.*)*',
+    name: 'NotFound',
+    component: NotFoundView,
+    meta: {
+      requiresAuth: false,
+    }
+  }];
 
 export const router = createRouter({
   history: createWebHistory(),
