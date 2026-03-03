@@ -7,7 +7,7 @@ import { useToast } from '../../composables/useToast'
 import InputField from '../ui/form/InputField.vue'
 import { nullToEmpty } from '../../helper/string.helper'
 import { useForm } from 'vee-validate'
-import { userConfigSchema, type UserConfigForm } from '../validation/schemas/user-config.schema'
+import { userConfigSchema, type UserConfigForm } from '../../validation/schemas/user-config.schema'
 
 interface UserConfig {
     linkedin: string

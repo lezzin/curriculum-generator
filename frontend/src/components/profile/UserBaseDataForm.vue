@@ -7,7 +7,7 @@ import InputField from '../../components/ui/form/InputField.vue'
 import TextAreaField from '../../components/ui/form/TextAreaField.vue'
 import BaseModal from '../ui/modal/BaseModal.vue'
 import { useForm, useFieldArray } from 'vee-validate'
-import { baseDataSchema, INITIAL_VALUES, type BaseDataForm } from '../validation/schemas/base-data.schema'
+import { baseDataSchema, INITIAL_VALUES, type BaseDataForm } from '../../validation/schemas/base-data.schema'
 
 interface Props {
     type: string | null

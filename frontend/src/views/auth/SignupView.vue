@@ -10,7 +10,7 @@ import InputField from '../../components/ui/form/InputField.vue'
 import AppTitle from '../../components/layout/AppTitle.vue'
 import CardContainer from '../../components/ui/card/CardContainer.vue'
 
-import { signupSchema, type SignUpForm } from '../../components/validation/schemas/signup.schema'
+import { signupSchema, type SignUpForm } from '../../validation/schemas/signup.schema'
 import { useAuthStore } from '../../stores/auth'
 
 const { handleSubmit } = useForm<SignUpForm>({

@@ -12,7 +12,7 @@ import InputField from '../../components/ui/form/InputField.vue'
 import GoogleIcon from '../../components/icon/GoogleIcon.vue'
 import GitHubIcon from '../../components/icon/GitHubIcon.vue'
 
-import { authSchema, type AuthForm } from '../../components/validation/schemas/auth.schema'
+import { authSchema, type AuthForm } from '../../validation/schemas/auth.schema'
 import { useAuthStore } from '../../stores/auth'
 
 const { handleSubmit } = useForm<AuthForm>({

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useForm } from 'vee-validate';
 import { useApi } from '../../composables/useApi';
-import { setPasswordSchema, type SetPasswordForm } from '../validation/schemas/set-password.schema';
+import { setPasswordSchema, type SetPasswordForm } from '../../validation/schemas/set-password.schema';
 import { useToast } from '../../composables/useToast';
 import InputField from '../ui/form/InputField.vue';
 import BaseButton from '../ui/BaseButton.vue';

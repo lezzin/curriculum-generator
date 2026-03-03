@@ -5,7 +5,7 @@ import TextAreaField from "../../components/ui/form/TextAreaField.vue"
 import { useApi } from "../../composables/useApi"
 import { useToast } from "../../composables/useToast"
 import { useForm } from "vee-validate"
-import { freelanceSchema, MAX_LENGTH, type FreelanceForm } from "../../components/validation/schemas/freelance.schema"
+import { freelanceSchema, MAX_LENGTH, type FreelanceForm } from "../../validation/schemas/freelance.schema"
 const { show } = useToast()
 
 const { handleSubmit } = useForm<FreelanceForm>({

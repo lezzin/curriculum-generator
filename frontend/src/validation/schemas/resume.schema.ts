@@ -1,5 +1,5 @@
 import * as yup from "yup";
-import { focusAreas, languages, markets, seniorities, templateTypes, type BaseTemplateType, type FocusArea, type Language, type Market, type Seniority } from "../../../interfaces/resume.interfaces";
+import { focusAreas, languages, markets, seniorities, templateTypes, type BaseTemplateType, type FocusArea, type Language, type Market, type Seniority } from "../../interfaces/resume.interfaces";
 
 export const MAX_LENGTH = 3000;
 export const MIN_LENGTH = 25;

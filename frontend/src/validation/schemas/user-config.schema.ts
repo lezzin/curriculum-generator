@@ -1,33 +1,28 @@
 import * as yup from "yup";
 
+function validateHostname(hostname: string, value: string | null | undefined): boolean {
+    if (!value) return true
+
+    try {
+        const url = new URL(value)
+        return url.hostname.includes(hostname)
+    } catch {
+        return false
+    }
+}
+
 export const userConfigSchema = yup.object({
     linkedin: yup
         .string()
         .nullable()
         .notRequired()
-        .test("is-linkedin", "Informe uma URL válida do LinkedIn", (value) => {
-            if (!value) return true
-            try {
-                const url = new URL(value)
-                return url.hostname.includes("linkedin.com")
-            } catch {
-                return false
-            }
-        }),
+        .test("is-linkedin", "Informe uma URL válida do LinkedIn", (value) => validateHostname('linkedin.com', value)),
 
     github: yup
         .string()
         .nullable()
         .notRequired()
-        .test("is-github", "Informe uma URL válida do GitHub", (value) => {
-            if (!value) return true
-            try {
-                const url = new URL(value)
-                return url.hostname.includes("github.com")
-            } catch {
-                return false
-            }
-        }),
+        .test("is-github", "Informe uma URL válida do GitHub", (value) => validateHostname('github.com', value)),
 
     portfolio: yup
         .string()
