@@ -7,9 +7,9 @@ export class GetAllResumesUseCase {
   constructor(
     private readonly resumeRepository: ResumeRepository,
     private readonly cache: CacheRepository,
-  ) {}
+  ) { }
 
-  async getAll(userId: string) {
+  async execute(userId: string) {
     const cacheKey = makeCacheKey(REMEMBER_RESUMES_CACHE_PREFIX, userId);
     const callback = async () => await this.resumeRepository.getAll(userId);
     return this.cache.remember(cacheKey, 600, callback);

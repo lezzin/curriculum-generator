@@ -55,7 +55,7 @@ export class ResumeController {
 
   @Get('/all')
   async getAllResumes(@CurrentUser('id') userId: any) {
-    return await this.getAllResumesUseCase.getAll(userId);
+    return await this.getAllResumesUseCase.execute(userId);
   }
 
   @Get('/pdf/:id')

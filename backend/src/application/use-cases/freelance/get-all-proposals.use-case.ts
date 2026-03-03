@@ -7,9 +7,9 @@ export class GetAllProposalsUseCase {
   constructor(
     private readonly freelanceProposalRepository: FreelanceProposalRepository,
     private readonly cache: CacheRepository,
-  ) {}
+  ) { }
 
-  async getAll(userId: string) {
+  async execute(userId: string) {
     const cacheKey = makeCacheKey(
       REMEMBER_FREELANCE_PROPOSALS_CACHE_PREFIX,
       userId,

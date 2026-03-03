@@ -34,6 +34,6 @@ export class FreelanceController {
 
   @Get('/proposal/all')
   async getAllProposals(@CurrentUser('id') userId: any) {
-    return await this.getAllProposalsUseCase.getAll(userId);
+    return await this.getAllProposalsUseCase.execute(userId);
   }
 }
