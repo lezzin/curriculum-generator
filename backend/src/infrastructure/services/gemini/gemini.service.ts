@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { GenerativeModel, GoogleGenerativeAI } from '@google/generative-ai';
 import { ConfigService } from '@nestjs/config';
-import { DiscordService } from './discord.service';
+import { DiscordService } from '../discord.service';
 import { GeminiPrompt } from './types/gemini.types';
 
 @Injectable()

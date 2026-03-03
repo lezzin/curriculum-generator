@@ -1,5 +1,6 @@
 import { randomUUID } from 'crypto';
 import { GenerateResumeInput } from 'src/application/models/input/generate-resume.input';
+import { ResumeItemOutput } from 'src/application/models/output/get-all-resumes.output';
 import { Resume } from 'src/domain/entities/resume.entity';
 import { BaseDataRepository } from 'src/domain/repositories/base-data.repository';
 import { CacheRepository } from 'src/domain/repositories/cache.repository';
@@ -8,16 +9,13 @@ import { UserConfigRepository } from 'src/domain/repositories/user-config.reposi
 import { UserRepository } from 'src/domain/repositories/user.repository';
 import { REMEMBER_RESUMES_CACHE_PREFIX } from 'src/domain/shared/constants/cache.constants';
 import { BaseDataType } from 'src/domain/shared/enums/base-data-type.enum';
-import {
-  Language,
-  SelectedTemplate,
-} from 'src/domain/shared/enums/resume.enums';
+import { SelectedTemplate } from 'src/domain/shared/enums/resume.enums';
 import {
   generateHash,
   makeCacheKey,
 } from 'src/domain/shared/helpers/cache-key.helper';
-import { buildResumePrompt } from 'src/domain/shared/helpers/resume-prompt.helper';
-import { GeminiService } from 'src/infrastructure/services/gemini.service';
+import { GeminiService } from 'src/infrastructure/services/gemini/gemini.service';
+import { buildResumePrompt } from 'src/infrastructure/services/gemini/helpers/resume-prompt.helper';
 import { ResumeDocumentService } from 'src/infrastructure/services/resume-document.service';
 import { SseService } from 'src/infrastructure/services/sse.service';
 
@@ -84,6 +82,7 @@ export class ResumeGenerationUseCase {
         resume.experiences,
         resume.projects,
         userId,
+        new Date()
       ),
     );
 
@@ -95,7 +94,12 @@ export class ResumeGenerationUseCase {
       userData,
       contactData,
     );
-    this.sseService.sendEvent(userId, 'resume-generated', savedResume);
+    this.sseService.sendEvent<ResumeItemOutput>(userId, 'resume-generated', {
+      id: savedResume.id,
+      prompt: savedResume.prompt,
+      template: savedResume.template,
+      createdAt: savedResume.createdAt
+    });
 
     return savedResume;
   }

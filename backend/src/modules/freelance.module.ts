@@ -3,7 +3,6 @@ import { FreelanceController } from 'src/presentation/controllers/freelance/free
 import { GenerateProposalUseCase } from 'src/application/use-cases/freelance/generate-proposal.use-case';
 import { FreelanceProposalRepository } from 'src/domain/repositories/freelance-proposal.repository';
 import { BullMQProposalQueue } from 'src/infrastructure/queue/bullmq-proposal.queue';
-import { GeminiService } from 'src/infrastructure/services/gemini.service';
 import { TypeOrmFreelanceProposalRepository } from 'src/infrastructure/database/repositories/freelance-proposal.repository';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { FreelanceProposalEntity } from 'src/infrastructure/database/entities/freelance-proposal.entity';
@@ -20,6 +19,7 @@ import { ProposalGenerationUseCase } from 'src/application/use-cases/freelance/p
 import { BaseDataRepository } from 'src/domain/repositories/base-data.repository';
 import { SseService } from 'src/infrastructure/services/sse.service';
 import { RemoveProposalUseCase } from 'src/application/use-cases/freelance/remove-proposal.use-case';
+import { GeminiService } from 'src/infrastructure/services/gemini/gemini.service';
 
 @Module({
   imports: [

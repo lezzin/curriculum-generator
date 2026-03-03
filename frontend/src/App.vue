@@ -4,7 +4,7 @@ import { useRoute } from 'vue-router';
 import { useToast } from './composables/useToast';
 import { sseService } from './services/sse.service';
 import type { Resume } from './interfaces/resume.interfaces';
-import type { MarketplaceProposal } from './interfaces/freelance.interfaces';
+import type { FreelanceProposal } from './interfaces/freelance.interfaces';
 import LoadContainer from './components/ui/LoadContainer.vue';
 import AppHeader from './components/layout/AppHeader.vue';
 import BaseToast from './components/ui/BaseToast.vue';
@@ -36,7 +36,7 @@ const setupSSE = () => {
     }
   });
 
-  sseService.on<MarketplaceProposal>('proposal-generated', () => {
+  sseService.on<FreelanceProposal>('proposal-generated', () => {
     if (route.name !== 'FreelanceProposalHistory') {
       show({
         message: 'Nova proposta gerada com sucesso!',

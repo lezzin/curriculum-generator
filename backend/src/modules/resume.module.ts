@@ -1,5 +1,4 @@
 import { Module } from '@nestjs/common';
-import { GeminiService } from 'src/infrastructure/services/gemini.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { DiscordService } from 'src/infrastructure/services/discord.service';
 import { BaseDataModule } from './base-data.module';
@@ -29,6 +28,7 @@ import { UserRepository } from 'src/domain/repositories/user.repository';
 import { UserModule } from './user.module';
 import { GetPageUseCase } from 'src/application/use-cases/resume/get-page.use-case';
 import { RemoveResumeUseCase } from 'src/application/use-cases/resume/remove-resume.use-case';
+import { GeminiService } from 'src/infrastructure/services/gemini/gemini.service';
 
 @Module({
   imports: [

@@ -1,5 +1,6 @@
 import { randomUUID } from 'crypto';
 import { GenerateProposalInput } from 'src/application/models/input/generate-proposal.input';
+import { ProposalItemOutput } from 'src/application/models/output/get-all-proposals.output';
 import { FreelanceProposal } from 'src/domain/entities/freelance-proposal.entity';
 import { BaseDataRepository } from 'src/domain/repositories/base-data.repository';
 import { CacheRepository } from 'src/domain/repositories/cache.repository';
@@ -10,10 +11,9 @@ import {
   generateHash,
   makeCacheKey,
 } from 'src/domain/shared/helpers/cache-key.helper';
-import { build99FreelasProposalPrompt } from 'src/domain/shared/helpers/freelance-proposal.prompt';
-import { FreelanceProposalInterface } from 'src/domain/shared/interfaces/freelance-proposal.interface';
-import { GeminiService } from 'src/infrastructure/services/gemini.service';
+import { buildFreelanceProposalPrompt, FreelanceProposalResponse } from 'src/infrastructure/services/gemini/helpers/freelance-proposal.prompt';
 import { SseService } from 'src/infrastructure/services/sse.service';
+import { GeminiService } from 'src/infrastructure/services/gemini/gemini.service';
 
 export class ProposalGenerationUseCase {
   constructor(
@@ -46,9 +46,9 @@ export class ProposalGenerationUseCase {
       promptKey,
       900,
       async () =>
-        await this.geminiService.generateJsonResponse<FreelanceProposalInterface>(
+        await this.geminiService.generateJsonResponse<FreelanceProposalResponse>(
           {
-            prompt: build99FreelasProposalPrompt(baseData, solicitation),
+            prompt: buildFreelanceProposalPrompt(baseData, solicitation),
             discordData: [
               `**Tipo**: Proposta Freelance`,
               `**Usuário**: ${userId}`,
@@ -65,11 +65,19 @@ export class ProposalGenerationUseCase {
         proposal.bidAmount,
         proposal.deliveryDays,
         userId,
+        new Date()
       ),
     );
 
     await this.invalidateCaches(userId, promptKey);
-    this.sseService.sendEvent(userId, 'proposal-generated', savedProposal);
+    this.sseService.sendEvent<ProposalItemOutput>(userId, 'proposal-generated', {
+      id: savedProposal.id,
+      bidAmount: savedProposal.bidAmount,
+      deliveryDays: savedProposal.deliveryDays,
+      message: savedProposal.message,
+      prompt: savedProposal.prompt,
+      createdAt: savedProposal.createdAt
+    });
 
     return savedProposal;
   }

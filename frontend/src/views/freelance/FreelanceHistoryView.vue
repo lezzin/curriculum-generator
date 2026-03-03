@@ -2,7 +2,7 @@
 import { onMounted, ref } from 'vue'
 import { useApi } from '../../composables/useApi'
 import { sseService } from '../../services/sse.service'
-import type { MarketplaceProposal } from '../../interfaces/freelance.interfaces'
+import type { FreelanceProposal } from '../../interfaces/freelance.interfaces'
 import ProposalPreview from '../../components/freelance/ProposalPreview.vue'
 import AppTitle from '../../components/layout/AppTitle.vue'
 import LoadContainer from '../../components/ui/LoadContainer.vue'
@@ -13,17 +13,17 @@ const { request, loading: isLoading } = useApi()
 const authStore = useAuthStore()
 const { show } = useToast()
 
-const proposalList = ref<MarketplaceProposal[]>([])
+const proposalList = ref<FreelanceProposal[]>([])
 
 async function getProposals() {
-    const { data, error } = await request<MarketplaceProposal[]>('get', '/freelance/proposal/all');
+    const { data, error } = await request<{ items: FreelanceProposal[] }>('get', '/freelance/proposal/all');
 
     if (error) {
         show({ message: error, type: 'error' })
         return
     }
 
-    proposalList.value = data ?? []
+    proposalList.value = data?.items ?? []
 }
 
 const removeFromList = (proposalId: string) => {
@@ -32,7 +32,7 @@ const removeFromList = (proposalId: string) => {
     )
 }
 
-sseService.on<MarketplaceProposal>("proposal-generated", (data) => {
+sseService.on<FreelanceProposal>("proposal-generated", (data) => {
     if (data.userId !== authStore.user?.id) return
     proposalList.value.unshift(data)
 })

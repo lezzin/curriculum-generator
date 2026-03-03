@@ -6,5 +6,6 @@ export class FreelanceProposal {
     public bidAmount: number,
     public deliveryDays: number,
     public userId: string,
-  ) {}
+    public readonly createdAt: Date,
+  ) { }
 }

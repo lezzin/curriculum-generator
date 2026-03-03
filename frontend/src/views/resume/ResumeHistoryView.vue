@@ -16,14 +16,14 @@ const { show } = useToast()
 const resumesList = ref<Resume[]>([])
 
 async function getResumes() {
-    const { data, error } = await request<Resume[]>('get', "/resume/all");
+    const { data, error } = await request<{ items: Resume[] }>('get', "/resume/all");
 
     if (error) {
         show({ message: error, type: 'error' })
         return
     }
 
-    resumesList.value = data ?? []
+    resumesList.value = data?.items ?? []
 }
 
 const removeFromList = (resumeId: string) => {

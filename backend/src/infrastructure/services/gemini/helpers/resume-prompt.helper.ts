@@ -1,4 +1,4 @@
-import { ResumeOptions } from '../interfaces/resume.interfaces';
+import { ResumeOptions } from "src/application/models/input/generate-resume.input";
 
 export function buildResumePrompt(
   baseResume: any,

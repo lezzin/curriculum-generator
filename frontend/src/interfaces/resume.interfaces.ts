@@ -10,23 +10,10 @@ export interface ResumeProject {
 }
 
 export interface Resume {
-    id: string
-    userId: string
-    createdAt: string
-    prompt: string
-    name: string
-    language: string
-    role: string
-    summary: string
-    skills: string[]
-    experiences?: {
-        title: string
-        company: string
-        period: string
-        responsibilities: string[]
-        technologies: string[]
-    }[]
-    projects?: ResumeProject[]
+    id: string,
+    prompt: string,
+    template: BaseTemplateType,
+    createdAt: Date,
 }
 
 export type BaseTemplateType = typeof BASE_TEMPLATE_TYPES[keyof typeof BASE_TEMPLATE_TYPES]

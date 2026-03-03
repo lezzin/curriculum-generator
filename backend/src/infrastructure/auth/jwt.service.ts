@@ -2,7 +2,14 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService as NestJwtService } from '@nestjs/jwt';
 import ms from 'ms';
-import { AuthUserData } from 'src/domain/shared/interfaces/auth.interfaces';
+
+type AuthTokenType = 'refresh_token' | 'access_token'
+
+export interface AuthUserData {
+  sub: string
+  email: string,
+  type: AuthTokenType,
+}
 
 @Injectable()
 export class JwtAdapter {

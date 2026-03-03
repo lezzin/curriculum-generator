@@ -24,7 +24,7 @@ export class SseService {
     });
   }
 
-  sendEvent(userId: string, event: string, data: any) {
+  sendEvent<T>(userId: string, event: string, data: T) {
     const payload = JSON.stringify(data);
 
     this.clients.get(userId)?.forEach((res) => {
