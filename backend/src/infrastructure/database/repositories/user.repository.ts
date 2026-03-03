@@ -59,11 +59,6 @@ export class TypeOrmUserRepository implements UserRepository {
     await this.ormRepo.save(this.toOrmEntity(user));
   }
 
-  async findByRefreshToken(id: string, refreshToken: string): Promise<User | null> {
-    const entity = (await this.ormRepo.findOneBy({ id, refreshToken }));
-    return entity ? this.toDomain(entity) : null;
-  }
-
   private toDomain(entity: UserEntity): User {
     const user = new User(
       entity.id,
@@ -71,6 +66,7 @@ export class TypeOrmUserRepository implements UserRepository {
       entity.email,
       entity.picture,
       entity.password,
+      entity.refreshToken
     );
 
     if (entity.providers) {

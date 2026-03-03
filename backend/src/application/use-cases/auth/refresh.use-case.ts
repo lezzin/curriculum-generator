@@ -2,6 +2,7 @@ import { UnauthorizedException } from '@nestjs/common';
 import { RefreshInput } from 'src/application/models/refresh.input';
 import { UserRepository } from 'src/domain/repositories/user.repository';
 import { JwtAdapter } from 'src/infrastructure/auth/jwt.service';
+import * as bcrypt from 'bcryptjs';
 
 export class RefreshUseCase {
   constructor(
@@ -10,16 +11,29 @@ export class RefreshUseCase {
   ) { }
 
   async execute(body: RefreshInput) {
-    const verify = this.jwtService.verifyRefreshToken(body.refresh_token);
+    const payload = this.jwtService.verifyRefreshToken(body.refresh_token);
 
-    if (verify.type !== 'refresh_token') {
+    if (payload.type !== 'refresh_token') {
       throw new UnauthorizedException('Tipo de token inválido!');
     }
 
-    const user = await this.userRepository.findByRefreshToken(verify.sub, body.refresh_token);
+    const user = await this.userRepository.findById(payload.sub);
 
     if (!user) {
-      throw new UnauthorizedException('Credenciais inválidas');
+      throw new UnauthorizedException('Usuário não encontrado');
+    }
+
+    if (!user.refreshToken) {
+      throw new UnauthorizedException('Refresh token não cadastrado');
+    }
+
+    const refreshTokenMatch = await bcrypt.compare(
+      body.refresh_token,
+      user.refreshToken,
+    );
+
+    if (!refreshTokenMatch) {
+      throw new UnauthorizedException('Refresh token inválido!');
     }
 
     const newAccessToken = this.jwtService.signAccessToken({
@@ -34,7 +48,7 @@ export class RefreshUseCase {
       type: 'refresh_token',
     });
 
-    user.refreshToken = newRefreshToken;
+    user.refreshToken = await bcrypt.hash(newRefreshToken, 10);
     await this.userRepository.update(user);
 
     return {

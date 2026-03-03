@@ -41,7 +41,7 @@ export class LoginUseCase {
       type: 'refresh_token'
     });
 
-    user.refreshToken = refreshToken;
+    user.refreshToken = await bcrypt.hash(refreshToken, 10);
     await this.userRepository.update(user)
 
     return {

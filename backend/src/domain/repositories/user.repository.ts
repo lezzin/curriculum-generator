@@ -9,5 +9,4 @@ export abstract class UserRepository {
     providerId: string,
   ): Promise<User | null>;
   abstract update(user: User): Promise<void>
-  abstract findByRefreshToken(id: string, token: string): Promise<User | null>
 }
