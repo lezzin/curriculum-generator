@@ -1,62 +1,64 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
-import { useApi } from '../../composables/useApi'
-import { sseService } from '../../services/sse.service'
-import type { FreelanceProposal } from '../../interfaces/freelance.interfaces'
-import ProposalPreview from '../../components/freelance/ProposalPreview.vue'
-import AppTitle from '../../components/layout/AppTitle.vue'
-import LoadContainer from '../../components/ui/LoadContainer.vue'
-import { useToast } from '../../composables/useToast'
-import { useAuthStore } from '../../stores/auth'
+import { onMounted, ref } from 'vue';
+import { useApi } from '../../composables/useApi';
+import { sseService } from '../../services/sse.service';
+import type { FreelanceProposal } from '../../interfaces/freelance.interfaces';
+import ProposalPreview from '../../components/freelance/ProposalPreview.vue';
+import AppTitle from '../../components/layout/AppTitle.vue';
+import LoadContainer from '../../components/ui/LoadContainer.vue';
+import { useToast } from '../../composables/useToast';
+import { useAuthStore } from '../../stores/auth';
 
-const { request, loading: isLoading } = useApi()
-const authStore = useAuthStore()
-const { show } = useToast()
+const { request, loading: isLoading } = useApi();
+const authStore = useAuthStore();
+const { show } = useToast();
 
-const proposalList = ref<FreelanceProposal[]>([])
+const proposalList = ref<FreelanceProposal[]>([]);
 
 async function getProposals() {
-    const { data, error } = await request<{ items: FreelanceProposal[] }>('get', '/freelance/proposal/all');
+  const { data, error } = await request<{ items: FreelanceProposal[] }>('get', '/freelance/proposal/all');
 
-    if (error) {
-        show({ message: error, type: 'error' })
-        return
-    }
+  if (error) {
+    show({ message: error, type: 'error' });
+    return;
+  }
 
-    proposalList.value = data?.items ?? []
+  proposalList.value = data?.items ?? [];
 }
 
 const removeFromList = (proposalId: string) => {
-    proposalList.value = proposalList.value.filter(
-        proposal => proposal.id !== proposalId
-    )
-}
+  proposalList.value = proposalList.value.filter((proposal) => proposal.id !== proposalId);
+};
 
-sseService.on<FreelanceProposal>("proposal-generated", (data) => {
-    if (data.userId !== authStore.user?.id) return
-    proposalList.value.unshift(data)
-})
+sseService.on<FreelanceProposal>('proposal-generated', (data) => {
+  if (data.userId !== authStore.user?.id) return;
+  proposalList.value.unshift(data);
+});
 
-onMounted(getProposals)
+onMounted(getProposals);
 </script>
 
 <template>
-    <AppTitle title="Minhas Propostas Geradas"
-        subtitle="Visualize e acompanhe as propostas criadas a partir das oportunidades selecionadas." />
+  <AppTitle
+    title="Minhas Propostas Geradas"
+    subtitle="Visualize e acompanhe as propostas criadas a partir das oportunidades selecionadas."
+  />
 
-    <LoadContainer :loading="isLoading">
-        <div class="grid gap-4" v-if="proposalList.length > 0">
-            <ProposalPreview v-for="proposal in proposalList" :key="proposal.id" :proposal="proposal"
-                @remove="() => removeFromList(proposal.id)" />
-        </div>
+  <LoadContainer :loading="isLoading">
+    <div class="grid gap-4" v-if="proposalList.length > 0">
+      <ProposalPreview
+        v-for="proposal in proposalList"
+        :key="proposal.id"
+        :proposal="proposal"
+        @remove="() => removeFromList(proposal.id)"
+      />
+    </div>
 
-        <div v-else class="text-center space-y-3">
-            <p class="text-gray-500">
-                Você ainda não gerou nenhuma proposta personalizada.
-            </p>
-            <router-link :to="{ name: 'FreelanceProposalGenerate' }" class="text-primary font-medium hover:underline">
-                Criar minha primeira proposta
-            </router-link>
-        </div>
-    </LoadContainer>
+    <div v-else class="text-center space-y-3">
+      <p class="text-gray-500">Você ainda não gerou nenhuma proposta personalizada.</p>
+      <router-link :to="{ name: 'FreelanceProposalGenerate' }" class="text-primary font-medium hover:underline">
+        Criar minha primeira proposta
+      </router-link>
+    </div>
+  </LoadContainer>
 </template>

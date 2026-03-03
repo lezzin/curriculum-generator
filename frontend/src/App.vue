@@ -22,7 +22,7 @@ const setupSSE = () => {
   sseService.on('message', (value: string) => {
     show({
       message: value,
-      type: 'info'
+      type: 'info',
     });
   });
 

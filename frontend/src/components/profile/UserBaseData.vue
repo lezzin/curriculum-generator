@@ -1,80 +1,91 @@
 <script setup lang="ts">
-import { reactive, ref, onMounted } from 'vue'
-import { useApi } from '../../composables/useApi'
-import { useToast } from '../../composables/useToast'
-import BaseDataCard from './BaseDataCard.vue'
-import UserBaseDataForm from './UserBaseDataForm.vue'
+import { reactive, ref, onMounted } from 'vue';
+import { useApi } from '../../composables/useApi';
+import { useToast } from '../../composables/useToast';
+import BaseDataCard from './BaseDataCard.vue';
+import UserBaseDataForm from './UserBaseDataForm.vue';
 
-type UserBaseType = 'resume' | 'freelance-proposal'
+type UserBaseType = 'resume' | 'freelance-proposal';
 
 type UserBaseDataItem = {
-    id: string
-    type: UserBaseType
-    description: string
-    userId: string
-    createdAt: string
-    updatedAt: string
-}
+  id: string;
+  type: UserBaseType;
+  description: string;
+  userId: string;
+  createdAt: string;
+  updatedAt: string;
+};
 
-const { request } = useApi()
-const { show } = useToast()
+const { request } = useApi();
+const { show } = useToast();
 
 const baseData = reactive<Record<UserBaseType, string | null>>({
-    resume: null,
-    'freelance-proposal': null,
-})
+  resume: null,
+  'freelance-proposal': null,
+});
 
-const isModalOpen = ref(false)
-const editingType = ref<UserBaseType>('resume')
+const isModalOpen = ref(false);
+const editingType = ref<UserBaseType>('resume');
 
 const loadBaseData = async () => {
-    const { data, error } = await request<UserBaseDataItem[]>('get', '/base-data/all')
+  const { data, error } = await request<UserBaseDataItem[]>('get', '/base-data/all');
 
-    if (!error) {
-        baseData.resume = data?.find(d => d.type === 'resume')?.description ?? null
-        baseData['freelance-proposal'] = data?.find(d => d.type === 'freelance-proposal')?.description ?? null
-        return;
-    }
+  if (!error) {
+    baseData.resume = data?.find((d) => d.type === 'resume')?.description ?? null;
+    baseData['freelance-proposal'] = data?.find((d) => d.type === 'freelance-proposal')?.description ?? null;
+    return;
+  }
 
-    show({ message: error, type: 'error' })
-}
+  show({ message: error, type: 'error' });
+};
 
 const openForm = (type: UserBaseType) => {
-    editingType.value = type
-    isModalOpen.value = true
-}
+  editingType.value = type;
+  isModalOpen.value = true;
+};
 
 const removeBaseData = async (type: UserBaseType) => {
-    const { error } = await request('post', '/base-data/remove', { type })
+  const { error } = await request('post', '/base-data/remove', { type });
 
-    if (!error) {
-        baseData[type] = null
-        show({ message: 'Base removida com sucesso.', type: 'success' })
-        return
-    }
+  if (!error) {
+    baseData[type] = null;
+    show({ message: 'Base removida com sucesso.', type: 'success' });
+    return;
+  }
 
-    show({ message: error, type: 'error' })
-}
+  show({ message: error, type: 'error' });
+};
 
 const handleSaved = async () => {
-    await loadBaseData()
-}
+  await loadBaseData();
+};
 
-onMounted(loadBaseData)
+onMounted(loadBaseData);
 </script>
 
 <template>
-    <UserBaseDataForm v-model:isOpen="isModalOpen" :type="editingType" :initialData="baseData[editingType]"
-        @saved="handleSaved" />
+  <UserBaseDataForm
+    v-model:isOpen="isModalOpen"
+    :type="editingType"
+    :initialData="baseData[editingType]"
+    @saved="handleSaved"
+  />
 
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <BaseDataCard title="Base de Informações para Currículos"
-            description="Essas informações servirão como contexto principal para gerar seus currículos automaticamente."
-            :content="baseData.resume" @edit="openForm('resume')" @remove="removeBaseData('resume')" />
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <BaseDataCard
+      title="Base de Informações para Currículos"
+      description="Essas informações servirão como contexto principal para gerar seus currículos automaticamente."
+      :content="baseData.resume"
+      @edit="openForm('resume')"
+      @remove="removeBaseData('resume')"
+    />
 
-        <BaseDataCard title="Base para Propostas Freelance"
-            description="Utilizada como contexto para gerar propostas personalizadas para clientes."
-            :content="baseData['freelance-proposal']" @edit="openForm('freelance-proposal')"
-            @remove="removeBaseData('freelance-proposal')" />
-    </div>
+    <BaseDataCard
+      title="Base para Propostas Freelance"
+      description="Utilizada como contexto para gerar propostas personalizadas para clientes."
+      :content="baseData['freelance-proposal']"
+      @edit="openForm('freelance-proposal')"
+      @remove="removeBaseData('freelance-proposal')"
+    />
+  </div>
 </template>

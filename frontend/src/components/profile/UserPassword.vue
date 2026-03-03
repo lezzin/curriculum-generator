@@ -11,34 +11,37 @@ const { request, loading } = useApi();
 const { show } = useToast();
 
 const { handleSubmit } = useForm<SetPasswordForm>({
-    validationSchema: setPasswordSchema
+  validationSchema: setPasswordSchema,
 });
 
 const submit = handleSubmit(async (form) => {
-    const { error } = await request('post', '/auth/set-password', form);
-    show(error ? { message: error, type: 'error' } : 'Senha definida com sucesso!');
+  const { error } = await request('post', '/auth/set-password', form);
+  show(error ? { message: error, type: 'error' } : 'Senha definida com sucesso!');
 });
 </script>
 
 <template>
-    <CardContainer>
-        <form @submit.prevent="submit" class="space-y-4">
-            <div>
-                <h2 class="text-xl font-semibold text-gray-800">
-                    Definir senha
-                </h2>
-                <p class="text-sm text-gray-500 mt-1">
-                    Você entrou com login social. Defina uma senha para poder acessar também com e-mail.
-                </p>
-            </div>
+  <CardContainer>
+    <form @submit.prevent="submit" class="space-y-4">
+      <div>
+        <h2 class="text-xl font-semibold text-gray-800">Definir senha</h2>
+        <p class="text-sm text-gray-500 mt-1">
+          Você entrou com login social. Defina uma senha para poder acessar também com e-mail.
+        </p>
+      </div>
 
-            <InputField name="password" label="Nova senha" type="password" autocomplete="new-password"
-                placeholder="********" />
+      <InputField
+        name="password"
+        label="Nova senha"
+        type="password"
+        autocomplete="new-password"
+        placeholder="********"
+      />
 
-            <BaseButton type="submit" class="w-full" :disabled="loading">
-                <span v-if="!loading">Registrar senha</span>
-                <span v-else>Salvando...</span>
-            </BaseButton>
-        </form>
-    </CardContainer>
+      <BaseButton type="submit" class="w-full" :disabled="loading">
+        <span v-if="!loading">Registrar senha</span>
+        <span v-else>Salvando...</span>
+      </BaseButton>
+    </form>
+  </CardContainer>
 </template>

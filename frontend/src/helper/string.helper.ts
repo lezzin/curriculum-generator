@@ -1,24 +1,19 @@
 export function toHumanReadableDate(date: Date): string {
-    const options: Intl.DateTimeFormatOptions = {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit',
-    };
+  const options: Intl.DateTimeFormatOptions = {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+  };
 
-    return new Date(date).toLocaleDateString(undefined, options);
+  return new Date(date).toLocaleDateString(undefined, options);
 }
 
 export function getFirstLetter(value?: string) {
-    return value?.charAt(0).toUpperCase();
+  return value?.charAt(0).toUpperCase();
 }
 
 export function nullToEmpty<T extends Record<string, any>>(obj: T): T {
-    return Object.fromEntries(
-        Object.entries(obj).map(([key, value]) => [
-            key,
-            value ?? ''
-        ])
-    ) as T
+  return Object.fromEntries(Object.entries(obj).map(([key, value]) => [key, value ?? ''])) as T;
 }

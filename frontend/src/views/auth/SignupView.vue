@@ -1,72 +1,87 @@
 <script setup lang="ts">
-import { watch } from 'vue'
-import { useForm } from 'vee-validate'
-import { useRouter } from 'vue-router'
-import { useApi } from '../../composables/useApi'
-import { useToast } from '../../composables/useToast'
+import { watch } from 'vue';
+import { useForm } from 'vee-validate';
+import { useRouter } from 'vue-router';
+import { useApi } from '../../composables/useApi';
+import { useToast } from '../../composables/useToast';
 
-import BaseButton from '../../components/ui/BaseButton.vue'
-import InputField from '../../components/ui/form/InputField.vue'
-import AppTitle from '../../components/layout/AppTitle.vue'
-import CardContainer from '../../components/ui/card/CardContainer.vue'
+import BaseButton from '../../components/ui/BaseButton.vue';
+import InputField from '../../components/ui/form/InputField.vue';
+import AppTitle from '../../components/layout/AppTitle.vue';
+import CardContainer from '../../components/ui/card/CardContainer.vue';
 
-import { signupSchema, type SignUpForm } from '../../validation/schemas/signup.schema'
-import { useAuthStore } from '../../stores/auth'
+import { signupSchema, type SignUpForm } from '../../validation/schemas/signup.schema';
+import { useAuthStore } from '../../stores/auth';
 
 const { handleSubmit } = useForm<SignUpForm>({
-    validationSchema: signupSchema
-})
+  validationSchema: signupSchema,
+});
 
-const router = useRouter()
-const authStore = useAuthStore()
-const { request, loading } = useApi()
-const { show } = useToast()
+const router = useRouter();
+const authStore = useAuthStore();
+const { request, loading } = useApi();
+const { show } = useToast();
 
 const signup = handleSubmit(async (form) => {
-    const { error } = await request('post', '/auth/register', form)
+  const { error } = await request('post', '/auth/register', form);
 
-    if (!error) {
-        await authStore.checkAuth();
-        router.replace('/');
-        show('Usuário registrado com sucesso!')
-        return;
-    }
+  if (!error) {
+    await authStore.checkAuth();
+    router.replace('/');
+    show('Usuário registrado com sucesso!');
+    return;
+  }
 
-    show({ message: error, type: 'error' })
-})
+  show({ message: error, type: 'error' });
+});
 
 watch(
-    () => authStore.user,
-    (value) => {
-        if (value) {
-            router.replace('/')
-        }
-    },
-    { immediate: true }
-)
+  () => authStore.user,
+  (value) => {
+    if (value) {
+      router.replace('/');
+    }
+  },
+  { immediate: true }
+);
 </script>
 
 <template>
-    <CardContainer class="max-w-lg mx-auto" size="lg">
-        <form class="space-y-5" @submit.prevent="signup">
-            <AppTitle title="Crie sua conta 🚀" subtitle="Leva menos de 1 minuto para começar" />
+  <CardContainer class="max-w-lg mx-auto" size="lg">
+    <form class="space-y-5" @submit.prevent="signup">
+      <AppTitle title="Crie sua conta 🚀" subtitle="Leva menos de 1 minuto para começar" />
 
-            <InputField label="Nome de usuário" name="name" type="text" autocomplete="username" :disabled="loading"
-                placeholder="Lezzin" />
-            <InputField label="Email" name="email" type="email" autocomplete="email" :disabled="loading"
-                placeholder="lezzin@gmail.com" />
-            <InputField label="Senha" name="password" type="password" autocomplete="new-password" :disabled="loading"
-                placeholder="********" />
+      <InputField
+        label="Nome de usuário"
+        name="name"
+        type="text"
+        autocomplete="username"
+        :disabled="loading"
+        placeholder="Lezzin"
+      />
+      <InputField
+        label="Email"
+        name="email"
+        type="email"
+        autocomplete="email"
+        :disabled="loading"
+        placeholder="lezzin@gmail.com"
+      />
+      <InputField
+        label="Senha"
+        name="password"
+        type="password"
+        autocomplete="new-password"
+        :disabled="loading"
+        placeholder="********"
+      />
 
-            <BaseButton type="submit" class="w-full" :loading="loading" :disabled="loading">
-                Criar conta
-            </BaseButton>
+      <BaseButton type="submit" class="w-full" :loading="loading" :disabled="loading"> Criar conta </BaseButton>
 
-            <router-link to="/auth/login"
-                class="text-center block text-sm text-gray-500 hover:text-blue-500 transition">
-                Já tem uma conta?
-                <span class="font-medium">Faça login</span>
-            </router-link>
-        </form>
-    </CardContainer>
+      <router-link to="/auth/login" class="text-center block text-sm text-gray-500 hover:text-blue-500 transition">
+        Já tem uma conta?
+        <span class="font-medium">Faça login</span>
+      </router-link>
+    </form>
+  </CardContainer>
 </template>

@@ -2,15 +2,15 @@
 import LoadSpinner from '../icon/LoadSpinner.vue';
 
 interface Props {
-    loading: boolean
+  loading: boolean;
 }
 
-defineProps<Props>()
+defineProps<Props>();
 </script>
 
 <template>
-    <div class="flex items-center justify-center h-48" v-if="loading">
-        <LoadSpinner />
-    </div>
-    <slot v-else />
+  <div class="flex items-center justify-center h-48" v-if="loading">
+    <LoadSpinner />
+  </div>
+  <slot v-else />
 </template>

@@ -3,43 +3,43 @@
 @tailwind utilities;
 
 html {
-    scroll-behavior: smooth;
+  scroll-behavior: smooth;
 }
 
 .form-control {
-    @apply flex flex-col gap-1;
+  @apply flex flex-col gap-1;
 
-    >label {
-        @apply text-sm font-medium;
+  > label {
+    @apply text-sm font-medium;
+  }
+
+  select,
+  textarea,
+  input {
+    @apply w-full h-10 px-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50;
+  }
+
+  select {
+    @apply appearance-none;
+  }
+
+  textarea {
+    @apply resize-none h-auto py-2;
+  }
+
+  .has-button-helper {
+    @apply rounded-e-none border-r-0;
+
+    ~ button {
+      @apply rounded-s-none;
     }
+  }
 
-    select,
-    textarea,
-    input {
-        @apply w-full h-10 px-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50
-    }
+  .error-field {
+    @apply border-red-500 focus:ring-red-500;
+  }
 
-    select {
-        @apply appearance-none;
-    }
-
-    textarea {
-        @apply resize-none h-auto py-2;
-    }
-
-    .has-button-helper {
-        @apply rounded-e-none border-r-0;
-
-        ~button {
-            @apply rounded-s-none;
-        }
-    }
-
-    .error-field {
-        @apply border-red-500 focus:ring-red-500;
-    }
-
-    .error-text {
-        @apply text-red-500 text-xs
-    }
+  .error-text {
+    @apply text-red-500 text-xs;
+  }
 }
