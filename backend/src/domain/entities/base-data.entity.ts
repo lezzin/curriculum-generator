@@ -1,4 +1,4 @@
-import { BaseDataType } from '../shared/enums/base-data-type.enum';
+import { BaseDataType } from '../enums/base-data-type.enum';
 
 export class BaseData {
   constructor(
@@ -7,7 +7,7 @@ export class BaseData {
     public userId: string,
     public type: BaseDataType,
     public readonly createdAt: Date,
-  ) {}
+  ) { }
 
   updateDescription(description: string) {
     this.description = description;

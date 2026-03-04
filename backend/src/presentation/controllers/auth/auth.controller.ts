@@ -19,7 +19,7 @@ import { GetUserUseCase } from 'src/application/use-cases/user/get-user.use-case
 import { JwtAuthGuard } from 'src/infrastructure/auth/jwt-auth.guard';
 import { CurrentUser } from 'src/infrastructure/auth/current-user.decorator';
 import { LoginDto, SetPasswordDto, SignUpDto } from './auth.dto';
-import { cookieOptions } from 'src/domain/shared/config/cookie.config';
+import { cookieOptions } from 'src/infrastructure/http/config/cookie.config';
 import { SetPasswordUseCase } from 'src/application/use-cases/auth/set-password.use-case';
 import { RegisterUserUseCase } from 'src/application/use-cases/user/register-user.use-case';
 
@@ -32,7 +32,7 @@ export class AuthController {
     private readonly socialLoginUseCase: SocialLoginUseCase,
     private readonly getUserUseCase: GetUserUseCase,
     private readonly setPasswordUseCase: SetPasswordUseCase,
-  ) {}
+  ) { }
 
   @Post('login')
   @HttpCode(HttpStatus.NO_CONTENT)
@@ -117,7 +117,7 @@ export class AuthController {
 
   @Get('google')
   @UseGuards(AuthGuard('google'))
-  googleAuth() {}
+  googleAuth() { }
 
   @Get('google/callback')
   @UseGuards(AuthGuard('google'))
@@ -127,7 +127,7 @@ export class AuthController {
 
   @Get('github')
   @UseGuards(AuthGuard('github'))
-  githubAuth() {}
+  githubAuth() { }
 
   @Get('github/callback')
   @UseGuards(AuthGuard('github'))

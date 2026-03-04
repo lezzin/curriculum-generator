@@ -4,7 +4,7 @@ import {
   Market,
   SelectedTemplate,
   TargetSeniority,
-} from 'src/domain/shared/enums/resume.enums';
+} from 'src/domain/enums/resume.enums';
 
 export interface ResumeOptions {
   language: Language;

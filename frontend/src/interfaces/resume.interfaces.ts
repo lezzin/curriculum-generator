@@ -11,6 +11,7 @@ export interface ResumeProject {
 
 export interface Resume {
   id: string;
+  userId: string;
   prompt: string;
   template: BaseTemplateType;
   createdAt: Date;

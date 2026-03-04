@@ -34,21 +34,27 @@ export class ResumeController {
     private readonly getPdfUseCase: GetPdfUseCase,
     private readonly getPageUseCase: GetPageUseCase,
     private readonly generatePdfUseCase: GeneratePdfUseCase,
-  ) {}
+  ) { }
 
   @Post('/generate')
   @HttpCode(HttpStatus.ACCEPTED)
   async generateResume(
-    @Body() body: GenerateResumeDto,
     @CurrentUser('id') userId: string,
+    @Body() body: GenerateResumeDto,
   ) {
     await this.generateResumeUseCase.execute({ ...body, userId });
   }
 
   @Post('/remove')
   @HttpCode(HttpStatus.NO_CONTENT)
-  async remove(@Body() body: { resume_id: string }) {
-    await this.removeResumeUseCase.execute(body.resume_id);
+  async remove(
+    @CurrentUser('id') userId: string,
+    @Body() body: { resume_id: string }
+  ) {
+    await this.removeResumeUseCase.execute({
+      resumeId: body.resume_id,
+      userId
+    });
   }
 
   @Get('/all')

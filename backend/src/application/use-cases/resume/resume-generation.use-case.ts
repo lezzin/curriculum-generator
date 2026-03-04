@@ -7,13 +7,8 @@ import { CacheRepository } from 'src/domain/repositories/cache.repository';
 import { ResumeRepository } from 'src/domain/repositories/resume.repository';
 import { UserConfigRepository } from 'src/domain/repositories/user-config.repository';
 import { UserRepository } from 'src/domain/repositories/user.repository';
-import { REMEMBER_RESUMES_CACHE_PREFIX } from 'src/domain/shared/constants/cache.constants';
-import { BaseDataType } from 'src/domain/shared/enums/base-data-type.enum';
-import { SelectedTemplate } from 'src/domain/shared/enums/resume.enums';
-import {
-  generateHash,
-  makeCacheKey,
-} from 'src/domain/shared/helpers/cache-key.helper';
+import { BaseDataType } from 'src/domain/enums/base-data-type.enum';
+import { SelectedTemplate } from 'src/domain/enums/resume.enums';
 import { GeminiService } from 'src/infrastructure/services/gemini/gemini.service';
 import { buildResumePrompt } from 'src/infrastructure/services/gemini/helpers/resume-prompt.helper';
 import { ResumeDocumentService } from 'src/infrastructure/services/resume-document.service';
@@ -29,7 +24,7 @@ export class ResumeGenerationUseCase {
     private readonly resumeDocumentService: ResumeDocumentService,
     private readonly sseService: SseService,
     private readonly cache: CacheRepository,
-  ) {}
+  ) { }
 
   async execute(body: GenerateResumeInput) {
     const { userId, jobDescription, options } = body;
@@ -57,10 +52,8 @@ export class ResumeGenerationUseCase {
       return;
     }
 
-    const promptKey = generateHash(jobDescription);
-
-    const resume = await this.cache.remember(
-      promptKey,
+    const resume = await this.cache.rememberByHash(
+      jobDescription,
       900,
       async () =>
         await this.geminiService.generateJsonResponse<Resume>({
@@ -88,7 +81,7 @@ export class ResumeGenerationUseCase {
 
     const contactData = await this.userConfigRepository.findByUserId(userId);
 
-    await this.invalidateCaches(userId, promptKey);
+    await this.invalidateCaches(userId, jobDescription);
     await this.resumeDocumentService.generateAndStorePdf(
       savedResume,
       userData,
@@ -96,6 +89,7 @@ export class ResumeGenerationUseCase {
     );
     this.sseService.sendEvent<ResumeItemOutput>(userId, 'resume-generated', {
       id: savedResume.id,
+      userId: savedResume.userId,
       prompt: savedResume.prompt,
       template: savedResume.template,
       createdAt: savedResume.createdAt,
@@ -104,8 +98,8 @@ export class ResumeGenerationUseCase {
     return savedResume;
   }
 
-  private async invalidateCaches(userId: string, promptKey: string) {
-    await this.cache.del(makeCacheKey(REMEMBER_RESUMES_CACHE_PREFIX, userId));
-    await this.cache.del(promptKey);
+  private async invalidateCaches(userId: string, value: string) {
+    await this.cache.invalidateScope('resume:all', userId);
+    await this.cache.invalidateByHash(value);
   }
 }

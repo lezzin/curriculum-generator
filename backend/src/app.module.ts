@@ -7,6 +7,7 @@ import { BaseDataModule } from './modules/base-data.module';
 import { FreelanceModule } from './modules/freelance.module';
 import { ResumeModule } from './modules/resume.module';
 import { UserConfigModule } from './modules/user-config.module';
+import { InfrastructureCacheModule } from './infrastructure/modules/cache.module';
 
 @Module({
   imports: [
@@ -34,6 +35,7 @@ import { UserConfigModule } from './modules/user-config.module';
     FreelanceModule,
     ResumeModule,
     UserConfigModule,
+    InfrastructureCacheModule,
   ],
 })
-export class AppModule {}
+export class AppModule { }

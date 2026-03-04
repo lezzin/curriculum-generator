@@ -1,4 +1,4 @@
-import { SelectedTemplate } from 'src/domain/shared/enums/resume.enums';
+import { SelectedTemplate } from 'src/domain/enums/resume.enums';
 
 export interface GetPageInput {
   id: string;

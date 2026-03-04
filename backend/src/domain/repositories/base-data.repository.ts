@@ -1,5 +1,5 @@
 import { BaseData } from '../entities/base-data.entity';
-import { BaseDataType } from '../shared/enums/base-data-type.enum';
+import { BaseDataType } from '../enums/base-data-type.enum';
 
 export abstract class BaseDataRepository {
   abstract save(baseData: BaseData): Promise<void>;

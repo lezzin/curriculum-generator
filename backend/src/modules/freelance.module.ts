@@ -14,7 +14,6 @@ import { FreelanceProcessor } from 'src/infrastructure/queue/processors/freelanc
 import { BullModule } from '@nestjs/bullmq';
 import { SseModule } from 'src/infrastructure/modules/sse.module';
 import { CacheRepository } from 'src/domain/repositories/cache.repository';
-import { CacheModule } from 'src/infrastructure/modules/cache.module';
 import { ProposalGenerationUseCase } from 'src/application/use-cases/freelance/proposal-generation.use-case';
 import { BaseDataRepository } from 'src/domain/repositories/base-data.repository';
 import { SseService } from 'src/infrastructure/services/sse.service';
@@ -27,7 +26,6 @@ import { GeminiService } from 'src/infrastructure/services/gemini/gemini.service
     BaseDataModule,
     BullMQModule,
     SseModule,
-    CacheModule,
     BullModule.registerQueue({
       name: 'freelance.queue',
     }),
@@ -82,11 +80,14 @@ import { GeminiService } from 'src/infrastructure/services/gemini/gemini.service
     },
     {
       provide: RemoveProposalUseCase,
-      useFactory: (freelanceProposalRepository: FreelanceProposalRepository) =>
-        new RemoveProposalUseCase(freelanceProposalRepository),
-      inject: [FreelanceProposalRepository],
+      useFactory: (
+        freelanceProposalRepository: FreelanceProposalRepository,
+        cache: CacheRepository,
+      ) =>
+        new RemoveProposalUseCase(freelanceProposalRepository, cache),
+      inject: [FreelanceProposalRepository, CacheRepository],
     },
   ],
   exports: [GenerateProposalUseCase],
 })
-export class FreelanceModule {}
+export class FreelanceModule { }

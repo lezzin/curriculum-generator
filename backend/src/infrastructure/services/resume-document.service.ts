@@ -13,7 +13,7 @@ import { StorageRepository } from 'src/domain/repositories/storage.repository';
 import {
   Language,
   SelectedTemplate,
-} from 'src/domain/shared/enums/resume.enums';
+} from 'src/domain/enums/resume.enums';
 
 @Injectable()
 export class ResumeDocumentService implements OnModuleInit, OnModuleDestroy {
@@ -26,7 +26,7 @@ export class ResumeDocumentService implements OnModuleInit, OnModuleDestroy {
     args: ['--no-sandbox', '--disable-setuid-sandbox'],
   };
 
-  constructor(private readonly storage: StorageRepository) {}
+  constructor(private readonly storage: StorageRepository) { }
 
   async onModuleInit() {
     this.browser = await puppeteer.launch(this.PUPPETEER_CONFIG);

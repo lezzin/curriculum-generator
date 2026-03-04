@@ -1,4 +1,4 @@
-import { Language, SelectedTemplate } from '../shared/enums/resume.enums';
+import { Language, SelectedTemplate } from '../enums/resume.enums';
 
 export class Resume {
   constructor(
@@ -14,5 +14,5 @@ export class Resume {
     public projects: any,
     public userId: string,
     public readonly createdAt: Date,
-  ) {}
+  ) { }
 }

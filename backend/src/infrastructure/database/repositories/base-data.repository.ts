@@ -4,14 +4,14 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { BaseDataRepository } from 'src/domain/repositories/base-data.repository';
 import { BaseDataEntity } from '../entities/base-data.entity';
 import { BaseData } from 'src/domain/entities/base-data.entity';
-import { BaseDataType } from 'src/domain/shared/enums/base-data-type.enum';
+import { BaseDataType } from 'src/domain/enums/base-data-type.enum';
 
 @Injectable()
 export class TypeOrmBaseDataRepository implements BaseDataRepository {
   constructor(
     @InjectRepository(BaseDataEntity)
     private ormRepo: Repository<BaseDataEntity>,
-  ) {}
+  ) { }
 
   async save(baseData: BaseData): Promise<void> {
     await this.ormRepo.upsert(

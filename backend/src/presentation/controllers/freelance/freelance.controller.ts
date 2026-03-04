@@ -21,7 +21,7 @@ export class FreelanceController {
     private readonly generateProposalUseCase: GenerateProposalUseCase,
     private readonly removeProposalUseCase: RemoveProposalUseCase,
     private readonly getAllProposalsUseCase: GetAllProposalsUseCase,
-  ) {}
+  ) { }
 
   @Post('/proposal/generate')
   @HttpCode(HttpStatus.ACCEPTED)
@@ -34,8 +34,14 @@ export class FreelanceController {
 
   @Post('/proposal/remove')
   @HttpCode(HttpStatus.NO_CONTENT)
-  async remove(@Body() body: { proposal_id: string }) {
-    await this.removeProposalUseCase.execute(body.proposal_id);
+  async remove(
+    @CurrentUser('id') userId: string,
+    @Body() body: { proposal_id: string }
+  ) {
+    await this.removeProposalUseCase.execute({
+      proposalId: body.proposal_id,
+      userId
+    });
   }
 
   @Get('/proposal/all')

@@ -5,12 +5,7 @@ import { FreelanceProposal } from 'src/domain/entities/freelance-proposal.entity
 import { BaseDataRepository } from 'src/domain/repositories/base-data.repository';
 import { CacheRepository } from 'src/domain/repositories/cache.repository';
 import { FreelanceProposalRepository } from 'src/domain/repositories/freelance-proposal.repository';
-import { REMEMBER_FREELANCE_PROPOSALS_CACHE_PREFIX } from 'src/domain/shared/constants/cache.constants';
-import { BaseDataType } from 'src/domain/shared/enums/base-data-type.enum';
-import {
-  generateHash,
-  makeCacheKey,
-} from 'src/domain/shared/helpers/cache-key.helper';
+import { BaseDataType } from 'src/domain/enums/base-data-type.enum';
 import {
   buildFreelanceProposalPrompt,
   FreelanceProposalResponse,
@@ -25,7 +20,7 @@ export class ProposalGenerationUseCase {
     private readonly geminiService: GeminiService,
     private readonly sseService: SseService,
     private readonly cache: CacheRepository,
-  ) {}
+  ) { }
 
   async execute(body: GenerateProposalInput) {
     const { solicitation, userId } = body;
@@ -43,10 +38,8 @@ export class ProposalGenerationUseCase {
       return;
     }
 
-    const promptKey = generateHash(solicitation);
-
-    const proposal = await this.cache.remember(
-      promptKey,
+    const proposal = await this.cache.rememberByHash(
+      solicitation,
       900,
       async () =>
         await this.geminiService.generateJsonResponse<FreelanceProposalResponse>(
@@ -72,12 +65,13 @@ export class ProposalGenerationUseCase {
       ),
     );
 
-    await this.invalidateCaches(userId, promptKey);
+    await this.invalidateCaches(userId, solicitation);
     this.sseService.sendEvent<ProposalItemOutput>(
       userId,
       'proposal-generated',
       {
         id: savedProposal.id,
+        userId: savedProposal.userId,
         bidAmount: savedProposal.bidAmount,
         deliveryDays: savedProposal.deliveryDays,
         message: savedProposal.message,
@@ -89,10 +83,8 @@ export class ProposalGenerationUseCase {
     return savedProposal;
   }
 
-  private async invalidateCaches(userId: string, promptKey: string) {
-    await this.cache.del(
-      makeCacheKey(REMEMBER_FREELANCE_PROPOSALS_CACHE_PREFIX, userId),
-    );
-    await this.cache.del(promptKey);
+  private async invalidateCaches(userId: string, value: string) {
+    await this.cache.invalidateScope('freelance-proposal:all', userId);
+    await this.cache.invalidateByHash(value);
   }
 }

@@ -12,7 +12,7 @@ import {
   Market,
   SelectedTemplate,
   TargetSeniority,
-} from 'src/domain/shared/enums/resume.enums';
+} from 'src/domain/enums/resume.enums';
 import { Type } from 'class-transformer';
 
 export class ResumeOptionsDto {

@@ -5,35 +5,33 @@ import {
 import { FreelanceProposal } from 'src/domain/entities/freelance-proposal.entity';
 import { CacheRepository } from 'src/domain/repositories/cache.repository';
 import { FreelanceProposalRepository } from 'src/domain/repositories/freelance-proposal.repository';
-import { REMEMBER_FREELANCE_PROPOSALS_CACHE_PREFIX } from 'src/domain/shared/constants/cache.constants';
-import { makeCacheKey } from 'src/domain/shared/helpers/cache-key.helper';
 
 export class GetAllProposalsUseCase {
   constructor(
     private readonly freelanceProposalRepository: FreelanceProposalRepository,
     private readonly cache: CacheRepository,
-  ) {}
+  ) { }
 
   async execute(userId: string): Promise<GetAllProposalsOutput> {
-    const cacheKey = makeCacheKey(
-      REMEMBER_FREELANCE_PROPOSALS_CACHE_PREFIX,
+    return this.cache.rememberByScope(
+      'freelance-proposal:all',
       userId,
-    );
+      5,
+      async () => {
+        const proposals = await this.freelanceProposalRepository.getAll(userId);
+        const items = proposals.map(this.toOutput);
 
-    return this.cache.remember(cacheKey, 600, async () => {
-      const proposals = await this.freelanceProposalRepository.getAll(userId);
-      const items = proposals.map(this.toOutput);
-
-      return {
-        items,
-        total: items.length,
-      };
-    });
+        return {
+          items,
+          total: items.length,
+        };
+      });
   }
 
   private toOutput(proposal: FreelanceProposal): ProposalItemOutput {
     return {
       id: proposal.id,
+      userId: proposal.userId,
       bidAmount: proposal.bidAmount,
       deliveryDays: proposal.deliveryDays,
       message: proposal.message,

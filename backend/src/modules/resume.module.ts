@@ -17,7 +17,6 @@ import { StorageModule } from 'src/infrastructure/modules/storage.module';
 import { SseModule } from 'src/infrastructure/modules/sse.module';
 import { GetPdfUseCase } from 'src/application/use-cases/resume/get-pdf.use-case';
 import { CacheRepository } from 'src/domain/repositories/cache.repository';
-import { CacheModule } from 'src/infrastructure/modules/cache.module';
 import { SseService } from 'src/infrastructure/services/sse.service';
 import { BaseDataRepository } from 'src/domain/repositories/base-data.repository';
 import { ResumeGenerationUseCase } from 'src/application/use-cases/resume/resume-generation.use-case';
@@ -37,7 +36,6 @@ import { GeminiService } from 'src/infrastructure/services/gemini/gemini.service
     BullMQModule,
     StorageModule,
     SseModule,
-    CacheModule,
     UserModule,
     UserConfigModule,
     BullModule.registerQueue({
@@ -140,9 +138,10 @@ import { GeminiService } from 'src/infrastructure/services/gemini/gemini.service
       useFactory: (
         resumeRepository: ResumeRepository,
         pdfService: ResumeDocumentService,
-      ) => new RemoveResumeUseCase(resumeRepository, pdfService),
-      inject: [ResumeRepository, ResumeDocumentService],
+        cache: CacheRepository,
+      ) => new RemoveResumeUseCase(resumeRepository, pdfService, cache),
+      inject: [ResumeRepository, ResumeDocumentService, CacheRepository],
     },
   ],
 })
-export class ResumeModule {}
+export class ResumeModule { }

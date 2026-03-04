@@ -1,5 +1,5 @@
 import { IsDefined, IsEnum, IsString } from 'class-validator';
-import { BaseDataType } from 'src/domain/shared/enums/base-data-type.enum';
+import { BaseDataType } from 'src/domain/enums/base-data-type.enum';
 
 export class UpsertBaseDataDto {
   @IsDefined({ message: 'A descrição é obrigatória' })

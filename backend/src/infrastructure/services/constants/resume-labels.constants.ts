@@ -1,4 +1,4 @@
-import { Language } from 'src/domain/shared/enums/resume.enums';
+import { Language } from 'src/domain/enums/resume.enums';
 
 export const SECTION_LABELS = {
   [Language.PT]: {

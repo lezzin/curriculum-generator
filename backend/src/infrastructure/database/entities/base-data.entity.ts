@@ -1,4 +1,4 @@
-import { BaseDataType } from 'src/domain/shared/enums/base-data-type.enum';
+import { BaseDataType } from 'src/domain/enums/base-data-type.enum';
 import {
   Column,
   CreateDateColumn,

@@ -1,7 +1,8 @@
-import { SelectedTemplate } from 'src/domain/shared/enums/resume.enums';
+import { SelectedTemplate } from 'src/domain/enums/resume.enums';
 
 export interface ResumeItemOutput {
   id: string;
+  userId: string;
   prompt: string;
   template: SelectedTemplate;
   createdAt: Date;

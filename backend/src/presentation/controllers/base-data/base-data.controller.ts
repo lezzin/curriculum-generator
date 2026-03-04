@@ -11,7 +11,7 @@ import {
 import { GetAllBaseDataUseCase } from 'src/application/use-cases/base-data/get-all-base-data.use-case';
 import { RemoveBaseDataUseCase } from 'src/application/use-cases/base-data/remove-base-data.use-case';
 import { UpsertBaseDataUseCase } from 'src/application/use-cases/base-data/upsert-base-data.use-case';
-import { BaseDataType } from 'src/domain/shared/enums/base-data-type.enum';
+import { BaseDataType } from 'src/domain/enums/base-data-type.enum';
 import { CurrentUser } from 'src/infrastructure/auth/current-user.decorator';
 import { JwtAuthGuard } from 'src/infrastructure/auth/jwt-auth.guard';
 import { UpsertBaseDataDto } from './base-data.dto';
@@ -23,7 +23,7 @@ export class BaseDataController {
     private readonly upsertBaseDataUseCase: UpsertBaseDataUseCase,
     private readonly removeBaseDataUseCase: RemoveBaseDataUseCase,
     private readonly getAllBaseDataUseCase: GetAllBaseDataUseCase,
-  ) {}
+  ) { }
 
   @Post('upsert')
   @HttpCode(HttpStatus.NO_CONTENT)
