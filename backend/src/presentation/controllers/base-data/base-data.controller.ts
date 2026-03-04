@@ -13,7 +13,7 @@ import { RemoveBaseDataUseCase } from 'src/application/use-cases/base-data/remov
 import { UpsertBaseDataUseCase } from 'src/application/use-cases/base-data/upsert-base-data.use-case';
 import { BaseDataType } from 'src/domain/enums/base-data-type.enum';
 import { CurrentUser } from 'src/infrastructure/auth/current-user.decorator';
-import { JwtAuthGuard } from 'src/infrastructure/auth/jwt-auth.guard';
+import { JwtAuthGuard } from 'src/infrastructure/auth/guards/jwt-auth.guard';
 import { UpsertBaseDataDto } from './base-data.dto';
 
 @UseGuards(JwtAuthGuard)

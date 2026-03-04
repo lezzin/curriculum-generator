@@ -1,3 +1,4 @@
+import { UserRole } from '../enums/user-role.enum';
 import { UserProvider } from './user-provider.entity';
 
 export class User {
@@ -10,7 +11,8 @@ export class User {
     public picture?: string | null,
     public password?: string | null,
     public refreshToken?: string | null,
-  ) {}
+    public role: UserRole = UserRole.USER
+  ) { }
 
   addProvider(provider: UserProvider) {
     const exists = this.providers.find((p) => p.provider === provider.provider);
@@ -24,5 +26,9 @@ export class User {
 
   getProviders() {
     return this.providers;
+  }
+
+  isAdmin(): boolean {
+    return this.role === UserRole.ADMIN;
   }
 }

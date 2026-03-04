@@ -10,7 +10,7 @@ import {
 import { GenerateProposalUseCase } from 'src/application/use-cases/freelance/generate-proposal.use-case';
 import { GetAllProposalsUseCase } from 'src/application/use-cases/freelance/get-all-proposals.use-case';
 import { CurrentUser } from 'src/infrastructure/auth/current-user.decorator';
-import { JwtAuthGuard } from 'src/infrastructure/auth/jwt-auth.guard';
+import { JwtAuthGuard } from 'src/infrastructure/auth/guards/jwt-auth.guard';
 import { GenerateProposalDto } from './freelance.dto';
 import { RemoveProposalUseCase } from 'src/application/use-cases/freelance/remove-proposal.use-case';
 

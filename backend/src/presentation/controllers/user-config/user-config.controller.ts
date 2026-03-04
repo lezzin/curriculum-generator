@@ -10,7 +10,7 @@ import {
 import { GetByUserIdUserConfigUseCase } from 'src/application/use-cases/user-config/get-by-user-id.use-case';
 import { UpsertUserConfigUseCase } from 'src/application/use-cases/user-config/upsert.use-case';
 import { CurrentUser } from 'src/infrastructure/auth/current-user.decorator';
-import { JwtAuthGuard } from 'src/infrastructure/auth/jwt-auth.guard';
+import { JwtAuthGuard } from 'src/infrastructure/auth/guards/jwt-auth.guard';
 import { UpsertUserConfigDto } from './user-config.dto';
 
 @UseGuards(JwtAuthGuard)
@@ -19,7 +19,7 @@ export class UserConfigController {
   constructor(
     private readonly upsertUserConfigUseCase: UpsertUserConfigUseCase,
     private readonly getByUserIdUserConfigUseCase: GetByUserIdUserConfigUseCase,
-  ) {}
+  ) { }
 
   @Post('upsert')
   @HttpCode(HttpStatus.NO_CONTENT)

@@ -4,10 +4,10 @@ import {
   Entity,
   OneToMany,
   PrimaryGeneratedColumn,
-  Table,
   UpdateDateColumn,
 } from 'typeorm';
 import { UserProviderEntity } from './user-provider.entity';
+import { UserRole } from 'src/domain/enums/user-role.enum';
 
 @Entity('users')
 export class UserEntity {
@@ -34,6 +34,9 @@ export class UserEntity {
     eager: true,
   })
   providers: UserProviderEntity[];
+
+  @Column({ type: 'enum', enum: UserRole, default: UserRole.USER })
+  role: UserRole;
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;

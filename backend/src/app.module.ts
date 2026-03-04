@@ -8,6 +8,7 @@ import { FreelanceModule } from './modules/freelance.module';
 import { ResumeModule } from './modules/resume.module';
 import { UserConfigModule } from './modules/user-config.module';
 import { InfrastructureCacheModule } from './infrastructure/modules/cache.module';
+import { AdminModule } from './modules/admin.module';
 
 @Module({
   imports: [
@@ -35,6 +36,7 @@ import { InfrastructureCacheModule } from './infrastructure/modules/cache.module
     FreelanceModule,
     ResumeModule,
     UserConfigModule,
+    AdminModule,
     InfrastructureCacheModule,
   ],
 })

@@ -12,7 +12,7 @@ export class TypeOrmUserRepository implements UserRepository {
   constructor(
     @InjectRepository(UserEntity)
     private ormRepo: Repository<UserEntity>,
-  ) {}
+  ) { }
 
   async create(user: User): Promise<User> {
     const entity = this.toOrmEntity(user);
@@ -67,6 +67,7 @@ export class TypeOrmUserRepository implements UserRepository {
       entity.picture,
       entity.password,
       entity.refreshToken,
+      entity.role
     );
 
     if (entity.providers) {
@@ -89,6 +90,7 @@ export class TypeOrmUserRepository implements UserRepository {
     entity.password = user.password;
     entity.picture = user.picture;
     entity.refreshToken = user.refreshToken;
+    entity.role = user.role;
 
     entity.providers = user.getProviders().map((p) => {
       const provider = new UserProviderEntity();

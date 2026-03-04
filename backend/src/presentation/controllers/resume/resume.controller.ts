@@ -16,7 +16,7 @@ import { GetPdfUseCase } from 'src/application/use-cases/resume/get-pdf.use-case
 import { GenerateResumeUseCase } from 'src/application/use-cases/resume/generate-resume.use-case';
 import { GetAllResumesUseCase } from 'src/application/use-cases/resume/get-all-resumes.use-case';
 import { CurrentUser } from 'src/infrastructure/auth/current-user.decorator';
-import { JwtAuthGuard } from 'src/infrastructure/auth/jwt-auth.guard';
+import { JwtAuthGuard } from 'src/infrastructure/auth/guards/jwt-auth.guard';
 import { GenerateResumeDto, GetPageParamsDto } from './resume.dto';
 import { GeneratePdfUseCase } from 'src/application/use-cases/resume/generate-pdf.use-case';
 import { GetPageUseCase } from 'src/application/use-cases/resume/get-page.use-case';

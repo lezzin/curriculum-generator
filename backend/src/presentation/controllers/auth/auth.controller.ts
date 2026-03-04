@@ -16,7 +16,7 @@ import { LoginUseCase } from 'src/application/use-cases/auth/login.use-case';
 import { RefreshUseCase } from 'src/application/use-cases/auth/refresh.use-case';
 import { SocialLoginUseCase } from 'src/application/use-cases/auth/social-login.use-case';
 import { GetUserUseCase } from 'src/application/use-cases/user/get-user.use-case';
-import { JwtAuthGuard } from 'src/infrastructure/auth/jwt-auth.guard';
+import { JwtAuthGuard } from 'src/infrastructure/auth/guards/jwt-auth.guard';
 import { CurrentUser } from 'src/infrastructure/auth/current-user.decorator';
 import { LoginDto, SetPasswordDto, SignUpDto } from './auth.dto';
 import { cookieOptions } from 'src/infrastructure/http/config/cookie.config';
