@@ -10,6 +10,10 @@ export function toHumanReadableDate(date: Date): string {
   return new Date(date).toLocaleDateString(undefined, options);
 }
 
+export function getTodayDate() {
+  return new Intl.DateTimeFormat('sv-SE').format(new Date());
+}
+
 export function getFirstLetter(value?: string) {
   return value?.charAt(0).toUpperCase();
 }

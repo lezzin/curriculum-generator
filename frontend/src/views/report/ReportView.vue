@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { reactive, ref, watch } from 'vue'
+import { computed, onMounted, reactive, ref, watch } from 'vue'
 import { useApi } from '../../composables/useApi'
 import { useForm } from 'vee-validate'
 import { reportSchema, type ReportForm } from '../../validation/schemas/report.schema'
@@ -11,6 +11,7 @@ import InputField from '../../components/ui/form/InputField.vue'
 import SelectField from '../../components/ui/form/SelectField.vue'
 import AppTitle from '../../components/layout/AppTitle.vue'
 import BaseBadge, { type Variant } from '../../components/ui/BaseBadge.vue'
+import { getTodayDate } from '../../helper/string.helper'
 
 const { loading, request } = useApi()
 const { show } = useToast()
@@ -25,7 +26,9 @@ const reportData = reactive({
 const { handleSubmit, values } = useForm<ReportForm>({
     validationSchema: reportSchema,
     initialValues: {
-        limit: 10
+        initial_date_creation: getTodayDate(),
+        final_date_creation: getTodayDate(),
+        limit: 10,
     }
 })
 
@@ -51,19 +54,52 @@ const loadReport = handleSubmit(async () => {
     await fetchReport()
 })
 
-const nextPage = async () => {
-    if (reportData.meta.current_page < reportData.meta.last_page) {
-        page.value++
-        await fetchReport()
+const goToPage = async (targetPage: number) => {
+    if (!reportData.meta) return
+
+    if (targetPage < 1 || targetPage > reportData.meta.last_page) {
+        return
     }
+
+    page.value = targetPage
+    await fetchReport()
+}
+
+const firstPage = async () => {
+    await goToPage(1)
+}
+
+const nextPage = async () => {
+    await goToPage(page.value + 1)
 }
 
 const prevPage = async () => {
-    if (reportData.meta.current_page > 1) {
-        page.value--
-        await fetchReport()
-    }
+    await goToPage(page.value - 1)
 }
+
+const lastPage = async () => {
+    await goToPage(reportData.meta.last_page)
+}
+
+const visiblePages = computed(() => {
+    if (!reportData.meta) return []
+
+    const current = reportData.meta.current_page
+    const last = reportData.meta.last_page
+
+    const delta = 2
+
+    let start = Math.max(1, current - delta)
+    let end = Math.min(last, current + delta)
+
+    const pages = []
+
+    for (let i = start; i <= end; i++) {
+        pages.push(i)
+    }
+
+    return pages
+})
 
 const getBadgeStatusVariant = (statusId: number): Variant => {
     const variants: Record<number, Variant> = {
@@ -82,6 +118,8 @@ watch(() => values.limit, async () => {
     page.value = 1
     await fetchReport()
 })
+
+onMounted(fetchReport)
 </script>
 
 <template>
@@ -115,6 +153,7 @@ watch(() => values.limit, async () => {
             <table class="w-full text-sm">
                 <thead class="border-b">
                     <tr class="text-left">
+                        <th class="p-2">Nome</th>
                         <th class="p-2">Registros</th>
                         <th class="p-2">Processados</th>
                         <th class="p-2">Criado</th>
@@ -126,6 +165,7 @@ watch(() => values.limit, async () => {
 
                 <tbody>
                     <tr v-for="item in reportData.items" :key="item.id" class="border-b">
+                        <td class="p-2">{{ item.report_name }}</td>
                         <td class="p-2">{{ item.total_records }}</td>
                         <td class="p-2">{{ item.processed_records }}%</td>
 
@@ -148,20 +188,41 @@ watch(() => values.limit, async () => {
                 </tbody>
             </table>
 
-            <div v-if="reportData.meta" class="flex justify-between items-center mt-4">
-                <BaseButton size="sm" :disabled="reportData.meta.current_page === 1 || loading" @click="prevPage">
-                    Anterior
-                </BaseButton>
-
-                <span class="text-sm">
-                    Página {{ reportData.meta.current_page }}
-                    de {{ reportData.meta.last_page }}
+            <div v-if="reportData.meta" class="flex flex-col md:flex-row md:items-center md:justify-between gap-3 mt-4">
+                <span class="text-sm text-gray-600">
+                    Mostrando
+                    {{ reportData.meta.from }}
+                    até
+                    {{ reportData.meta.to }}
+                    de
+                    {{ reportData.meta.total }}
+                    registros
                 </span>
 
-                <BaseButton size="sm" :disabled="reportData.meta.current_page === reportData.meta.last_page || loading"
-                    @click="nextPage">
-                    Próxima
-                </BaseButton>
+                <div class="flex items-center gap-1">
+                    <BaseButton size="sm" variant="outline" :disabled="page === 1 || loading" @click="firstPage">
+                        «
+                    </BaseButton>
+
+                    <BaseButton size="sm" variant="outline" :disabled="page === 1 || loading" @click="prevPage">
+                        ‹
+                    </BaseButton>
+
+                    <BaseButton v-for="p in visiblePages" :key="p" size="sm"
+                        :variant="p === page ? 'default' : 'outline'" :disabled="loading" @click="goToPage(p)">
+                        {{ p }}
+                    </BaseButton>
+
+                    <BaseButton size="sm" variant="outline" :disabled="page === reportData.meta.last_page || loading"
+                        @click="nextPage">
+                        ›
+                    </BaseButton>
+
+                    <BaseButton size="sm" variant="outline" :disabled="page === reportData.meta.last_page || loading"
+                        @click="lastPage">
+                        »
+                    </BaseButton>
+                </div>
             </div>
         </CardContainer>
     </div>
