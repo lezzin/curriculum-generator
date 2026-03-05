@@ -11,7 +11,7 @@ export class ReportController {
         private readonly generateReportUseCase: GenerateReportUseCase
     ) { }
 
-    @Get('resume')
+    @Get('/')
     async getProgresses(
         @CurrentUser('id') userId: string,
         @Query() body: GenerateReportDto

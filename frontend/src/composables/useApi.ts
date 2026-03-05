@@ -18,7 +18,12 @@ export function useApi() {
     if (useLoading) loading.value = true;
 
     try {
-      const result = params ? await api[method](path, params) : await api[method](path);
+      const result = await api.request({
+        method,
+        url: path,
+        ...(method === 'get' ? { params } : { data: params })
+      })
+
       return { data: result.data as T, error: null };
     } catch (err) {
       return { data: null, error: extractErrorMessage(err) };

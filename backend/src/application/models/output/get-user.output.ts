@@ -4,4 +4,5 @@ export interface GetUserOutput {
   email: string;
   picture?: string | null;
   onlyProvider: boolean;
+  isAdmin: boolean;
 }

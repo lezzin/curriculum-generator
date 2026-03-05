@@ -8,6 +8,7 @@ export type User = {
   email: string;
   picture: string | null;
   onlyProvider: boolean;
+  isAdmin: boolean;
 };
 
 export const useAuthStore = defineStore('auth', () => {

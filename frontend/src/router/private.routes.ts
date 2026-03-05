@@ -4,6 +4,7 @@ import ResumeHistoryView from '../views/resume/ResumeHistoryView.vue';
 import FreelanceView from '../views/freelance/FreelanceView.vue';
 import FreelanceHistoryView from '../views/freelance/FreelanceHistoryView.vue';
 import ProfileView from '../views/auth/ProfileView.vue';
+import ReportView from '../views/report/ReportView.vue';
 
 export const privateRoutes: RouteRecordRaw[] = [
   {
@@ -48,6 +49,18 @@ export const privateRoutes: RouteRecordRaw[] = [
         path: 'history',
         name: 'FreelanceProposalHistory',
         component: FreelanceHistoryView,
+      },
+    ],
+  },
+
+  {
+    path: '/report',
+    meta: { requiresAuth: true },
+    children: [
+      {
+        path: '',
+        name: 'HomeReport',
+        component: ReportView,
       },
     ],
   },

@@ -55,29 +55,25 @@ const menus: Menu[] = [
           <div v-if="authStore.user?.id" class="flex items-center gap-8">
             <BaseDropdown v-for="menu in menus" :key="menu.label">
               <template #trigger="{ toggle, isOpen }">
-                <button
-                  @click="toggle"
-                  class="flex items-center gap-1 text-gray-600 hover:text-black transition"
-                  aria-haspopup="true"
-                  :aria-expanded="isOpen"
-                >
+                <button @click="toggle" class="flex items-center gap-1 text-gray-600 hover:text-black transition"
+                  aria-haspopup="true" :aria-expanded="isOpen">
                   {{ menu.label }}
                   <RotateArrow :rotate="isOpen" />
                 </button>
               </template>
 
               <template #default="{ close }">
-                <router-link
-                  v-for="item in menu.items"
-                  :key="item.label"
-                  :to="item.to"
-                  @click="close"
-                  class="dropdown-item"
-                >
+                <router-link v-for="item in menu.items" :key="item.label" :to="item.to" @click="close"
+                  class="dropdown-item">
                   {{ item.label }}
                 </router-link>
               </template>
             </BaseDropdown>
+
+            <router-link :to="{ name: 'HomeReport' }"
+              class="flex items-center gap-1 text-gray-600 hover:text-black transition" v-if="authStore.user.isAdmin">
+              Relatórios
+            </router-link>
           </div>
         </div>
 
@@ -86,12 +82,8 @@ const menus: Menu[] = [
 
           <BaseDropdown v-else>
             <template #trigger="{ toggle, isOpen }">
-              <button
-                @click="toggle"
-                class="flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-gray-100 transition"
-                aria-haspopup="true"
-                :aria-expanded="isOpen"
-              >
+              <button @click="toggle" class="flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-gray-100 transition"
+                aria-haspopup="true" :aria-expanded="isOpen">
                 <UserAvatar :user="authStore.user" size="sm" />
 
                 <div class="text-left hidden sm:block">
@@ -108,10 +100,8 @@ const menus: Menu[] = [
             <template #default="{ close }">
               <router-link :to="{ name: 'Profile' }" @click="close" class="dropdown-item"> Meu Perfil </router-link>
 
-              <button
-                @click="handleLogout(close)"
-                class="w-full text-left px-4 py-2 text-red-500 hover:bg-red-50 transition"
-              >
+              <button @click="handleLogout(close)"
+                class="w-full text-left px-4 py-2 text-red-500 hover:bg-red-50 transition">
                 Sair da conta
               </button>
             </template>
