@@ -23,3 +23,13 @@ export class GetReportsDto {
     @IsString({ message: 'O campo final_date_creation deve ser uma string.' })
     final_date_creation: string;
 }
+
+export class RequestResumeReportDto {
+    @IsDefined({ message: 'O campo initial_date_creation é obrigatório.' })
+    @IsString({ message: 'O campo initial_date_creation deve ser uma string.' })
+    initial_date_creation: string;
+
+    @IsDefined({ message: 'O campo final_date_creation é obrigatório.' })
+    @IsString({ message: 'O campo final_date_creation deve ser uma string.' })
+    final_date_creation: string;
+}

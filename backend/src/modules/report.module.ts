@@ -4,6 +4,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ReportHttpClient } from 'src/infrastructure/http/report/report-http.client';
 import { ReportController } from 'src/presentation/controllers/report/report.controller';
 import { GetReportsUseCase } from 'src/application/use-cases/report/get-reports.use-case';
+import { RequestResumeReportUseCase } from 'src/application/use-cases/report/request-resume-report.use-case';
 
 @Module({
     imports: [
@@ -26,7 +27,14 @@ import { GetReportsUseCase } from 'src/application/use-cases/report/get-reports.
             useFactory: (httpClient: ReportHttpClient) => {
                 return new GetReportsUseCase(httpClient);
             }
-        }
+        },
+        {
+            inject: [ReportHttpClient],
+            provide: RequestResumeReportUseCase,
+            useFactory: (httpClient: ReportHttpClient) => {
+                return new RequestResumeReportUseCase(httpClient);
+            }
+        },
     ],
 })
 export class ReportModule { }

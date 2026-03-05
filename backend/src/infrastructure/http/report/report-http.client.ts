@@ -1,8 +1,7 @@
 import { HttpService } from '@nestjs/axios';
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { HttpException, Injectable } from '@nestjs/common';
 import { lastValueFrom } from 'rxjs';
-import { extractErrorMessage } from '../helpers/error.helper';
-import { isAxiosError } from 'axios';
+import { extractAxiosError } from '../helpers/error.helper';
 
 type HttpMethod = 'get' | 'post' | 'put' | 'patch' | 'delete';
 
@@ -32,11 +31,8 @@ export class ReportHttpClient {
 
             return response.data as T;
         } catch (error: unknown) {
-            if (isAxiosError(error)) {
-                throw new HttpException(error.message, error?.status ?? HttpStatus.INTERNAL_SERVER_ERROR)
-            }
-
-            throw new Error(extractErrorMessage(error));
+            const { message, status } = extractAxiosError(error);
+            throw new HttpException(message, status);
         }
     }
 }

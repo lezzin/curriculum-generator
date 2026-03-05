@@ -1,27 +1,100 @@
-import { AxiosError } from 'axios';
+import { AxiosError, AxiosResponse, isAxiosError } from 'axios';
 
-function handleAxiosResponseError(response: any): string {
+interface ExtractedAxiosError {
+  message: string;
+  status: number;
+}
+
+function normalizeMessage(message: unknown): string {
+  if (Array.isArray(message)) {
+    return message.join(', ');
+  }
+
+  if (typeof message === 'string') {
+    return message;
+  }
+
+  return 'Erro inesperado.';
+}
+
+function handleLaravelValidationErrors(errors: Record<string, string[]>): string {
+  return Object.values(errors)
+    .flat()
+    .join(', ');
+}
+
+function handleAxiosResponseError(response: AxiosResponse): ExtractedAxiosError {
   const { data, status, statusText } = response;
 
-  if (data?.message) {
-    return Array.isArray(data.message) ? data.message.join(', ') : String(data.message);
+  if (!data) {
+    return {
+      message: `Erro ${status}: ${statusText}`,
+      status,
+    };
   }
 
+  // Laravel validation errors
+  if (data.errors && typeof data.errors === 'object') {
+    return {
+      message: handleLaravelValidationErrors(data.errors),
+      status,
+    };
+  }
+
+  // Standard message
+  if (data.message) {
+    return {
+      message: normalizeMessage(data.message),
+      status,
+    };
+  }
+
+  // Raw string response
   if (typeof data === 'string') {
-    return data;
+    return {
+      message: data,
+      status,
+    };
   }
 
-  return `Erro ${status}: ${statusText}`;
+  return {
+    message: `Erro ${status}: ${statusText}`,
+    status,
+  };
 }
 
-function handleAxiosError(err: AxiosError): string {
-  if (err.response) return handleAxiosResponseError(err.response);
-  if (err.request) return 'Nenhuma resposta do servidor. Verifique sua conexão.';
-  return err.message || 'Erro inesperado.';
+function handleAxiosError(error: AxiosError): ExtractedAxiosError {
+  if (error.response) {
+    return handleAxiosResponseError(error.response);
+  }
+
+  if (error.request) {
+    return {
+      message: 'Nenhuma resposta do servidor. Verifique sua conexão.',
+      status: 503,
+    };
+  }
+
+  return {
+    message: error.message || 'Erro inesperado.',
+    status: 500,
+  };
 }
 
-export function extractErrorMessage(err: unknown): string {
-  if (err instanceof AxiosError) return handleAxiosError(err);
-  if (err instanceof Error) return err.message;
-  return 'Erro inesperado.';
+export function extractAxiosError(error: unknown): ExtractedAxiosError {
+  if (isAxiosError(error)) {
+    return handleAxiosError(error);
+  }
+
+  if (error instanceof Error) {
+    return {
+      message: error.message,
+      status: 500,
+    };
+  }
+
+  return {
+    message: 'Erro inesperado.',
+    status: 500,
+  };
 }
