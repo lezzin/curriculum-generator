@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useApi } from '../../composables/api/useApi'
+import { useReportApi } from '../../composables/api/useReportApi'
 import { useForm } from 'vee-validate'
 import { useToast } from '../../composables/useToast'
 
@@ -8,6 +8,8 @@ import InputField from '../../components/ui/form/InputField.vue'
 import AppTitle from '../../components/layout/AppTitle.vue'
 import { resumeReportSchema, type ResumeReportForm } from '../../validation/schemas/resume-report.schema'
 import BaseModal from '../ui/modal/BaseModal.vue'
+import { storeToRefs } from 'pinia'
+import { useAuthStore } from '../../stores/auth'
 
 interface Props {
     isOpen: boolean;
@@ -21,7 +23,8 @@ interface Emit {
 const props = defineProps<Props>()
 const emit = defineEmits<Emit>()
 
-const { loading, request } = useApi()
+const { user } = storeToRefs(useAuthStore())
+const { loading, request } = useReportApi()
 const { show } = useToast()
 
 const { handleSubmit } = useForm<ResumeReportForm>({
@@ -29,7 +32,8 @@ const { handleSubmit } = useForm<ResumeReportForm>({
 })
 
 const requestReport = handleSubmit(async (form) => {
-    const { error } = await request('post', '/report/resume', {
+    const { error } = await request('post', '/resume-generation', {
+        user_uuid: user.value?.id,
         initial_date_creation: form.initial_date_creation,
         final_date_creation: form.final_date_creation
     })
