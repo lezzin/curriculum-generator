@@ -1,4 +1,4 @@
-export interface GenerateReportInput {
+export interface GetReportsInput {
     page: number;
     limit: number;
     userId: string;

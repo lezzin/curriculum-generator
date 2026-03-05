@@ -1,22 +1,22 @@
 import { Controller, Get, Query, UseGuards } from "@nestjs/common";
-import { GenerateReportUseCase } from "src/application/use-cases/report/generate-report.use-case";
+import { GetReportsUseCase } from "src/application/use-cases/report/get-reports.use-case";
 import { CurrentUser } from "src/infrastructure/auth/current-user.decorator";
-import { GenerateReportDto } from "./report.dto";
 import { JwtAuthGuard } from "src/infrastructure/auth/guards/jwt-auth.guard";
+import { GetReportsDto } from "./report.dto";
 
 @UseGuards(JwtAuthGuard)
 @Controller('report')
 export class ReportController {
     constructor(
-        private readonly generateReportUseCase: GenerateReportUseCase
+        private readonly getReportsUseCase: GetReportsUseCase
     ) { }
 
     @Get('/')
     async getProgresses(
         @CurrentUser('id') userId: string,
-        @Query() body: GenerateReportDto
+        @Query() body: GetReportsDto
     ) {
-        return this.generateReportUseCase.execute({
+        return this.getReportsUseCase.execute({
             ...body,
             userId,
             initialDateCreation: body.initial_date_creation,

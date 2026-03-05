@@ -3,7 +3,7 @@ import { HttpModule } from '@nestjs/axios';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ReportHttpClient } from 'src/infrastructure/http/report/report-http.client';
 import { ReportController } from 'src/presentation/controllers/report/report.controller';
-import { GenerateReportUseCase } from 'src/application/use-cases/report/generate-report.use-case';
+import { GetReportsUseCase } from 'src/application/use-cases/report/get-reports.use-case';
 
 @Module({
     imports: [
@@ -22,9 +22,9 @@ import { GenerateReportUseCase } from 'src/application/use-cases/report/generate
         ReportHttpClient,
         {
             inject: [ReportHttpClient],
-            provide: GenerateReportUseCase,
+            provide: GetReportsUseCase,
             useFactory: (httpClient: ReportHttpClient) => {
-                return new GenerateReportUseCase(httpClient);
+                return new GetReportsUseCase(httpClient);
             }
         }
     ],

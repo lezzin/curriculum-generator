@@ -1,7 +1,7 @@
 import { Type } from 'class-transformer';
 import { IsDefined, IsNumber, IsString, Max, Min } from 'class-validator';
 
-export class GenerateReportDto {
+export class GetReportsDto {
     @IsDefined({ message: 'O campo page é obrigatório.' })
     @IsNumber({}, { message: 'O campo page deve ser um número.' })
     @Min(1, { message: 'O campo page deve ser maior ou igual a 1.' })

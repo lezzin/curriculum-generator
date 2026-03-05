@@ -1,12 +1,12 @@
-import { GenerateReportInput } from "src/application/models/input/generate-report.input";
+import { GetReportsInput } from "src/application/models/input/get-reports.input";
 import { ReportHttpClient } from "src/infrastructure/http/report/report-http.client";
 
-export class GenerateReportUseCase {
+export class GetReportsUseCase {
     constructor(
         private readonly reportHtpClient: ReportHttpClient
     ) { }
 
-    async execute(body: GenerateReportInput) {
+    async execute(body: GetReportsInput) {
         return await this.reportHtpClient.request({
             method: 'get',
             path: '/report',
