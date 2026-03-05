@@ -54,8 +54,14 @@ export class ResumeDocumentService implements OnModuleInit, OnModuleDestroy {
     );
 
     return template({
-      ...resume,
-      ...user,
+      name: user.name,
+      summary: resume.summary,
+      initials: user.name,
+      role: resume.role,
+      skills: resume.skills,
+      experiences: resume.experiences,
+      projects: resume.projects,
+
       labels,
       contactsHtml: this.getContactHTML(user, userConfig, templateFolder),
     });

@@ -63,6 +63,7 @@ export class ResumeController {
   }
 
   @Get('/pdf/:id')
+  @UseFilters(HtmlExceptionFilter)
   async getPdfById(@Param('id') id: string, @Res() res: Response) {
     const stream = await this.getPdfUseCase.execute(id);
 

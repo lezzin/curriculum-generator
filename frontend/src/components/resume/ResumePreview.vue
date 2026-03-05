@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, onMounted, capitalize } from 'vue';
-import { usePdf } from '../../composables/usePdf';
+import { ref, computed, capitalize } from 'vue';
 import { BASE_TEMPLATE_TYPES, type BaseTemplateType, type Resume } from '../../interfaces/resume.interfaces';
 import BaseButton from '../ui/BaseButton.vue';
 import { toHumanReadableDate } from '../../helper/string.helper';
@@ -26,9 +25,11 @@ const shouldToggle = ref(false);
 const resume = computed(() => props.resume);
 
 const { show } = useToast();
-const { request, loading } = useApi();
-const { setPublicPdfUrl, setPublicPageUrl, pageUrl, pdfUrl } = usePdf();
+const { request, loading, apiUrl } = useApi();
 const templateTypes = computed(() => Object.values(BASE_TEMPLATE_TYPES));
+
+const pdfUrl = computed(() => `${apiUrl}/resume/pdf/${props.resume.id}`)
+const pageUrl = computed(() => `${apiUrl}/resume/page/${props.resume.id}`)
 
 function togglePrompt() {
   isOpen.value = !isOpen.value;
@@ -69,11 +70,6 @@ const removeResume = async () => {
 
   show({ message: error, type: 'error' });
 };
-
-onMounted(async () => {
-  await setPublicPdfUrl(resume.value.id!);
-  setPublicPageUrl(resume.value.id!);
-});
 </script>
 
 <template>
