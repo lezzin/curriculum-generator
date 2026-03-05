@@ -8,6 +8,7 @@ import RotateArrow from '../icon/RotateArrow.vue';
 import BaseDropdown from '../ui/BaseDropdown.vue';
 import { useToast } from '../../composables/useToast';
 import { useApi } from '../../composables/api/useApi';
+import ConfirmModal from '../ui/modal/ConfirmModal.vue';
 
 interface Props {
   resume: Resume;
@@ -30,6 +31,7 @@ const templateTypes = computed(() => Object.values(BASE_TEMPLATE_TYPES));
 
 const pdfUrl = computed(() => `${apiUrl}/resume/pdf/${props.resume.id}`)
 const pageUrl = computed(() => `${apiUrl}/resume/page/${props.resume.id}`)
+const showConfirmModal = ref(false);
 
 function togglePrompt() {
   isOpen.value = !isOpen.value;
@@ -56,6 +58,7 @@ const goToPageUrl = async (template: BaseTemplateType, callable: () => void) => 
   window.open(`${pageUrl.value}/${template}`, '_blank');
   callable();
 };
+
 
 const removeResume = async () => {
   const { error } = await request('post', '/resume/remove', {
@@ -99,7 +102,7 @@ const removeResume = async () => {
 
         <BaseButton @click.stop="goToPdfUrl" size="sm" variant="outline" :disabled="!pdfUrl"> PDF </BaseButton>
 
-        <BaseButton @click.stop="removeResume" size="sm" variant="destructive" :disabled="loading">
+        <BaseButton @click.stop="showConfirmModal = true" size="sm" variant="destructive" :disabled="loading">
           Remover
         </BaseButton>
       </div>
@@ -109,6 +112,8 @@ const removeResume = async () => {
       {{ isOpen ? resume.prompt : shortPrompt }}
     </CardContainer>
   </div>
+
+  <ConfirmModal :is-open="showConfirmModal" @cancel="showConfirmModal = false" @confirm="removeResume" />
 </template>
 
 <style scoped lang="postcss">

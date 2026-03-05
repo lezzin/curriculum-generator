@@ -6,6 +6,7 @@ import { toHumanReadableDate } from '../../helper/string.helper';
 import CardContainer from '../ui/card/CardContainer.vue';
 import { useToast } from '../../composables/useToast';
 import { useApi } from '../../composables/api/useApi';
+import ConfirmModal from '../ui/modal/ConfirmModal.vue';
 
 interface Props {
   proposal: FreelanceProposal;
@@ -24,6 +25,7 @@ const { request, loading } = useApi();
 const copied = ref(false);
 const editableText = ref('');
 const isOpen = ref(false);
+const showConfirmModal = ref(false);
 
 const formattedProposal = computed(() => {
   if (!props.proposal) return '';
@@ -92,7 +94,7 @@ async function copyProposal() {
           {{ copied ? 'Copiado!' : 'Copiar proposta' }}
         </BaseButton>
 
-        <BaseButton @click.stop="removeProposal" size="sm" variant="destructive" :disabled="loading">
+        <BaseButton @click.stop="showConfirmModal = true" size="sm" variant="destructive" :disabled="loading">
           Remover
         </BaseButton>
       </div>
@@ -113,4 +115,6 @@ async function copyProposal() {
         class="w-full resize-none text-sm leading-relaxed rounded-xl p-4 bg-zinc-50 text-zinc-700 border border-zinc-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all duration-300" />
     </div>
   </div>
+
+  <ConfirmModal :is-open="showConfirmModal" @cancel="showConfirmModal = false" @confirm="removeProposal" />
 </template>
