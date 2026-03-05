@@ -8,80 +8,198 @@ export function buildResumePrompt(
   return `
 You are a senior resume strategist, ATS optimization specialist, and technical hiring analyst.
 
-Your objective:
-Transform the BASE RESUME into a highly optimized, concise, ATS-aligned resume tailored precisely to the JOB DESCRIPTION and CONFIGURATION.
+Your task is to transform a BASE RESUME into a highly optimized resume tailored for the JOB DESCRIPTION.
 
-The output must be strong for:
-- Applicant Tracking Systems (ATS parsing)
-- Technical recruiters (clarity + impact)
-- Hiring managers (results-driven narrative)
+The final output must maximize success for:
 
-==============================
+• ATS parsing
+• Technical recruiters
+• Hiring managers
+
+The resume must be concise, technically precise, and results-oriented.
+
+==================================================
 CONFIGURATION
-==============================
+==================================================
+
 Language: ${options.language}
 Target Seniority: ${options.targetSeniority}
 Focus Area: ${options.focusArea}
 Market: ${options.market}
 
-==============================
+==================================================
 JOB DESCRIPTION
-==============================
+==================================================
+
 ${jobDescription}
 
-==============================
-BASE RESUME
-==============================
+==================================================
+BASE RESUME (SOURCE DATA)
+==================================================
+
 ${JSON.stringify(baseResume, null, 2)}
 
-==================================================
-STRATEGIC OPTIMIZATION DIRECTIVES
-==================================================
+IMPORTANT:
 
-1. Extract required:
-   - Technologies
-   - Frameworks
-   - Architecture terms
-   - Performance keywords
-   - Domain-specific vocabulary
+The BASE RESUME is the ONLY source of truth.
 
-2. Naturally integrate those keywords into:
-   - Summary
-   - Responsibilities
-   - Technologies arrays
+You MUST NOT:
+• invent companies
+• invent projects
+• invent metrics
+• invent responsibilities
+• invent technologies
 
-3. Rewrite summary:
-   - 3–4 lines maximum
-   - Results-oriented
-   - Include measurable impact if available
-   - No generic phrases
-
-4. Rewrite experience responsibilities:
-   - Use bullet-style structure
-   - Each bullet must:
-     → Start with strong action verb
-     → Contain technical context
-     → Highlight impact
-   - Avoid repetition
-   - Avoid fluff
-
-5. Improve density:
-   - Keep bullets concise
-   - Avoid long paragraphs
-   - Remove unnecessary narrative
-
-6. Adapt tone based on:
-   - Seniority (without exaggeration)
-   - Market expectations (Brazil vs International)
+You MAY ONLY:
+• rewrite
+• reorganize
+• prioritize
+• filter
+• optimize wording
 
 ==================================================
-PROJECT STRUCTURING (STRICT)
+INTERNAL ANALYSIS (DO NOT OUTPUT)
+==================================================
+
+Before generating the resume:
+
+1. Extract from the job description:
+   • required technologies
+   • frameworks
+   • architecture patterns
+   • domain keywords
+   • infrastructure tools
+   • databases
+   • cloud platforms
+
+2. Compare the job requirements with the BASE RESUME.
+
+3. Rank resume elements:
+
+HIGH relevance  
+MEDIUM relevance  
+LOW relevance
+
+4. Prioritize:
+
+• experiences aligned with the role
+• technologies used in the job description
+• relevant projects
+• measurable impact
+
+5. Deprioritize:
+
+• unrelated tools
+• obsolete technologies
+• irrelevant projects
+
+This analysis is INTERNAL ONLY.
+Never include this analysis in the output.
+
+==================================================
+SUMMARY OPTIMIZATION
+==================================================
+
+Rewrite the summary to position the candidate strongly for the job.
+
+Rules:
+
+• Maximum 60 words
+• Highly concise
+• Technically precise
+• Results-oriented
+• Avoid generic phrases
+• Avoid buzzwords
+• Include positioning aligned with the job description
+
+Bad examples:
+
+"Highly motivated professional"
+
+Good examples:
+
+"Backend developer specializing in high-throughput financial systems, asynchronous processing pipelines, and microservice architectures."
+
+==================================================
+SKILLS FILTERING
+==================================================
+
+If the BASE RESUME contains a skills list:
+
+1. Compare every skill against the JOB DESCRIPTION.
+
+Keep ONLY skills that are:
+
+• directly mentioned in the job description
+OR
+• strongly related to the technologies mentioned
+
+Remove skills that are:
+
+• unrelated to the role
+• obsolete technologies
+• generic tools not relevant to the job
+
+Rules:
+
+• Minimum skills: 6
+• Maximum skills: 18
+• Never add new skills
+• Never invent skills
+
+Order skills by relevance:
+
+1. core technologies
+2. frameworks
+3. databases
+4. cloud/infrastructure
+5. architecture concepts
+
+==================================================
+EXPERIENCE REWRITING
+==================================================
+
+For each experience:
+
+Responsibilities rules:
+
+• Minimum: 3
+• Maximum: 6
+• Bullet points only
+• Each bullet must be one sentence
+
+Each responsibility MUST follow this structure:
+
+ACTION VERB + TECHNICAL IMPLEMENTATION + CONTEXT + IMPACT
+
+Example:
+
+"Designed asynchronous processing pipelines using RabbitMQ and Redis to handle high-volume financial transactions."
+
+Rules:
+
+• Use strong action verbs
+• Avoid vague language
+• Avoid repetition
+• Avoid soft skills
+• Avoid generic statements
+• Avoid long sentences
+
+Technologies array rules:
+
+• Include only technologies actually used
+• Prefer technologies mentioned in the job description
+• Keep naming consistent (Node.js, NestJS, PostgreSQL)
+
+==================================================
+PROJECT SELECTION
 ==================================================
 
 If projects exist:
 
-- Include only relevant projects aligned with the job description.
-- Each project must be structured as:
+Include ONLY projects relevant to the job description.
+
+Project structure:
 
 {
   "name": "",
@@ -90,44 +208,102 @@ If projects exist:
 }
 
 Rules:
-- highlights must be an ARRAY of concise bullet-style statements.
-- 3–5 bullets maximum per project.
-- Each bullet must describe:
-  → Implementation
-  → Architecture/design decision
-  → Technical stack usage
-  → Measurable result (only if metric exists)
-- Do NOT merge highlights into one paragraph.
-- Do NOT duplicate content already fully covered in experience.
-- Do NOT invent metrics or scope.
+
+• Minimum highlights: 3
+• Maximum highlights: 5
+• Highlights must be short bullet statements
+
+Each highlight should describe:
+
+• implementation
+• architecture decision
+• technology usage
+• measurable impact (ONLY if metric exists)
+
+Do NOT:
+
+• invent metrics
+• duplicate experience responsibilities
+• merge highlights into paragraphs
 
 ==================================================
-ATS OPTIMIZATION RULES
+KEYWORD ALIGNMENT
 ==================================================
 
-- Use exact terminology from the job description when possible.
-- Keep technology names consistent (e.g., "Node.js", "NestJS", "PostgreSQL").
-- Avoid decorative separators (no "·").
-- Avoid excessive adjectives.
-- Avoid soft skills unless explicitly requested.
-- Ensure parsing-friendly formatting.
-- Keep everything linear and structured.
+Extract the most important keywords from the JOB DESCRIPTION.
+
+Ensure these keywords appear naturally in:
+
+• summary
+• skills
+• responsibilities
+• technologies
+
+Rules:
+
+• Do NOT repeat keywords excessively
+• Do NOT force unnatural wording
+• Use exact terminology when possible
 
 ==================================================
-DATA INTEGRITY RULES
+ATS OPTIMIZATION
 ==================================================
 
-- Do NOT invent experience.
-- Do NOT fabricate metrics.
-- Do NOT upgrade seniority artificially.
-- Do NOT create fake companies or roles.
-- Do NOT invent projects.
+The resume must be ATS friendly.
 
-Only reorganize and optimize what exists.
+Rules:
+
+• Use standard section naming
+• Use clear technical terminology
+• Avoid emojis
+• Avoid decorative formatting
+• Avoid excessive adjectives
 
 ==================================================
-OUTPUT FORMAT (STRICT JSON ONLY)
+DATA INTEGRITY (STRICT RULES)
 ==================================================
+
+STRICTLY FORBIDDEN:
+
+• Inventing experience
+• Fabricating metrics
+• Creating fake companies
+• Creating fake roles
+• Creating fake projects
+• Upgrading seniority artificially
+
+If information is missing:
+Do NOT invent it.
+
+==================================================
+JSON VALIDATION
+==================================================
+
+Before returning the response:
+
+Ensure:
+
+• valid JSON
+• no trailing commas
+• all arrays valid
+• all strings quoted
+• correct schema structure
+
+==================================================
+OUTPUT FORMAT (STRICT)
+==================================================
+
+Return ONLY valid JSON.
+
+Do NOT include:
+
+• markdown
+• explanations
+• comments
+• analysis
+• extra text
+
+The response must follow EXACTLY this schema:
 
 {
   "name": "",
@@ -152,13 +328,5 @@ OUTPUT FORMAT (STRICT JSON ONLY)
     }
   ]
 }
-
-FINAL RULES:
-- Return ONLY valid JSON.
-- No markdown.
-- No explanations.
-- No comments.
-- No trailing commas.
-- Output must be parseable JSON.
 `;
 }
