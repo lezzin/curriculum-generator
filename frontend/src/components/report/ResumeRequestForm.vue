@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useApi } from '../../composables/useApi'
+import { useApi } from '../../composables/api/useApi'
 import { useForm } from 'vee-validate'
 import { useToast } from '../../composables/useToast'
 

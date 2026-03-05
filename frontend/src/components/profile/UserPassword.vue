@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useForm } from 'vee-validate';
-import { useApi } from '../../composables/useApi';
+import { useApi } from '../../composables/api/useApi';
 import { setPasswordSchema, type SetPasswordForm } from '../../validation/schemas/set-password.schema';
 import { useToast } from '../../composables/useToast';
 import InputField from '../ui/form/InputField.vue';
@@ -30,13 +30,8 @@ const submit = handleSubmit(async (form) => {
         </p>
       </div>
 
-      <InputField
-        name="password"
-        label="Nova senha"
-        type="password"
-        autocomplete="new-password"
-        placeholder="********"
-      />
+      <InputField name="password" label="Nova senha" type="password" autocomplete="new-password"
+        placeholder="********" />
 
       <BaseButton type="submit" class="w-full" :disabled="loading">
         <span v-if="!loading">Registrar senha</span>

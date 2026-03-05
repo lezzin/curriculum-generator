@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { watch } from 'vue';
-import { useApi } from '../../composables/useApi';
+import { useApi } from '../../composables/api/useApi';
 import { useToast } from '../../composables/useToast';
 import BaseButton from '../../components/ui/BaseButton.vue';
 import InputField from '../../components/ui/form/InputField.vue';

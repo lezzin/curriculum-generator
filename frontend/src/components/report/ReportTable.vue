@@ -4,7 +4,8 @@ import CardContainer from '../ui/card/CardContainer.vue';
 import ReportStatusBadge from './ReportStatusBadge.vue'
 
 defineProps<{
-    items: any[]
+    items: any[],
+    loading: boolean
 }>()
 </script>
 
@@ -48,5 +49,5 @@ defineProps<{
             </tbody>
         </table>
     </CardContainer>
-    <p v-else class="text-center text-gray-500">Nenhum resultado para a busca.</p>
+    <p v-else-if="!loading" class="text-center text-gray-500">Nenhum resultado para a busca.</p>
 </template>

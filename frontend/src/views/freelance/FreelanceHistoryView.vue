@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
-import { useApi } from '../../composables/useApi';
+import { useApi } from '../../composables/api/useApi';
 import { sseService } from '../../services/sse.service';
 import type { FreelanceProposal } from '../../interfaces/freelance.interfaces';
 import ProposalPreview from '../../components/freelance/ProposalPreview.vue';
@@ -39,19 +39,13 @@ onMounted(getProposals);
 </script>
 
 <template>
-  <AppTitle
-    title="Minhas Propostas Geradas"
-    subtitle="Visualize e acompanhe as propostas criadas a partir das oportunidades selecionadas."
-  />
+  <AppTitle title="Minhas Propostas Geradas"
+    subtitle="Visualize e acompanhe as propostas criadas a partir das oportunidades selecionadas." />
 
   <LoadContainer :loading="isLoading">
     <div class="grid gap-4" v-if="proposalList.length > 0">
-      <ProposalPreview
-        v-for="proposal in proposalList"
-        :key="proposal.id"
-        :proposal="proposal"
-        @remove="() => removeFromList(proposal.id)"
-      />
+      <ProposalPreview v-for="proposal in proposalList" :key="proposal.id" :proposal="proposal"
+        @remove="() => removeFromList(proposal.id)" />
     </div>
 
     <div v-else class="text-center space-y-3">

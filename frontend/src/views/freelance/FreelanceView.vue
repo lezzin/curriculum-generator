@@ -2,7 +2,7 @@
 import BaseButton from '../../components/ui/BaseButton.vue';
 import AppTitle from '../../components/layout/AppTitle.vue';
 import TextAreaField from '../../components/ui/form/TextAreaField.vue';
-import { useApi } from '../../composables/useApi';
+import { useApi } from '../../composables/api/useApi';
 import { useToast } from '../../composables/useToast';
 import { useForm } from 'vee-validate';
 import { freelanceSchema, MAX_LENGTH, type FreelanceForm } from '../../validation/schemas/freelance.schema';
@@ -27,21 +27,14 @@ const generateProposal = handleSubmit(async (form) => {
 </script>
 
 <template>
-  <AppTitle
-    title="Gerar Proposta Personalizada"
-    subtitle="Crie uma proposta estratégica com base na solicitação recebida."
-  />
+  <AppTitle title="Gerar Proposta Personalizada"
+    subtitle="Crie uma proposta estratégica com base na solicitação recebida." />
 
   <form class="space-y-10" @submit.prevent="generateProposal">
     <div class="space-y-4">
-      <TextAreaField
-        name="solicitationText"
-        label="Descrição completa da solicitação"
-        :rows="10"
-        :max-length="MAX_LENGTH"
-        :show-length="true"
-        placeholder="Cole aqui todos os detalhes da solicitação. Quanto mais informações, mais personalizada será a proposta."
-      />
+      <TextAreaField name="solicitationText" label="Descrição completa da solicitação" :rows="10"
+        :max-length="MAX_LENGTH" :show-length="true"
+        placeholder="Cole aqui todos os detalhes da solicitação. Quanto mais informações, mais personalizada será a proposta." />
 
       <BaseButton type="submit" :disabled="isLoading" :loading="isLoading"> Gerar proposta personalizada </BaseButton>
     </div>

@@ -1,5 +1,5 @@
 import { ref, onUnmounted } from 'vue';
-import { useApi } from './useApi';
+import { useApi } from './api/useApi';
 
 const { request, apiUrl } = useApi();
 

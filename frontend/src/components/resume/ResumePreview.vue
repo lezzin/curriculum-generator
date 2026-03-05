@@ -8,7 +8,7 @@ import CardContainer from '../ui/card/CardContainer.vue';
 import RotateArrow from '../icon/RotateArrow.vue';
 import BaseDropdown from '../ui/BaseDropdown.vue';
 import { useToast } from '../../composables/useToast';
-import { useApi } from '../../composables/useApi';
+import { useApi } from '../../composables/api/useApi';
 
 interface Props {
   resume: Resume;
@@ -77,11 +77,8 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div
-    class="group border rounded-2xl px-5 pb-5 bg-white shadow-sm hover:shadow-md transition-all duration-200"
-    @click="togglePrompt"
-    :class="shouldToggle && 'cursor-pointer'"
-  >
+  <div class="group border rounded-2xl px-5 pb-5 bg-white shadow-sm hover:shadow-md transition-all duration-200"
+    @click="togglePrompt" :class="shouldToggle && 'cursor-pointer'">
     <div class="py-4 flex justify-between items-center gap-4">
       <small class="text-gray-500">Criado em: {{ toHumanReadableDate(resume.createdAt ?? '') }}</small>
 
@@ -97,15 +94,8 @@ onMounted(async () => {
           </template>
 
           <template #default="{ close }">
-            <BaseButton
-              v-for="type in templateTypes"
-              :key="type"
-              :value="type"
-              @click.stop="goToPageUrl(type, close)"
-              size="sm"
-              variant="ghost"
-              class="dropdown-item"
-            >
+            <BaseButton v-for="type in templateTypes" :key="type" :value="type" @click.stop="goToPageUrl(type, close)"
+              size="sm" variant="ghost" class="dropdown-item">
               {{ capitalize(type) }}
             </BaseButton>
           </template>

@@ -9,3 +9,10 @@ export const api: AxiosInstance = axios.create({
     'Content-Type': 'application/json',
   },
 });
+
+export const reportApi: AxiosInstance = axios.create({
+  baseURL: config.reportApiUrl,
+  headers: {
+    'Content-Type': 'application/json',
+  },
+});

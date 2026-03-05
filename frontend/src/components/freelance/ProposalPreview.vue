@@ -5,7 +5,7 @@ import BaseButton from '../ui/BaseButton.vue';
 import { toHumanReadableDate } from '../../helper/string.helper';
 import CardContainer from '../ui/card/CardContainer.vue';
 import { useToast } from '../../composables/useToast';
-import { useApi } from '../../composables/useApi';
+import { useApi } from '../../composables/api/useApi';
 
 interface Props {
   proposal: FreelanceProposal;
@@ -79,10 +79,8 @@ async function copyProposal() {
 </script>
 
 <template>
-  <div
-    v-if="proposal"
-    class="rounded-2xl p-6 space-y-5 shadow-sm bg-white border border-zinc-200 transition-all duration-300"
-  >
+  <div v-if="proposal"
+    class="rounded-2xl p-6 space-y-5 shadow-sm bg-white border border-zinc-200 transition-all duration-300">
     <div class="flex items-center justify-between">
       <small class="text-gray-500">
         Criado em:
@@ -111,11 +109,8 @@ async function copyProposal() {
     <div class="space-y-1">
       <label class="text-sm font-medium text-zinc-700"> Proposta </label>
 
-      <textarea
-        v-model="editableText"
-        rows="12"
-        class="w-full resize-none text-sm leading-relaxed rounded-xl p-4 bg-zinc-50 text-zinc-700 border border-zinc-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all duration-300"
-      />
+      <textarea v-model="editableText" rows="12"
+        class="w-full resize-none text-sm leading-relaxed rounded-xl p-4 bg-zinc-50 text-zinc-700 border border-zinc-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all duration-300" />
     </div>
   </div>
 </template>

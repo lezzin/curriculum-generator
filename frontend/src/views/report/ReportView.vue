@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { ref, reactive, onMounted, watch } from 'vue'
-import { useApi } from '../../composables/useApi'
 import { useToast } from '../../composables/useToast'
 import { useForm } from 'vee-validate'
 import { reportSchema, type ReportForm } from '../../validation/schemas/report.schema'
@@ -12,8 +11,12 @@ import ReportFilters from '../../components/report/ReportFilters.vue'
 import ReportTable from '../../components/report/ReportTable.vue'
 import ReportPagination, { type Meta } from '../../components/report/ReportPagination.vue'
 import ResumeRequestForm from '../../components/report/ResumeRequestForm.vue'
+import { useAuthStore } from '../../stores/auth'
+import { storeToRefs } from 'pinia'
+import { useReportApi } from '../../composables/api/useReportApi'
 
-const { loading, request } = useApi()
+const { user } = storeToRefs(useAuthStore())
+const { loading, request } = useReportApi()
 const { show } = useToast()
 
 const page = ref(1)
@@ -37,7 +40,8 @@ const { handleSubmit, values } = useForm<ReportForm>({
 })
 
 const fetchReport = async () => {
-    const { error, data } = await request<any>('get', '/report', {
+    const { data, error } = await request<any>('get', '/report', {
+        user_uuid: user.value?.id,
         page: page.value,
         limit: values.limit,
         initial_date_creation: values.initial_date_creation,
@@ -76,7 +80,7 @@ onMounted(fetchReport)
 
         <ReportFilters :loading="loading" @submit="loadReport" />
 
-        <ReportTable :items="reportData.items" />
+        <ReportTable :items="reportData.items" :loading="loading" />
 
         <ReportPagination v-if="(reportData?.items.length || 0) > 0 && reportData.meta" :meta="reportData.meta"
             :loading="loading" v-model:page="page" @change="fetchReport" />

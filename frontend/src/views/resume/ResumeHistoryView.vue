@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
-import { useApi } from '../../composables/useApi';
+import { useApi } from '../../composables/api/useApi';
 import { sseService } from '../../services/sse.service';
 import type { Resume } from '../../interfaces/resume.interfaces';
 import ResumePreview from '../../components/resume/ResumePreview.vue';
@@ -39,19 +39,13 @@ onMounted(getResumes);
 </script>
 
 <template>
-  <AppTitle
-    title="Meus Currículos Gerados"
-    subtitle="Acompanhe, visualize e gerencie os currículos criados com base nas vagas enviadas."
-  />
+  <AppTitle title="Meus Currículos Gerados"
+    subtitle="Acompanhe, visualize e gerencie os currículos criados com base nas vagas enviadas." />
 
   <LoadContainer :loading="isLoading">
     <div class="grid gap-4" v-if="resumesList.length > 0">
-      <ResumePreview
-        v-for="resume in resumesList"
-        :key="resume.id"
-        :resume="resume"
-        @remove="() => removeFromList(resume.id)"
-      />
+      <ResumePreview v-for="resume in resumesList" :key="resume.id" :resume="resume"
+        @remove="() => removeFromList(resume.id)" />
     </div>
     <div v-else class="text-center space-y-3">
       <p class="text-gray-500">Você ainda não gerou nenhum currículo personalizado.</p>
