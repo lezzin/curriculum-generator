@@ -13,7 +13,7 @@ type Form = 'resume' | 'proposal' | 'confirm_modal'
 const modalStates = reactive<Record<Form, boolean>>({
     resume: false,
     proposal: false,
-    confirm_modal: false,
+    confirm_modal: true,
 })
 
 const setModalState = (modal: Form, value: boolean) => {
@@ -37,8 +37,8 @@ const goToReportScreen = () => {
             @saved="() => setModalState('confirm_modal', true)" />
 
         <ConfirmModal title="Redirecionamento"
-            message="Relatório enviado para processamento com sucesso! Ir para a tela de processamento?"
-            :is-open="modalStates.confirm_modal" @cancel="() => setModalState('confirm_modal', false)"
-            @confirm="goToReportScreen" />
+            message="Relatório enviado para processamento com sucesso!<br>Ir para a tela de processamento?"
+            confirmVariant="default" cancelVariant="destructive" :is-open="modalStates.confirm_modal"
+            @cancel="() => setModalState('confirm_modal', false)" @confirm="goToReportScreen" />
     </div>
 </template>

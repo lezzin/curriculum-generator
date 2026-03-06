@@ -13,7 +13,7 @@ interface Props {
   target?: string;
 }
 
-type Variant = 'default' | 'outline' | 'ghost' | 'destructive';
+export type Variant = 'default' | 'outline' | 'ghost' | 'destructive';
 type Size = 'sm' | 'md' | 'lg' | 'icon';
 type As = 'button' | 'a' | 'router-link';
 
