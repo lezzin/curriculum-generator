@@ -42,6 +42,13 @@ const menus: Menu[] = [
       { label: 'Histórico', to: { name: 'FreelanceProposalHistory' } },
     ],
   },
+  {
+    label: 'Relatório',
+    items: [
+      { label: 'Tela de processamento', to: { name: 'HomeReport' } },
+      { label: 'Solicitar relatório', to: { name: 'ReportSolicitation' } },
+    ],
+  },
 ];
 </script>
 
@@ -69,11 +76,6 @@ const menus: Menu[] = [
                 </router-link>
               </template>
             </BaseDropdown>
-
-            <router-link :to="{ name: 'HomeReport' }"
-              class="flex items-center gap-1 text-gray-600 hover:text-black transition" v-if="authStore.user.isAdmin">
-              Relatórios
-            </router-link>
           </div>
         </div>
 

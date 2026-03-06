@@ -1,87 +1,57 @@
 <script setup lang="ts">
-import { useReportApi } from '../../../composables/api/useReportApi'
 import { useForm } from 'vee-validate'
-import { useToast } from '../../../composables/useToast'
-
-import BaseButton from '../../../components/ui/BaseButton.vue'
-import InputField from '../../../components/ui/form/InputField.vue'
-import AppTitle from '../../../components/layout/AppTitle.vue'
-import { resumeReportSchema, type ResumeReportForm } from '../../../validation/schemas/resume-report.schema'
-import BaseModal from '../../ui/modal/BaseModal.vue'
-import { storeToRefs } from 'pinia'
-import { useAuthStore } from '../../../stores/auth'
-import CardContainer from '../../ui/card/CardContainer.vue'
+import { useReportRequest } from '../../../composables/useReportRequest';
+import { resumeReportSchema } from '../../../validation/schemas/resume-report.schema';
+import InputField from '../../ui/form/InputField.vue';
+import BaseReportForm from './BaseReportForm.vue';
+import BaseButton from '../../ui/BaseButton.vue';
 
 interface Props {
-    isOpen: boolean;
-}
-
-interface Emit {
-    (e: 'close'): void;
-    (e: 'saved'): Promise<void>;
-    (e: 'update:isOpen', value: boolean): Promise<void>;
+    isOpen: boolean
 }
 
 const props = defineProps<Props>()
-const emit = defineEmits<Emit>()
 
-const { user } = storeToRefs(useAuthStore())
-const { loading, request } = useReportApi()
-const { show } = useToast()
+const emit = defineEmits([
+    'close',
+    'saved',
+    'update:isOpen'
+])
 
-const { handleSubmit } = useForm<ResumeReportForm>({
-    validationSchema: resumeReportSchema,
+const { submit, loading } = useReportRequest('/resume-generation')
+
+const { handleSubmit } = useForm({
+    validationSchema: resumeReportSchema
 })
 
 const requestReport = handleSubmit(async (form) => {
-    const { error } = await request('post', '/resume-generation', {
-        user_uuid: user.value?.id,
-        initial_date_creation: form.initial_date_creation,
-        final_date_creation: form.final_date_creation
-    })
+    const success = await submit(form)
 
-    if (!error) {
-        show("Relatório enviado para processamento com sucesso!")
-        emit('close');
-        emit('saved');
-        return;
+    if (success) {
+        emit('close')
+        emit('saved')
     }
-
-    show({ message: error, type: 'error' })
 })
 </script>
 
 <template>
-    <CardContainer size="sm" class="bg-slate-50 flex items-center justify-between">
-        <div>
-            <p class="font-medium">Gerar relatório</p>
-            <p class="text-sm text-gray-500">
-                Solicite um novo relatório de currículos.
-            </p>
-        </div>
+    <BaseReportForm :is-open="isOpen" title="Gerar relatório" description="Solicite um novo relatório de currículos"
+        modal-title="Relatório de currículos gerados" @close="emit('close')"
+        @update:isOpen="emit('update:isOpen', $event)">
 
-        <BaseButton @click="$emit('update:isOpen', true)">
-            Gerar relatório
-        </BaseButton>
-    </CardContainer>
+        <form class="space-y-4" @submit.prevent="requestReport">
+            <div class="grid md:grid-cols-3 gap-2">
+                <InputField type="date" label="Data inicial" name="initial_date_creation" />
+                <InputField type="date" label="Data final" name="final_date_creation" />
 
-    <BaseModal :is-open="isOpen" @close="emit('close')">
-        <div class="space-y-6">
-            <AppTitle title="Relatório de currículos gerados" />
+                <div>
+                    <p>&nbsp;</p>
 
-            <form class="space-y-4" @submit.prevent="requestReport">
-                <div class="grid md:grid-cols-3 gap-2">
-                    <InputField type="date" label="Data inicial" name="initial_date_creation" />
-                    <InputField type="date" label="Data final" name="final_date_creation" />
-
-                    <div>
-                        <p>&nbsp;</p>
-                        <BaseButton type="submit" :disabled="loading" :loading="loading" class="w-full">
-                            Solicitar
-                        </BaseButton>
-                    </div>
+                    <BaseButton type="submit" :loading="loading" class="w-full">
+                        Solicitar
+                    </BaseButton>
                 </div>
-            </form>
-        </div>
-    </BaseModal>
+            </div>
+        </form>
+    </BaseReportForm>
 </template>

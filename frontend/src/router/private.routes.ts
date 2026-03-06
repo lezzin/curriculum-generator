@@ -5,6 +5,7 @@ import FreelanceView from '../views/freelance/FreelanceView.vue';
 import FreelanceHistoryView from '../views/freelance/FreelanceHistoryView.vue';
 import ProfileView from '../views/auth/ProfileView.vue';
 import ReportView from '../views/report/ReportView.vue';
+import ReportSolicitationView from '../views/report/ReportSolicitationView.vue';
 
 export const privateRoutes: RouteRecordRaw[] = [
   {
@@ -61,6 +62,11 @@ export const privateRoutes: RouteRecordRaw[] = [
         path: '',
         name: 'HomeReport',
         component: ReportView,
+      },
+      {
+        path: 'solicitation',
+        name: 'ReportSolicitation',
+        component: ReportSolicitationView,
       },
     ],
   },

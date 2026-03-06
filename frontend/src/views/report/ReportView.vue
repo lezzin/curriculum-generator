@@ -9,18 +9,15 @@ import AppTitle from '../../components/layout/AppTitle.vue'
 import ReportFilters from '../../components/report/ReportFilters.vue'
 import ReportTable from '../../components/report/ReportTable.vue'
 import ReportPagination, { type Meta } from '../../components/report/ReportPagination.vue'
-import ResumeRequestForm from '../../components/report/requests/ResumeRequestForm.vue'
 import { useAuthStore } from '../../stores/auth'
 import { storeToRefs } from 'pinia'
 import { useReportApi } from '../../composables/api/useReportApi'
-import ProposalRequestForm from '../../components/report/requests/ProposalRequestForm.vue'
 
 const { user } = storeToRefs(useAuthStore())
 const { loading, request } = useReportApi()
 const { show } = useToast()
 
 const page = ref(1)
-const isResumeRequestOpen = ref(false)
 
 const reportData = reactive<{
     items: any[],
@@ -71,10 +68,6 @@ onMounted(fetchReport)
 </script>
 
 <template>
-    <ResumeRequestForm v-model:isOpen="isResumeRequestOpen" @close="isResumeRequestOpen = false" @saved="fetchReport" />
-    <ProposalRequestForm v-model:isOpen="isResumeRequestOpen" @close="isResumeRequestOpen = false"
-        @saved="fetchReport" />
-
     <div class="space-y-6">
         <AppTitle title="Processamento de Relatórios" />
 
