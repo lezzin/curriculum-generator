@@ -6,14 +6,14 @@ import { reportSchema, type ReportForm } from '../../validation/schemas/report.s
 import { getTodayDate } from '../../helper/string.helper'
 
 import AppTitle from '../../components/layout/AppTitle.vue'
-import ReportHeader from '../../components/report/ReportHeader.vue'
 import ReportFilters from '../../components/report/ReportFilters.vue'
 import ReportTable from '../../components/report/ReportTable.vue'
 import ReportPagination, { type Meta } from '../../components/report/ReportPagination.vue'
-import ResumeRequestForm from '../../components/report/ResumeRequestForm.vue'
+import ResumeRequestForm from '../../components/report/requests/ResumeRequestForm.vue'
 import { useAuthStore } from '../../stores/auth'
 import { storeToRefs } from 'pinia'
 import { useReportApi } from '../../composables/api/useReportApi'
+import ProposalRequestForm from '../../components/report/requests/ProposalRequestForm.vue'
 
 const { user } = storeToRefs(useAuthStore())
 const { loading, request } = useReportApi()
@@ -71,11 +71,11 @@ onMounted(fetchReport)
 </script>
 
 <template>
-    <ResumeRequestForm :is-open="isResumeRequestOpen" @close="isResumeRequestOpen = false" @saved="fetchReport" />
+    <ResumeRequestForm v-model:isOpen="isResumeRequestOpen" @close="isResumeRequestOpen = false" @saved="fetchReport" />
+    <ProposalRequestForm v-model:isOpen="isResumeRequestOpen" @close="isResumeRequestOpen = false"
+        @saved="fetchReport" />
 
     <div class="space-y-6">
-        <ReportHeader @create="isResumeRequestOpen = true" />
-
         <AppTitle title="Processamento de Relatórios" />
 
         <ReportFilters :loading="loading" @submit="loadReport" />

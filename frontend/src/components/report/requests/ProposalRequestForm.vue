@@ -1,15 +1,16 @@
 <script setup lang="ts">
-import { useReportApi } from '../../composables/api/useReportApi'
+import { useReportApi } from '../../../composables/api/useReportApi'
 import { useForm } from 'vee-validate'
-import { useToast } from '../../composables/useToast'
+import { useToast } from '../../../composables/useToast'
 
-import BaseButton from '../../components/ui/BaseButton.vue'
-import InputField from '../../components/ui/form/InputField.vue'
-import AppTitle from '../../components/layout/AppTitle.vue'
-import { resumeReportSchema, type ResumeReportForm } from '../../validation/schemas/resume-report.schema'
-import BaseModal from '../ui/modal/BaseModal.vue'
+import BaseButton from '../../../components/ui/BaseButton.vue'
+import InputField from '../../../components/ui/form/InputField.vue'
+import AppTitle from '../../../components/layout/AppTitle.vue'
+import BaseModal from '../../ui/modal/BaseModal.vue'
 import { storeToRefs } from 'pinia'
-import { useAuthStore } from '../../stores/auth'
+import { useAuthStore } from '../../../stores/auth'
+import CardContainer from '../../ui/card/CardContainer.vue'
+import { proposalReportSchema, type ProposalReportForm } from '../../../validation/schemas/proposal-report.schema'
 
 interface Props {
     isOpen: boolean;
@@ -18,6 +19,7 @@ interface Props {
 interface Emit {
     (e: 'close'): void;
     (e: 'saved'): Promise<void>;
+    (e: 'update:isOpen', value: boolean): Promise<void>;
 }
 
 const props = defineProps<Props>()
@@ -27,12 +29,12 @@ const { user } = storeToRefs(useAuthStore())
 const { loading, request } = useReportApi()
 const { show } = useToast()
 
-const { handleSubmit } = useForm<ResumeReportForm>({
-    validationSchema: resumeReportSchema,
+const { handleSubmit } = useForm<ProposalReportForm>({
+    validationSchema: proposalReportSchema,
 })
 
 const requestReport = handleSubmit(async (form) => {
-    const { error } = await request('post', '/resume-generation', {
+    const { error } = await request('post', '/proposal-generation', {
         user_uuid: user.value?.id,
         initial_date_creation: form.initial_date_creation,
         final_date_creation: form.final_date_creation
@@ -50,9 +52,22 @@ const requestReport = handleSubmit(async (form) => {
 </script>
 
 <template>
+    <CardContainer size="sm" class="bg-slate-50 flex items-center justify-between">
+        <div>
+            <p class="font-medium">Gerar relatório</p>
+            <p class="text-sm text-gray-500">
+                Solicite um novo relatório de propostas.
+            </p>
+        </div>
+
+        <BaseButton @click="$emit('update:isOpen', true)">
+            Gerar relatório
+        </BaseButton>
+    </CardContainer>
+
     <BaseModal :is-open="isOpen" @close="emit('close')">
         <div class="space-y-6">
-            <AppTitle title="Relatório de currículos gerados" />
+            <AppTitle title="Relatório de propostas geradas" />
 
             <form class="space-y-4" @submit.prevent="requestReport">
                 <div class="grid md:grid-cols-3 gap-2">
