@@ -27,7 +27,13 @@ const handleDownloadFile = async (path: string) => {
     }
 
     const url = data?.url
-    window.location.href = url;
+
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = '';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
 }
 </script>
 
@@ -62,7 +68,7 @@ const handleDownloadFile = async (path: string) => {
 
                         <td class="p-2">
                             <BaseButton v-if="item.final_file_path" size="sm" variant="outline"
-                                @click="handleDownloadFile(item.final_file_path)">
+                                @click="handleDownloadFile(item.final_file_path)" :disabled="loading">
                                 Download
                             </BaseButton>
                             <span v-else>-</span>
