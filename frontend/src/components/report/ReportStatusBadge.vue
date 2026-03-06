@@ -1,19 +1,20 @@
 <script setup lang="ts">
+import type { ProcessStatus } from '../../types/report.types';
 import BaseBadge from '../ui/BaseBadge.vue'
 import type { Variant } from '../ui/BaseBadge.vue'
 
 const props = defineProps<{
-    statusId: number
+    statusId: ProcessStatus
     text: string
 }>()
 
-const variants: Record<number, Variant> = {
+const variants: Record<ProcessStatus, Variant> = {
     1: 'outline',
-    2: 'ghost',
-    3: 'default',
+    2: 'info',
+    3: 'success',
     4: 'destructive',
-    5: 'outline',
-    6: 'ghost'
+    5: 'warning',
+    6: 'destructive'
 }
 
 const variant = variants[props.statusId] ?? 'default'

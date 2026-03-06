@@ -97,7 +97,8 @@ async function handleChangeProcessStatus(
 
                         <td class="p-2 flex gap-2">
                             <BaseButton v-if="getStatusConfig(item.status_id).download && item.final_file_path"
-                                size="sm" variant="outline" :disabled="loadingReportRequest"
+                                size="sm" variant="outline"
+                                :disabled="loadingReportRequest || getStatusConfig(item.status_id).download === 'expired'"
                                 @click="handleDownloadFile(item.final_file_path)">
                                 Download
                             </BaseButton>
@@ -109,8 +110,8 @@ async function handleChangeProcessStatus(
                             </BaseButton>
 
                             <span v-if="
-                                !getStatusConfig(item.status_id).download &&
-                                !getStatusConfig(item.status_id).cancel
+                                (!getStatusConfig(item.status_id).download && !getStatusConfig(item.status_id).cancel) ||
+                                !item.final_file_path
                             ">
                                 -
                             </span>
