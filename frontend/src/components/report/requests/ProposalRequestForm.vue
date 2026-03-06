@@ -6,17 +6,7 @@ import { proposalReportSchema } from '../../../validation/schemas/proposal-repor
 import InputField from '../../ui/form/InputField.vue';
 import BaseButton from '../../ui/BaseButton.vue';
 
-interface Props {
-    isOpen: boolean
-}
-
-const props = defineProps<Props>()
-
-const emit = defineEmits([
-    'close',
-    'saved',
-    'update:isOpen'
-])
+const emit = defineEmits(['saved',])
 
 const { submit, loading } = useReportRequest('/proposal-generation')
 
@@ -26,19 +16,13 @@ const { handleSubmit } = useForm({
 
 const requestReport = handleSubmit(async (form) => {
     const success = await submit(form)
-
-    if (success) {
-        emit('close')
-        emit('saved')
-    }
+    if (!success) return;
+    emit('saved')
 })
 </script>
 
 <template>
-    <BaseReportForm :is-open="isOpen" title="Gerar relatório" description="Solicite um novo relatório de propostas"
-        modal-title="Relatório de propostas geradas" @close="emit('close')"
-        @update:isOpen="emit('update:isOpen', $event)">
-
+    <BaseReportForm title="Propostas" description="Solicite um novo relatório de propostas">
         <form class="space-y-4" @submit.prevent="requestReport">
             <div class="grid md:grid-cols-3 gap-2">
                 <InputField type="date" label="Data inicial" name="initial_date_creation" />
