@@ -21,3 +21,12 @@ export function getFirstLetter(value?: string) {
 export function nullToEmpty<T extends Record<string, any>>(obj: T): T {
   return Object.fromEntries(Object.entries(obj).map(([key, value]) => [key, value ?? ''])) as T;
 }
+
+export function handleDownload(url: string) {
+  const link = document.createElement('a')
+  link.href = url
+  link.download = ''
+  document.body.appendChild(link)
+  link.click()
+  document.body.removeChild(link)
+}

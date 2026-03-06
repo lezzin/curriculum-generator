@@ -73,7 +73,7 @@ onUnmounted(() => {
   <AppHeader />
 
   <LoadContainer :loading="authStore.isAuthLoading">
-    <AppContainer class="p-8 space-y-8">
+    <AppContainer class="pt-8 space-y-8 pb-16">
       <router-view></router-view>
       <BaseToast />
     </AppContainer>

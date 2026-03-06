@@ -54,7 +54,7 @@ const menus: Menu[] = [
 
 <template>
   <header class="bg-white/80 backdrop-blur-md border-b sticky top-0 z-50 h-[68px]">
-    <AppContainer class="px-8 py-2 h-full">
+    <AppContainer class="py-2 h-full">
       <nav class="flex items-center justify-between text-sm font-medium h-[inherit]">
         <div class="flex items-center gap-8">
           <router-link :to="{ name: 'Home' }" class="text-gray-600 hover:text-black transition"> Início </router-link>

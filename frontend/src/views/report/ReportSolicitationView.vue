@@ -26,7 +26,7 @@ const goToReportScreen = () => {
 </script>
 
 <template>
-    <div class="space-y-8 pb-16">
+    <div class="space-y-8">
         <AppTitle title="Solicitar geração de relatórios"
             subtitle="Envie solicitações de relatórios que serão gerados em segundo plano" />
 
