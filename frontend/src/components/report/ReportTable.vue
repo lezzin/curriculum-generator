@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { useReportApi } from '../../composables/api/useReportApi';
+import { useToast } from '../../composables/useToast';
 import BaseButton from '../ui/BaseButton.vue'
 import CardContainer from '../ui/card/CardContainer.vue';
 import ReportStatusBadge from './ReportStatusBadge.vue'
@@ -7,6 +9,26 @@ defineProps<{
     items: any[],
     loading: boolean
 }>()
+
+const { request, loading } = useReportApi()
+const { show } = useToast();
+
+const handleDownloadFile = async (path: string) => {
+    const { data, error } = await request<{ url: string }>('get', '/report/download-file', { path });
+
+    if (error) {
+        show({ message: error, type: 'error' });
+        return;
+    }
+
+    if (!data?.url) {
+        show({ message: 'URL não encontrada para o registro', type: 'warning' });
+        return;
+    }
+
+    const url = data?.url
+    window.location.href = url;
+}
 </script>
 
 <template>
@@ -39,8 +61,8 @@ defineProps<{
                         </td>
 
                         <td class="p-2">
-                            <BaseButton v-if="item.final_file_path" size="sm" as="a" variant="outline"
-                                :href="`/storage/${item.final_file_path}`">
+                            <BaseButton v-if="item.final_file_path" size="sm" variant="outline"
+                                @click="handleDownloadFile(item.final_file_path)">
                                 Download
                             </BaseButton>
                             <span v-else>-</span>
