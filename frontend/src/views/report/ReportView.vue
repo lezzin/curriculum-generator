@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, reactive, onMounted, watch } from 'vue'
+import { ref, reactive, onMounted, watch, onUnmounted } from 'vue'
 import { useToast } from '../../composables/useToast'
 import { useForm } from 'vee-validate'
 import { reportSchema, type ReportForm } from '../../validation/schemas/report.schema'
@@ -12,6 +12,7 @@ import ReportPagination, { type Meta } from '../../components/report/ReportPagin
 import { useAuthStore } from '../../stores/auth'
 import { storeToRefs } from 'pinia'
 import { useReportApi } from '../../composables/api/useReportApi'
+import { sseService } from '../../services/sse.service'
 
 const { user } = storeToRefs(useAuthStore())
 const { loading, request } = useReportApi()
@@ -19,8 +20,22 @@ const { show } = useToast()
 
 const page = ref(1)
 
+interface ReportItem {
+    id: string
+    progress_id: string
+    total_records: number
+    report_name: string
+    processed_records: number
+    final_file_path: string
+    started_at: string
+    finished_at: string
+    created_at: string
+    status_id: number
+    status_name: string
+}
+
 const reportData = reactive<{
-    items: any[],
+    items: ReportItem[],
     meta: Meta | null
 }>({
     items: [],
@@ -64,7 +79,20 @@ watch(() => values.limit, async () => {
     await fetchReport()
 })
 
-onMounted(fetchReport)
+const handleProgress = (data: any) => {
+    reportData.items = reportData.items.map(item =>
+        item.progress_id == data.progress_id ? data : item
+    )
+};
+
+onMounted(async () => {
+    await fetchReport();
+    sseService.on('progress', handleProgress);
+});
+
+onUnmounted(() => {
+    sseService.off('progress', handleProgress);
+});
 </script>
 
 <template>

@@ -16,9 +16,9 @@ import { SseModule } from 'src/infrastructure/modules/sse.module';
 import { CacheRepository } from 'src/domain/repositories/cache.repository';
 import { ProposalGenerationUseCase } from 'src/application/use-cases/freelance/proposal-generation.use-case';
 import { BaseDataRepository } from 'src/domain/repositories/base-data.repository';
-import { SseService } from 'src/infrastructure/services/sse.service';
 import { RemoveProposalUseCase } from 'src/application/use-cases/freelance/remove-proposal.use-case';
 import { GeminiService } from 'src/infrastructure/services/gemini/gemini.service';
+import { SseRepository } from 'src/domain/repositories/sse.repository';
 
 @Module({
   imports: [
@@ -60,21 +60,21 @@ import { GeminiService } from 'src/infrastructure/services/gemini/gemini.service
         freelanceProposalRepository: FreelanceProposalRepository,
         baseDataRepository: BaseDataRepository,
         geminiService: GeminiService,
-        sseService: SseService,
+        sseRepository: SseRepository,
         cache: CacheRepository,
       ) =>
         new ProposalGenerationUseCase(
           freelanceProposalRepository,
           baseDataRepository,
           geminiService,
-          sseService,
+          sseRepository,
           cache,
         ),
       inject: [
         FreelanceProposalRepository,
         BaseDataRepository,
         GeminiService,
-        SseService,
+        SseRepository,
         CacheRepository,
       ],
     },

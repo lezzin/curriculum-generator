@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue';
+import { onMounted, onUnmounted, ref } from 'vue';
 import { useApi } from '../../composables/api/useApi';
 import { sseService } from '../../services/sse.service';
 import type { Resume } from '../../interfaces/resume.interfaces';
@@ -30,12 +30,19 @@ const removeFromList = (resumeId: string) => {
   resumesList.value = resumesList.value.filter((resume) => resume.id !== resumeId);
 };
 
-sseService.on<Resume>('resume-generated', (data) => {
+const handleResumeGenerated = (data: Resume) => {
   if (data.userId !== authStore.user?.id) return;
   resumesList.value.unshift(data);
+};
+
+onMounted(async () => {
+  await getResumes();
+  sseService.on<Resume>('proposal-generated', handleResumeGenerated);
 });
 
-onMounted(getResumes);
+onUnmounted(() => {
+  sseService.off('proposal-generated', handleResumeGenerated);
+});
 </script>
 
 <template>

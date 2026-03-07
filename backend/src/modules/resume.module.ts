@@ -17,7 +17,6 @@ import { StorageModule } from 'src/infrastructure/modules/storage.module';
 import { SseModule } from 'src/infrastructure/modules/sse.module';
 import { GetPdfUseCase } from 'src/application/use-cases/resume/get-pdf.use-case';
 import { CacheRepository } from 'src/domain/repositories/cache.repository';
-import { SseService } from 'src/infrastructure/services/sse.service';
 import { BaseDataRepository } from 'src/domain/repositories/base-data.repository';
 import { ResumeGenerationUseCase } from 'src/application/use-cases/resume/resume-generation.use-case';
 import { GeneratePdfUseCase } from 'src/application/use-cases/resume/generate-pdf.use-case';
@@ -28,6 +27,7 @@ import { UserModule } from './user.module';
 import { GetPageUseCase } from 'src/application/use-cases/resume/get-page.use-case';
 import { RemoveResumeUseCase } from 'src/application/use-cases/resume/remove-resume.use-case';
 import { GeminiService } from 'src/infrastructure/services/gemini/gemini.service';
+import { SseRepository } from 'src/domain/repositories/sse.repository';
 
 @Module({
   imports: [
@@ -88,7 +88,7 @@ import { GeminiService } from 'src/infrastructure/services/gemini/gemini.service
         userConfigRepository: UserConfigRepository,
         userRepository: UserRepository,
         pdfService: ResumeDocumentService,
-        sseService: SseService,
+        sseRepository: SseRepository,
         cache: CacheRepository,
       ) =>
         new ResumeGenerationUseCase(
@@ -98,7 +98,7 @@ import { GeminiService } from 'src/infrastructure/services/gemini/gemini.service
           userRepository,
           geminiService,
           pdfService,
-          sseService,
+          sseRepository,
           cache,
         ),
       inject: [
@@ -108,7 +108,7 @@ import { GeminiService } from 'src/infrastructure/services/gemini/gemini.service
         UserConfigRepository,
         UserRepository,
         ResumeDocumentService,
-        SseService,
+        SseRepository,
         CacheRepository,
       ],
     },

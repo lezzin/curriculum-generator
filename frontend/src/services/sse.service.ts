@@ -6,6 +6,7 @@ class SSEService {
   private api!: AxiosInstance;
   private eventSource: EventSource | null = null;
   private listeners = new Map<string, SSECallback[]>();
+  private registeredEvents = new Set<string>();
   private reconnectInterval = 3000;
 
   init(api: AxiosInstance) {
@@ -20,16 +21,28 @@ class SSEService {
     const url = `${this.api.defaults.baseURL}/events/connect`;
     this.eventSource = new EventSource(url, { withCredentials: true });
 
-    this.eventSource.addEventListener('message', (e) => this.emitEvent('message', e.data));
-    this.eventSource.addEventListener('resume-generated', (e) => this.emitEvent('resume-generated', e.data));
-    this.eventSource.addEventListener('proposal-generated', (e) => this.emitEvent('proposal-generated', e.data));
-
     this.eventSource.onerror = () => {
       console.warn('SSE desconectado, tentando reconectar...');
       this.eventSource?.close();
       this.eventSource = null;
+      this.registeredEvents.clear();
+
       setTimeout(() => this.connect(), this.reconnectInterval);
     };
+
+    this.listeners.forEach((_, eventName) => {
+      this.registerEvent(eventName);
+    });
+  }
+
+  private registerEvent(eventName: string) {
+    if (!this.eventSource || this.registeredEvents.has(eventName)) return;
+
+    this.eventSource.addEventListener(eventName, (e: MessageEvent) => {
+      this.emitEvent(eventName, e.data);
+    });
+
+    this.registeredEvents.add(eventName);
   }
 
   private emitEvent(eventName: string, data: any) {
@@ -45,13 +58,23 @@ class SSEService {
   }
 
   on<T>(eventName: string, callback: SSECallback<T>) {
-    if (!this.listeners.has(eventName)) this.listeners.set(eventName, []);
+    if (!this.listeners.has(eventName)) {
+      this.listeners.set(eventName, []);
+    }
+
     this.listeners.get(eventName)!.push(callback);
+
+    this.registerEvent(eventName);
   }
 
   off(eventName: string, callback?: SSECallback) {
-    if (!callback) return this.listeners.delete(eventName);
+    if (!callback) {
+      this.listeners.delete(eventName);
+      return;
+    }
+
     const arr = this.listeners.get(eventName) || [];
+
     this.listeners.set(
       eventName,
       arr.filter((cb) => cb !== callback)
@@ -62,6 +85,7 @@ class SSEService {
     this.eventSource?.close();
     this.eventSource = null;
     this.listeners.clear();
+    this.registeredEvents.clear();
   }
 }
 

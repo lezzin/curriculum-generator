@@ -12,7 +12,7 @@ import { SelectedTemplate } from 'src/domain/enums/resume.enums';
 import { GeminiService } from 'src/infrastructure/services/gemini/gemini.service';
 import { buildResumePrompt } from 'src/infrastructure/services/gemini/helpers/resume-prompt.helper';
 import { ResumeDocumentService } from 'src/infrastructure/services/resume-document.service';
-import { SseService } from 'src/infrastructure/services/sse.service';
+import { SseRepository } from 'src/domain/repositories/sse.repository';
 
 export class ResumeGenerationUseCase {
   constructor(
@@ -22,7 +22,7 @@ export class ResumeGenerationUseCase {
     private readonly userRepository: UserRepository,
     private readonly geminiService: GeminiService,
     private readonly resumeDocumentService: ResumeDocumentService,
-    private readonly sseService: SseService,
+    private readonly sseRepository: SseRepository,
     private readonly cache: CacheRepository,
   ) { }
 
@@ -34,7 +34,7 @@ export class ResumeGenerationUseCase {
       BaseDataType.RESUME,
     );
     if (!baseData) {
-      this.sseService.sendEvent(
+      this.sseRepository.sendEvent(
         userId,
         'message',
         'Ops! Não encontramos informações base para gerar o currículo. Por favor, cadastre seus dados primeiro.',
@@ -44,7 +44,7 @@ export class ResumeGenerationUseCase {
 
     const userData = await this.userRepository.findById(userId);
     if (!userData) {
-      this.sseService.sendEvent(
+      this.sseRepository.sendEvent(
         userId,
         'message',
         'Usuário não encontrado. Confirme se o ID está correto ou faça login novamente.',
@@ -87,7 +87,7 @@ export class ResumeGenerationUseCase {
       userData,
       contactData,
     );
-    this.sseService.sendEvent<ResumeItemOutput>(userId, 'resume-generated', {
+    this.sseRepository.sendEvent<ResumeItemOutput>(userId, 'resume-generated', {
       id: savedResume.id,
       userId: savedResume.userId,
       prompt: savedResume.prompt,

@@ -10,15 +10,15 @@ import {
   buildFreelanceProposalPrompt,
   FreelanceProposalResponse,
 } from 'src/infrastructure/services/gemini/helpers/freelance-proposal.prompt';
-import { SseService } from 'src/infrastructure/services/sse.service';
 import { GeminiService } from 'src/infrastructure/services/gemini/gemini.service';
+import { SseRepository } from 'src/domain/repositories/sse.repository';
 
 export class ProposalGenerationUseCase {
   constructor(
     private readonly freelanceProposalRepository: FreelanceProposalRepository,
     private readonly baseDataRepository: BaseDataRepository,
     private readonly geminiService: GeminiService,
-    private readonly sseService: SseService,
+    private readonly sseRepository: SseRepository,
     private readonly cache: CacheRepository,
   ) { }
 
@@ -30,7 +30,7 @@ export class ProposalGenerationUseCase {
       BaseDataType.FREELANCE_PROPOSAL,
     );
     if (!baseData) {
-      this.sseService.sendEvent(
+      this.sseRepository.sendEvent(
         userId,
         'message',
         'Ops! Não encontramos informações base para gerar a proposta. Por favor, cadastre seus dados primeiro.',
@@ -66,7 +66,7 @@ export class ProposalGenerationUseCase {
     );
 
     await this.invalidateCaches(userId, solicitation);
-    this.sseService.sendEvent<ProposalItemOutput>(
+    this.sseRepository.sendEvent<ProposalItemOutput>(
       userId,
       'proposal-generated',
       {

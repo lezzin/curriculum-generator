@@ -7,10 +7,7 @@ export class AdminGuard implements CanActivate {
         context: ExecutionContext,
     ): boolean | Promise<boolean> | Observable<boolean> {
         const request = context.switchToHttp().getRequest();
-
         const user = request.user;
-
-        console.log(user);
 
         if (!user?.isAdmin?.()) {
             throw new ForbiddenException('Acesso negado. Administradores apenas!');
