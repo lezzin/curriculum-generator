@@ -36,6 +36,16 @@ const setupSSE = () => {
     }
   });
 
+  sseService.on<Resume>('progress-finished', () => {
+    if (route.name !== 'HomeReport') {
+      show({
+        message: 'Novo relatório gerado com sucesso!',
+        link: { label: 'Ir para tela', to: 'HomeReport' },
+        duration: 0,
+      });
+    }
+  });
+
   sseService.on<FreelanceProposal>('proposal-generated', () => {
     if (route.name !== 'FreelanceProposalHistory') {
       show({

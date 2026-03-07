@@ -6,43 +6,61 @@ class SSEService {
   private api!: AxiosInstance;
   private eventSource: EventSource | null = null;
   private listeners = new Map<string, SSECallback[]>();
-  private registeredEvents = new Set<string>();
+  private registeredEvents = new Map<string, EventListener>();
   private reconnectInterval = 3000;
+  private isConnecting = false;
 
   init(api: AxiosInstance) {
-    if (this.eventSource) return;
+    if (this.eventSource || this.isConnecting) return;
     this.api = api;
     this.connect();
   }
 
   private connect() {
     if (!this.api) return console.error('SSEService: API não inicializada');
+    if (this.isConnecting) return;
+
+    this.isConnecting = true;
 
     const url = `${this.api.defaults.baseURL}/events/connect`;
     this.eventSource = new EventSource(url, { withCredentials: true });
 
     this.eventSource.onerror = () => {
       console.warn('SSE desconectado, tentando reconectar...');
-      this.eventSource?.close();
-      this.eventSource = null;
-      this.registeredEvents.clear();
-
+      this.cleanupEventSource();
       setTimeout(() => this.connect(), this.reconnectInterval);
     };
 
-    this.listeners.forEach((_, eventName) => {
+    this.registeredEvents.forEach((_, eventName) => {
       this.registerEvent(eventName);
     });
+
+    this.isConnecting = false;
+  }
+
+  private cleanupEventSource() {
+    if (!this.eventSource) return;
+
+    this.registeredEvents.forEach((listener, eventName) => {
+      this.eventSource?.removeEventListener(eventName, listener);
+    });
+
+    this.eventSource.close();
+    this.eventSource = null;
+    this.registeredEvents.clear();
   }
 
   private registerEvent(eventName: string) {
-    if (!this.eventSource || this.registeredEvents.has(eventName)) return;
+    if (!this.eventSource) return;
+    if (this.registeredEvents.has(eventName)) return;
 
-    this.eventSource.addEventListener(eventName, (e: MessageEvent) => {
-      this.emitEvent(eventName, e.data);
-    });
+    const listener: EventListener = (e: Event) => {
+      const me = e as MessageEvent;
+      this.emitEvent(eventName, me.data);
+    };
 
-    this.registeredEvents.add(eventName);
+    this.eventSource.addEventListener(eventName, listener);
+    this.registeredEvents.set(eventName, listener);
   }
 
   private emitEvent(eventName: string, data: any) {
@@ -70,6 +88,9 @@ class SSEService {
   off(eventName: string, callback?: SSECallback) {
     if (!callback) {
       this.listeners.delete(eventName);
+      const listener = this.registeredEvents.get(eventName);
+      if (listener) this.eventSource?.removeEventListener(eventName, listener);
+      this.registeredEvents.delete(eventName);
       return;
     }
 
@@ -79,13 +100,18 @@ class SSEService {
       eventName,
       arr.filter((cb) => cb !== callback)
     );
+
+    if ((this.listeners.get(eventName) || []).length === 0) {
+      const listener = this.registeredEvents.get(eventName);
+      if (listener) this.eventSource?.removeEventListener(eventName, listener);
+      this.registeredEvents.delete(eventName);
+      this.listeners.delete(eventName);
+    }
   }
 
   close() {
-    this.eventSource?.close();
-    this.eventSource = null;
+    this.cleanupEventSource();
     this.listeners.clear();
-    this.registeredEvents.clear();
   }
 }
 
