@@ -13,7 +13,7 @@ type Form = 'resume' | 'proposal' | 'confirm_modal'
 const modalStates = reactive<Record<Form, boolean>>({
     resume: false,
     proposal: false,
-    confirm_modal: true,
+    confirm_modal: false,
 })
 
 const setModalState = (modal: Form, value: boolean) => {
