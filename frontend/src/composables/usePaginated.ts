@@ -1,9 +1,12 @@
-// composables/usePaginated.ts
 import { ref, computed, shallowRef } from 'vue';
 import type { PaginatedResult } from '../interfaces/paginate.interfaces';
-import type { AxiosInstance } from 'axios';
+import { useApi } from './api/useApi';
+import { useToast } from './useToast';
 
-export function usePaginated<T>(api: AxiosInstance, endpoint: string, pageSize = 10) {
+const { request } = useApi();
+const { show } = useToast();
+
+export function usePaginated<T>(endpoint: string, pageSize = 10) {
     const items = shallowRef<T[]>([]);
     const total = ref(0);
     const page = ref(1);
@@ -33,7 +36,20 @@ export function usePaginated<T>(api: AxiosInstance, endpoint: string, pageSize =
         isFetching.value = true;
 
         try {
-            const { data } = await api.get<PaginatedResult<T>>(endpoint, { params: { page: page.value, limit: pageSize } });
+            const { data, error } = await request<PaginatedResult<T>>('get', endpoint, {
+                page: page.value,
+                limit: pageSize
+            });
+
+            if (error) {
+                show({ message: error, type: 'error' })
+                return;
+            }
+
+            if (!data) {
+                return
+            }
+
             total.value = data.total;
             addUnique(data.data, getId);
             page.value++;

@@ -19,7 +19,7 @@ const {
   fetch,
   remove,
   prepend
-} = usePaginated<Resume>(api, '/resume/all', 10);
+} = usePaginated<Resume>('/resume/all', 10);
 
 function handleResumeGenerated(data: Resume) {
   if (data.userId !== authStore.user?.id) return;

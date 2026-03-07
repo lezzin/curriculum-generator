@@ -4,7 +4,6 @@ import { usePaginated } from '../../composables/usePaginated';
 import AppTitle from '../../components/layout/AppTitle.vue';
 import { useAuthStore } from '../../stores/auth';
 import { sseService } from '../../services/sse.service';
-import { api } from '../../services/api/api';
 import BasePagination from '../../components/ui/BasePagination.vue';
 import type { FreelanceProposal } from '../../interfaces/freelance.interfaces';
 import ProposalPreview from '../../components/freelance/ProposalPreview.vue';
@@ -19,7 +18,7 @@ const {
   fetch,
   remove,
   prepend,
-} = usePaginated<FreelanceProposal>(api, '/freelance/proposal/all', 10);
+} = usePaginated<FreelanceProposal>('/freelance/proposal/all', 10);
 
 function handleProposalGenerated(data: FreelanceProposal) {
   if (data.userId !== authStore.user?.id) return;
