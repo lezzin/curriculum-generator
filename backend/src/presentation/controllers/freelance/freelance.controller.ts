@@ -5,6 +5,7 @@ import {
   HttpCode,
   HttpStatus,
   Post,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import { GenerateProposalUseCase } from 'src/application/use-cases/freelance/generate-proposal.use-case';
@@ -13,6 +14,7 @@ import { CurrentUser } from 'src/infrastructure/auth/current-user.decorator';
 import { JwtAuthGuard } from 'src/infrastructure/auth/guards/jwt-auth.guard';
 import { GenerateProposalDto } from './freelance.dto';
 import { RemoveProposalUseCase } from 'src/application/use-cases/freelance/remove-proposal.use-case';
+import { PaginateDto } from 'src/presentation/dto/paginate.dto';
 
 @UseGuards(JwtAuthGuard)
 @Controller('/freelance')
@@ -45,7 +47,10 @@ export class FreelanceController {
   }
 
   @Get('/proposal/all')
-  async getAllProposals(@CurrentUser('id') userId: any) {
-    return await this.getAllProposalsUseCase.execute(userId);
+  async getAllProposals(
+    @CurrentUser('id') userId: any,
+    @Query() query: PaginateDto
+  ) {
+    return await this.getAllProposalsUseCase.execute({ ...query, userId });
   }
 }

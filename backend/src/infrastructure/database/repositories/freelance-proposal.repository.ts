@@ -4,7 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { FreelanceProposalRepository } from 'src/domain/repositories/freelance-proposal.repository';
 import { FreelanceProposalEntity } from '../entities/freelance-proposal.entity';
 import { FreelanceProposal } from 'src/domain/entities/freelance-proposal.entity';
-import { BaseDataType } from 'src/domain/enums/base-data-type.enum';
+import { PaginatedResult } from 'src/domain/interfaces/paginate.interfaces';
 
 @Injectable()
 export class TypeOrmFreelanceProposalRepository implements FreelanceProposalRepository {
@@ -19,11 +19,26 @@ export class TypeOrmFreelanceProposalRepository implements FreelanceProposalRepo
     return await this.ormRepo.save(freelanceProposal);
   }
 
-  async getAll(userId: string): Promise<FreelanceProposal[]> {
-    return (await this.ormRepo.find({
-      where: { userId },
-      order: { createdAt: 'DESC' },
-    })) as FreelanceProposal[];
+  async paginate(
+    userId: string,
+    page: number,
+    limit: number
+  ): Promise<PaginatedResult<FreelanceProposal>> {
+    const query = this.ormRepo
+      .createQueryBuilder('proposal')
+      .where('proposal.userId = :userId', { userId })
+      .orderBy('proposal.createdAt', 'DESC')
+      .skip((page - 1) * limit)
+      .take(limit)
+
+    const [data, total] = await query.getManyAndCount()
+
+    return {
+      data: data as FreelanceProposal[],
+      total,
+      page,
+      limit
+    }
   }
 
   async remove(id: string): Promise<void> {
