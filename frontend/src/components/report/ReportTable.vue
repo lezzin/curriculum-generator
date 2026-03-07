@@ -25,6 +25,10 @@ const props = defineProps<{
     loading: boolean
 }>()
 
+const emit = defineEmits<{
+    (e: 'update:items', items: any[]): void
+}>()
+
 const { request, loading: loadingReportRequest } = useReportApi()
 const { show } = useToast()
 
@@ -52,7 +56,7 @@ async function handleChangeProcessStatus(
     processId: string,
     statusId: ProcessStatus
 ) {
-    const { data, error } = await request<{ message: string }>('post', '/report/change-status', {
+    const { data, error } = await request<any>('post', '/report/change-status', {
         process_id: processId,
         status_id: statusId
     })
@@ -62,7 +66,12 @@ async function handleChangeProcessStatus(
         return
     }
 
-    show(data?.message ?? 'Status do processo atualizado com sucesso!')
+    const updatedItems = props.items.map(item =>
+        item.progress_id == data.progress_id ? data : item
+    )
+
+    emit('update:items', updatedItems);
+    show('Status do processo atualizado com sucesso!')
 }
 </script>
 

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { computed } from 'vue';
 import type { ProcessStatus } from '../../types/report.types';
 import BaseBadge from '../ui/BaseBadge.vue'
 import type { Variant } from '../ui/BaseBadge.vue'
@@ -17,7 +18,7 @@ const variants: Record<ProcessStatus, Variant> = {
     6: 'destructive'
 }
 
-const variant = variants[props.statusId] ?? 'default'
+const variant = computed(() => variants[props.statusId] ?? 'default')
 </script>
 
 <template>

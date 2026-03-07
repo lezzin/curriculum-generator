@@ -73,7 +73,7 @@ onMounted(fetchReport)
 
         <ReportFilters :loading="loading" @submit="loadReport" />
 
-        <ReportTable :items="reportData.items" :loading="loading" />
+        <ReportTable v-model:items="reportData.items" :loading="loading" />
 
         <ReportPagination v-if="(reportData?.items.length || 0) > 0 && reportData.meta" :meta="reportData.meta"
             :loading="loading" v-model:page="page" @change="fetchReport" />
