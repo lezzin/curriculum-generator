@@ -50,9 +50,8 @@ import { SseRepository } from 'src/domain/repositories/sse.repository';
       provide: GetAllProposalsUseCase,
       useFactory: (
         freelanceProposalRepository: FreelanceProposalRepository,
-        cache: CacheRepository,
-      ) => new GetAllProposalsUseCase(freelanceProposalRepository, cache),
-      inject: [FreelanceProposalRepository, CacheRepository],
+      ) => new GetAllProposalsUseCase(freelanceProposalRepository),
+      inject: [FreelanceProposalRepository],
     },
     {
       provide: ProposalGenerationUseCase,
