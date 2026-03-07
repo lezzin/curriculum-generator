@@ -34,7 +34,7 @@ export class TypeOrmFreelanceProposalRepository implements FreelanceProposalRepo
     const [data, total] = await query.getManyAndCount()
 
     return {
-      data: data as FreelanceProposal[],
+      data: data.map(this.toDomain),
       total,
       page,
       limit
@@ -43,5 +43,19 @@ export class TypeOrmFreelanceProposalRepository implements FreelanceProposalRepo
 
   async remove(id: string): Promise<void> {
     await this.ormRepo.delete(id);
+  }
+
+  private toDomain(entity: FreelanceProposalEntity): FreelanceProposal {
+    const user = new FreelanceProposal(
+      entity.id,
+      entity.prompt,
+      entity.message,
+      entity.bidAmount,
+      entity.deliveryDays,
+      entity.userId,
+      entity.createdAt
+    );
+
+    return user;
   }
 }
