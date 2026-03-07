@@ -1,3 +1,4 @@
+import { Language, SelectedTemplate } from 'src/domain/enums/resume.enums';
 import {
   Column,
   CreateDateColumn,
@@ -17,7 +18,7 @@ export class ResumeEntity {
   name: string;
 
   @Column()
-  language: string;
+  language: Language;
 
   @Column()
   role: string;
@@ -26,7 +27,7 @@ export class ResumeEntity {
   summary: string;
 
   @Column()
-  template: string;
+  template: SelectedTemplate;
 
   @Column('text', { array: true })
   skills: string[];

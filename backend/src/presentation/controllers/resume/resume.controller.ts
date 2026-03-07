@@ -7,6 +7,7 @@ import {
   HttpStatus,
   Param,
   Post,
+  Query,
   Res,
   UseFilters,
   UseGuards,
@@ -23,6 +24,7 @@ import { GetPageUseCase } from 'src/application/use-cases/resume/get-page.use-ca
 import { HtmlExceptionFilter } from 'src/infrastructure/http/filters/html-exception.filter';
 import { IsPublic } from 'src/infrastructure/auth/is-public.decorator';
 import { RemoveResumeUseCase } from 'src/application/use-cases/resume/remove-resume.use-case';
+import { PaginateDto } from 'src/presentation/dto/paginate.dto';
 
 @UseGuards(JwtAuthGuard)
 @Controller('/resume')
@@ -58,8 +60,11 @@ export class ResumeController {
   }
 
   @Get('/all')
-  async getAllResumes(@CurrentUser('id') userId: any) {
-    return await this.getAllResumesUseCase.execute(userId);
+  async getAllResumes(
+    @CurrentUser('id') userId: any,
+    @Query() query: PaginateDto
+  ) {
+    return await this.getAllResumesUseCase.execute({ ...query, userId });
   }
 
   @Get('/pdf/:id')

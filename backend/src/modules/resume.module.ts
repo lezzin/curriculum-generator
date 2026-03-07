@@ -74,10 +74,9 @@ import { SseRepository } from 'src/domain/repositories/sse.repository';
     {
       provide: GetAllResumesUseCase,
       useFactory: (
-        resumeRepository: ResumeRepository,
-        cache: CacheRepository,
-      ) => new GetAllResumesUseCase(resumeRepository, cache),
-      inject: [ResumeRepository, CacheRepository],
+        resumeRepository: ResumeRepository
+      ) => new GetAllResumesUseCase(resumeRepository),
+      inject: [ResumeRepository],
     },
     {
       provide: ResumeGenerationUseCase,
