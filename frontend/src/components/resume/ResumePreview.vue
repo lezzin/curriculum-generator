@@ -9,6 +9,9 @@ import BaseDropdown from '../ui/BaseDropdown.vue';
 import { useToast } from '../../composables/useToast';
 import { useApi } from '../../composables/api/useApi';
 import ConfirmModal from '../ui/modal/ConfirmModal.vue';
+import PdfIcon from '../icon/PdfIcon.vue';
+import TrashIcon from '../icon/TrashIcon.vue';
+import HtmlIcon from '../icon/HtmlIcon.vue';
 
 interface Props {
   resume: Resume;
@@ -87,7 +90,7 @@ const removeResume = async () => {
         <BaseDropdown>
           <template #trigger="{ toggle, isOpen }">
             <BaseButton @click.stop="toggle" aria-haspopup="true" :aria-expanded="isOpen" size="sm" variant="outline">
-              Páginas
+              <HtmlIcon />
               <RotateArrow :rotate="isOpen" />
             </BaseButton>
           </template>
@@ -100,10 +103,12 @@ const removeResume = async () => {
           </template>
         </BaseDropdown>
 
-        <BaseButton @click.stop="goToPdfUrl" size="sm" variant="outline" :disabled="!pdfUrl"> PDF </BaseButton>
+        <BaseButton @click.stop="goToPdfUrl" size="sm" variant="outline" :disabled="!pdfUrl">
+          <PdfIcon />
+        </BaseButton>
 
         <BaseButton @click.stop="showConfirmModal = true" size="sm" variant="destructive" :disabled="loading">
-          Remover
+          <TrashIcon />
         </BaseButton>
       </div>
     </div>

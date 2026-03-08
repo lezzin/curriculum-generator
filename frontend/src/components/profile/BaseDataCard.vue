@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import CardContainer from '../../components/ui/card/CardContainer.vue';
 import BaseButton from '../../components/ui/BaseButton.vue';
+import TrashIcon from '../icon/TrashIcon.vue';
 
 interface Props {
   title: string;
@@ -48,7 +49,9 @@ defineEmits<Emits>();
     </CardContainer>
 
     <div class="flex items-center gap-2">
-      <BaseButton v-if="content" variant="destructive" size="sm" @click="$emit('remove')"> Remover base </BaseButton>
+      <BaseButton v-if="content" variant="destructive" size="sm" @click="$emit('remove')">
+        <TrashIcon />
+      </BaseButton>
 
       <BaseButton size="sm" variant="outline" @click="$emit('edit')">
         {{ content ? 'Editar base' : 'Adicionar base' }}

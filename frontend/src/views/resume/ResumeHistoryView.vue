@@ -6,8 +6,8 @@ import AppTitle from '../../components/layout/AppTitle.vue';
 import { useAuthStore } from '../../stores/auth';
 import { sseService } from '../../services/sse.service';
 import type { Resume } from '../../interfaces/resume.interfaces';
-import { api } from '../../services/api/api';
 import BasePagination from '../../components/ui/BasePagination.vue';
+import ResumePreviewSkeleton from '../../components/resume/ResumePreviewSkeleton.vue';
 
 const authStore = useAuthStore();
 
@@ -50,6 +50,10 @@ function removeFromList(id: string) {
 
     <BasePagination :items="resumes" :hasMore="hasMore" :isFetching="isFetching"
       :loadMore="() => fetch(item => item.id)" :total="total" />
+  </div>
+
+  <div v-else-if="isFetching" class="grid gap-4">
+    <ResumePreviewSkeleton v-for="i in 3" :key="i" />
   </div>
 
   <div v-else class="text-center space-y-3">

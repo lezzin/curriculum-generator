@@ -7,6 +7,7 @@ import { sseService } from '../../services/sse.service';
 import BasePagination from '../../components/ui/BasePagination.vue';
 import type { FreelanceProposal } from '../../interfaces/freelance.interfaces';
 import ProposalPreview from '../../components/freelance/ProposalPreview.vue';
+import FreelancePreviewSkeleton from '../../components/freelance/FreelancePreviewSkeleton.vue';
 
 const authStore = useAuthStore();
 
@@ -43,12 +44,18 @@ function removeFromList(id: string) {
   <AppTitle title="Minhas Propostas Geradas"
     subtitle="Visualize e acompanhe as propostas criadas a partir das oportunidades selecionadas." />
 
-  <div v-if="proposals.length" class="grid gap-4">
-    <ProposalPreview v-for="proposal in proposals" :key="proposal.id" :proposal="proposal"
-      @remove="() => removeFromList(proposal.id)" />
+  <div v-if="proposals.length">
+    <div class="grid gap-4 md:grid-cols-2">
+      <ProposalPreview v-for="proposal in proposals" :key="proposal.id" :proposal="proposal"
+        @remove="() => removeFromList(proposal.id)" />
+    </div>
 
     <BasePagination :items="proposals" :hasMore="hasMore" :isFetching="isFetching"
       :loadMore="() => fetch(item => item.id)" :total="total" />
+  </div>
+
+  <div v-else-if="isFetching" class="grid gap-4 md:grid-cols-2">
+    <FreelancePreviewSkeleton v-for="i in 3" :key="i" />
   </div>
 
   <div v-else class="text-center space-y-3">
