@@ -36,7 +36,7 @@ import BaseButton from '../components/ui/BaseButton.vue';
         </p>
 
         <div class="flex items-center gap-4 mb-12 flex-wrap justify-center lg:justify-start">
-          <BaseButton size="lg" as="router-link" :to="{ name: 'ResumeGenerate' }"
+          <BaseButton size="lg" as="router-link" :to="{ name: 'Profile' }"
             class="!inline-flex !items-center !gap-2 !bg-green-700 !text-white !border-0 !font-semibold !tracking-[-0.01em] hover:!bg-green-800 hover:!-translate-y-px hover:!shadow-[0_8px_24px_rgba(22,163,74,0.3)] !transition-all !duration-200">
             Criar meu currículo base
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
