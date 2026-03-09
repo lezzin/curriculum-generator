@@ -7,9 +7,13 @@ import BaseDropdown from '../ui/BaseDropdown.vue';
 import RotateArrow from '../icon/RotateArrow.vue';
 import UserAvatar from '../ui/UserAvatar.vue';
 import { useAuthStore } from '../../stores/auth';
+import { ref } from 'vue';
+import ListIcon from '../icon/ListIcon.vue';
+import { useMobile } from '../../composables/useMobile';
 
 const router = useRouter();
 const authStore = useAuthStore();
+const { isMobile } = useMobile();
 
 function handleLogout(close: () => void) {
   authStore.logout();
@@ -50,16 +54,24 @@ const menus: Menu[] = [
     ],
   },
 ];
+
+const isMenuOpen = ref(false)
 </script>
 
 <template>
-  <header class="bg-white/80 backdrop-blur-md border-b sticky top-0 z-50 h-[68px]">
+  <BaseButton class="absolute top-2 left-2 z-50" @click="isMenuOpen = !isMenuOpen" size="icon" v-if="isMobile">
+    <ListIcon />
+  </BaseButton>
+
+  <header :class="!isMenuOpen && isMobile ? 'hidden' : ''"
+    class="absolute bg-white/80 backdrop-blur-md border-b md:sticky top-0 z-40 h-screen w-2/3 md:w-auto md:h-[68px]">
     <AppContainer class="py-2 h-full">
-      <nav class="flex items-center justify-between text-sm font-medium h-[inherit]">
-        <div class="flex items-center gap-8">
+      <nav
+        class="flex flex-col md:flex-row py-16 md:py-0 gap-8 md:gap-0 items-center justify-between text-sm font-medium md:h-[inherit]">
+        <div class="flex items-center flex-col md:flex-row gap-8">
           <router-link :to="{ name: 'Home' }" class="text-gray-600 hover:text-black transition"> Início </router-link>
 
-          <div v-if="authStore.user?.id" class="flex items-center gap-8">
+          <div v-if="authStore.user?.id" class="flex flex-col md:flex-row items-center gap-8">
             <BaseDropdown v-for="menu in menus" :key="menu.label">
               <template #trigger="{ toggle, isOpen }">
                 <button @click="toggle" class="flex items-center gap-1 text-gray-600 hover:text-black transition"
