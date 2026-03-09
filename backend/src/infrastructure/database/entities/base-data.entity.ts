@@ -20,6 +20,6 @@ export class BaseDataEntity {
   @Column({ name: 'user_id', unique: true })
   userId: string;
 
-  @CreateDateColumn({ name: 'created_at' })
+  @CreateDateColumn({ name: 'created_at', type: 'timestamptz' })
   createdAt: Date;
 }
