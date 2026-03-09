@@ -36,7 +36,7 @@ const setupSSE = () => {
     }
   });
 
-  sseService.on<Resume>('progress-finished', () => {
+  sseService.on('progress-finished', () => {
     if (route.name !== 'HomeReport') {
       show({
         message: 'Novo relatório gerado com sucesso!',
@@ -83,7 +83,7 @@ onUnmounted(() => {
   <AppHeader />
 
   <LoadContainer :loading="authStore.isAuthLoading">
-    <AppContainer class="pt-8 space-y-8 pb-16">
+    <AppContainer :class="route.name !== 'Home' ? 'pt-8 space-y-8 pb-16' : 'max-w-full'">
       <router-view></router-view>
       <BaseToast />
     </AppContainer>

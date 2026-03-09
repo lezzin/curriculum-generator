@@ -88,10 +88,12 @@ const handleProgress = (data: any) => {
 onMounted(async () => {
     await fetchReport();
     sseService.on('progress', handleProgress);
+    sseService.on('progress-finished', handleProgress);
 });
 
 onUnmounted(() => {
     sseService.off('progress', handleProgress);
+    sseService.off('progress-finished', handleProgress);
 });
 </script>
 
