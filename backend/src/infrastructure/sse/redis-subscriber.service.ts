@@ -3,18 +3,11 @@ import { ConfigService } from '@nestjs/config';
 import Redis from 'ioredis';
 import { SseRepository } from 'src/domain/repositories/sse.repository';
 
-interface RedisSSEPayload {
-    userId: string;
-    event: string;
-    data: unknown;
-}
-
 @Injectable()
 export class RedisSubscriberService implements OnModuleInit, OnModuleDestroy {
     private readonly logger = new Logger(RedisSubscriberService.name);
-    private subscriber: Redis;
-
-    private readonly CHANNEL = 'report-processor-database-sse-events';
+    private readonly subscriber: Redis;
+    private channel: string;
 
     constructor(
         private readonly sseRepository: SseRepository,
@@ -24,20 +17,22 @@ export class RedisSubscriberService implements OnModuleInit, OnModuleDestroy {
             host: configService.get('REDIS_HOST') || 'localhost',
             port: configService.get<number>('REDIS_PORT') || 6379,
         });
+
+        this.channel = configService.getOrThrow('SSE_CHANNEL')
     }
 
-    onModuleInit() {
-        this.subscriber.subscribe(this.CHANNEL);
+    async onModuleInit() {
+        await this.subscriber.psubscribe(this.channel);
 
-        this.subscriber.on('message', (channel, message) => {
-            if (channel !== this.CHANNEL) return;
+        this.subscriber.on('pmessage', (pattern, channel, message) => {
+            const userId = channel.substring(channel.lastIndexOf(':') + 1);
 
             try {
-                const payload: RedisSSEPayload = JSON.parse(message);
+                const payload = JSON.parse(message);
 
                 this.sseRepository.sendEvent(
-                    payload.userId,
-                    payload.event,
+                    userId,
+                    payload.meta.event,
                     payload.data
                 );
             } catch {
