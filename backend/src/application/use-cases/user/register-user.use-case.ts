@@ -1,12 +1,15 @@
 import { ConflictException } from 'src/domain/exceptions';
-import * as bcrypt from 'bcryptjs';
 import { randomUUID } from 'crypto';
 import { CreateUserInput } from 'src/application/models/input/create-user.input';
 import { User } from 'src/domain/entities/user.entity';
 import { UserRepository } from 'src/domain/repositories/user.repository';
+import { HashRepository } from 'src/domain/repositories/hash.repository';
 
 export class RegisterUserUseCase {
-  constructor(private userRepository: UserRepository) {}
+  constructor(
+    private userRepository: UserRepository,
+    private hashRepository: HashRepository,
+  ) {}
 
   async execute(body: CreateUserInput) {
     const user = await this.userRepository.findByEmail(body.email);
@@ -15,7 +18,7 @@ export class RegisterUserUseCase {
       throw new ConflictException('Não foi possível criar o usuário');
     }
 
-    const hashedPassword = await bcrypt.hash(body.password, 10);
+    const hashedPassword = await this.hashRepository.hash(body.password);
 
     await this.userRepository.create(
       new User(randomUUID(), body.name, body.email, null, hashedPassword),

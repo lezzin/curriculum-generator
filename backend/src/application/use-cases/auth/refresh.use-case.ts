@@ -2,12 +2,13 @@ import { UnauthorizedException } from 'src/domain/exceptions';
 import { RefreshInput } from 'src/application/models/input/refresh.input';
 import { UserRepository } from 'src/domain/repositories/user.repository';
 import { JwtAdapter } from 'src/infrastructure/auth/jwt.service';
-import * as bcrypt from 'bcryptjs';
+import { HashRepository } from 'src/domain/repositories/hash.repository';
 
 export class RefreshUseCase {
   constructor(
     private readonly userRepository: UserRepository,
     private readonly jwtService: JwtAdapter,
+    private readonly hashRepository: HashRepository,
   ) {}
 
   async execute(body: RefreshInput) {
@@ -27,7 +28,7 @@ export class RefreshUseCase {
       throw new UnauthorizedException('Refresh token não cadastrado');
     }
 
-    const refreshTokenMatch = await bcrypt.compare(
+    const refreshTokenMatch = await this.hashRepository.compare(
       body.refresh_token,
       user.refreshToken,
     );
@@ -48,7 +49,7 @@ export class RefreshUseCase {
       type: 'refresh_token',
     });
 
-    user.refreshToken = await bcrypt.hash(newRefreshToken, 10);
+    user.refreshToken = await this.hashRepository.hash(newRefreshToken);
     await this.userRepository.update(user);
 
     return {

@@ -1,13 +1,14 @@
 import { UnauthorizedException } from 'src/domain/exceptions';
-import * as bcrypt from 'bcryptjs';
 import { LoginInput } from 'src/application/models/input/login.input';
 import { UserRepository } from 'src/domain/repositories/user.repository';
 import { JwtAdapter } from 'src/infrastructure/auth/jwt.service';
+import { HashRepository } from 'src/domain/repositories/hash.repository';
 
 export class LoginUseCase {
   constructor(
     private userRepository: UserRepository,
     private jwtService: JwtAdapter,
+    private hashRepository: HashRepository,
   ) {}
 
   async execute(body: LoginInput) {
@@ -23,7 +24,10 @@ export class LoginUseCase {
       );
     }
 
-    const passwordMatch = await bcrypt.compare(body.password, user.password);
+    const passwordMatch = await this.hashRepository.compare(
+      body.password,
+      user.password,
+    );
 
     if (!passwordMatch) {
       throw new UnauthorizedException('Credenciais inválidas');
@@ -41,7 +45,7 @@ export class LoginUseCase {
       type: 'refresh_token',
     });
 
-    user.refreshToken = await bcrypt.hash(refreshToken, 10);
+    user.refreshToken = await this.hashRepository.hash(refreshToken);
     await this.userRepository.update(user);
 
     return {

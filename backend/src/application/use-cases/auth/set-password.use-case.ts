@@ -1,10 +1,13 @@
 import { BadRequestException } from 'src/domain/exceptions';
-import * as bcrypt from 'bcryptjs';
 import { SetPasswordInput } from 'src/application/models/input/set-password.input';
 import { UserRepository } from 'src/domain/repositories/user.repository';
+import { HashRepository } from 'src/domain/repositories/hash.repository';
 
 export class SetPasswordUseCase {
-  constructor(private readonly userRepository: UserRepository) {}
+  constructor(
+    private readonly userRepository: UserRepository,
+    private readonly hashRepository: HashRepository,
+  ) {}
 
   async execute(body: SetPasswordInput) {
     const user = await this.userRepository.findById(body.userId);
@@ -17,7 +20,7 @@ export class SetPasswordUseCase {
       throw new BadRequestException('Usuário já possui senha definida');
     }
 
-    user.password = await bcrypt.hash(body.password, 10);
+    user.password = await this.hashRepository.hash(body.password);
     await this.userRepository.update(user);
   }
 }

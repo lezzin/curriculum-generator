@@ -14,29 +14,37 @@ import { GoogleStrategy } from 'src/infrastructure/auth/strategies/google.strate
 import { GithubStrategy } from 'src/infrastructure/auth/strategies/github.strategy';
 import { RefreshUseCase } from 'src/application/use-cases/auth/refresh.use-case';
 import { SetPasswordUseCase } from 'src/application/use-cases/auth/set-password.use-case';
+import { HashRepository } from 'src/domain/repositories/hash.repository';
 
 @Module({
   imports: [UserModule, JwtModule.register({})],
   controllers: [AuthController],
   providers: [
-    LoginUseCase,
     JwtAdapter,
     JwtStrategy,
     GoogleStrategy,
     GithubStrategy,
     {
       provide: LoginUseCase,
-      useFactory: (userRepository: UserRepository, jwtAdapter: JwtAdapter) => {
-        return new LoginUseCase(userRepository, jwtAdapter);
+      useFactory: (
+        userRepository: UserRepository,
+        jwtAdapter: JwtAdapter,
+        hashRepository: HashRepository,
+      ) => {
+        return new LoginUseCase(userRepository, jwtAdapter, hashRepository);
       },
-      inject: [UserRepository, JwtAdapter],
+      inject: [UserRepository, JwtAdapter, HashRepository],
     },
     {
       provide: RefreshUseCase,
-      useFactory: (userRepository: UserRepository, jwtAdapter: JwtAdapter) => {
-        return new RefreshUseCase(userRepository, jwtAdapter);
+      useFactory: (
+        userRepository: UserRepository,
+        jwtAdapter: JwtAdapter,
+        hashRepository: HashRepository,
+      ) => {
+        return new RefreshUseCase(userRepository, jwtAdapter, hashRepository);
       },
-      inject: [UserRepository, JwtAdapter],
+      inject: [UserRepository, JwtAdapter, HashRepository],
     },
     {
       provide: SocialLoginUseCase,
@@ -55,10 +63,13 @@ import { SetPasswordUseCase } from 'src/application/use-cases/auth/set-password.
     },
     {
       provide: SetPasswordUseCase,
-      useFactory: (userRepository: UserRepository) => {
-        return new SetPasswordUseCase(userRepository);
+      useFactory: (
+        userRepository: UserRepository,
+        hashRepository: HashRepository,
+      ) => {
+        return new SetPasswordUseCase(userRepository, hashRepository);
       },
-      inject: [UserRepository],
+      inject: [UserRepository, HashRepository],
     },
   ],
 })
