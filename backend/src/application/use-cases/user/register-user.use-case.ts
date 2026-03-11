@@ -1,4 +1,4 @@
-import { ConflictException } from '@nestjs/common';
+import { ConflictException } from 'src/domain/exceptions';
 import * as bcrypt from 'bcryptjs';
 import { randomUUID } from 'crypto';
 import { CreateUserInput } from 'src/application/models/input/create-user.input';

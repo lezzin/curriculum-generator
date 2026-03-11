@@ -1,4 +1,4 @@
-import { UnauthorizedException } from '@nestjs/common';
+import { UnauthorizedException } from 'src/domain/exceptions';
 import * as bcrypt from 'bcryptjs';
 import { LoginInput } from 'src/application/models/input/login.input';
 import { UserRepository } from 'src/domain/repositories/user.repository';

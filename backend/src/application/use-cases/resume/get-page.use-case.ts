@@ -1,5 +1,5 @@
-import { NotFoundException } from '@nestjs/common';
 import { GetPageInput } from 'src/application/models/input/get-page.input';
+import { NotFoundException } from 'src/domain/exceptions';
 import { ResumeRepository } from 'src/domain/repositories/resume.repository';
 import { UserConfigRepository } from 'src/domain/repositories/user-config.repository';
 import { UserRepository } from 'src/domain/repositories/user.repository';
@@ -16,7 +16,7 @@ export class GetPageUseCase {
   async execute(body: GetPageInput) {
     const resume = await this.resumeRepository.findById(body.id);
     if (!resume) {
-      return new NotFoundException('Currículo não encontrado!');
+      throw new NotFoundException('Currículo não encontrado!');
     }
 
     if (body?.template) {
@@ -25,7 +25,7 @@ export class GetPageUseCase {
 
     const user = await this.userRepository.findById(resume.userId);
     if (!user) {
-      return new NotFoundException('Usuário não encontrado!');
+      throw new NotFoundException('Usuário não encontrado!');
     }
 
     const userConfig = await this.userConfigRepository.findByUserId(

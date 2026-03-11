@@ -1,4 +1,4 @@
-import { BadRequestException } from '@nestjs/common';
+import { BadRequestException } from 'src/domain/exceptions';
 import * as bcrypt from 'bcryptjs';
 import { SetPasswordInput } from 'src/application/models/input/set-password.input';
 import { UserRepository } from 'src/domain/repositories/user.repository';

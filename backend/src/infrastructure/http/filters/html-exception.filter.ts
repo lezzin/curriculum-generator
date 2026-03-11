@@ -9,6 +9,14 @@ import { Request, Response } from 'express';
 import * as fs from 'fs';
 import * as path from 'path';
 import * as Handlebars from 'handlebars';
+import {
+  BadRequestException,
+  ConflictException,
+  DomainException,
+  ForbiddenException,
+  NotFoundException,
+  UnauthorizedException,
+} from 'src/domain/exceptions';
 
 @Catch()
 export class HtmlExceptionFilter implements ExceptionFilter {
@@ -24,6 +32,15 @@ export class HtmlExceptionFilter implements ExceptionFilter {
         return response
           .status(exception.getStatus())
           .json(exception.getResponse());
+      }
+
+      if (exception instanceof DomainException) {
+        const status = this.getDomainStatus(exception);
+        return response.status(status).json({
+          statusCode: status,
+          message: exception.message,
+          error: exception.name,
+        });
       }
 
       return response
@@ -46,6 +63,10 @@ export class HtmlExceptionFilter implements ExceptionFilter {
         message = exceptionResponse?.message || message;
         description = exceptionResponse?.error;
       }
+    } else if (exception instanceof DomainException) {
+      status = this.getDomainStatus(exception);
+      message = exception.message;
+      description = exception.name;
     }
 
     try {
@@ -73,5 +94,20 @@ export class HtmlExceptionFilter implements ExceptionFilter {
         .type('text/html')
         .send(`<h1>500</h1><p>Erro ao renderizar página de erro</p>`);
     }
+  }
+
+  private getDomainStatus(exception: DomainException): number {
+    if (exception instanceof NotFoundException) {
+      return HttpStatus.NOT_FOUND;
+    } else if (exception instanceof UnauthorizedException) {
+      return HttpStatus.UNAUTHORIZED;
+    } else if (exception instanceof ConflictException) {
+      return HttpStatus.CONFLICT;
+    } else if (exception instanceof BadRequestException) {
+      return HttpStatus.BAD_REQUEST;
+    } else if (exception instanceof ForbiddenException) {
+      return HttpStatus.FORBIDDEN;
+    }
+    return HttpStatus.INTERNAL_SERVER_ERROR;
   }
 }

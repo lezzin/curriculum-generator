@@ -1,4 +1,4 @@
-import { NotFoundException } from '@nestjs/common';
+import { NotFoundException } from 'src/domain/exceptions';
 import { ResumeDocumentService } from 'src/infrastructure/services/resume-document.service';
 
 export class GetPdfUseCase {

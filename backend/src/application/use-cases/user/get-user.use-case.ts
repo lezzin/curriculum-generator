@@ -1,5 +1,6 @@
 import { GetUserInput } from 'src/application/models/input/get-user.input';
 import { GetUserOutput } from 'src/application/models/output/get-user.output';
+import { NotFoundException } from 'src/domain/exceptions';
 import { UserRepository } from 'src/domain/repositories/user.repository';
 
 export class GetUserUseCase {
@@ -9,7 +10,7 @@ export class GetUserUseCase {
     const user = await this.userRepository.findById(body.userId);
 
     if (!user) {
-      throw new Error('User not found');
+      throw new NotFoundException('User not found');
     }
 
     return {
