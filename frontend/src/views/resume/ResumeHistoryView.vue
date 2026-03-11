@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { onMounted, onUnmounted } from 'vue';
+import { onMounted } from 'vue';
 import { usePaginated } from '../../composables/usePaginated';
 import ResumePreview from '../../components/resume/ResumePreview.vue';
 import AppTitle from '../../components/layout/AppTitle.vue';
 import { useAuthStore } from '../../stores/auth';
-import { sseService } from '../../services/sse.service';
+import { useSSE } from '../../composables/useSSE';
 import type { Resume } from '../../interfaces/resume.interfaces';
 import BasePagination from '../../components/ui/BasePagination.vue';
 import ResumePreviewSkeleton from '../../components/resume/ResumePreviewSkeleton.vue';
@@ -26,13 +26,10 @@ function handleResumeGenerated(data: Resume) {
   prepend(data, (item) => item.id);
 }
 
+useSSE('resume-generated', handleResumeGenerated);
+
 onMounted(async () => {
   await fetch((item) => item.id);
-  sseService.on('resume-generated', handleResumeGenerated);
-});
-
-onUnmounted(() => {
-  sseService.off('resume-generated', handleResumeGenerated);
 });
 
 function removeFromList(id: string) {

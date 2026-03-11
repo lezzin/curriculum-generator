@@ -8,6 +8,7 @@ import RotateArrow from '../icon/RotateArrow.vue';
 import BaseDropdown from '../ui/BaseDropdown.vue';
 import { useToast } from '../../composables/useToast';
 import { useApi } from '../../composables/api/useApi';
+import { useToggleText } from '../../composables/useToggleText';
 import ConfirmModal from '../ui/modal/ConfirmModal.vue';
 import PdfIcon from '../icon/PdfIcon.vue';
 import TrashIcon from '../icon/TrashIcon.vue';
@@ -24,33 +25,16 @@ interface Emits {
 const props = defineProps<Props>();
 const emit = defineEmits<Emits>();
 
-const isOpen = ref(false);
-const shouldToggle = ref(false);
-const resume = computed(() => props.resume);
-
 const { show } = useToast();
 const { request, loading, apiUrl } = useApi();
+const { isOpen, shouldToggle, displayText, toggle } = useToggleText(props.resume?.prompt);
+
+const resume = computed(() => props.resume);
 const templateTypes = computed(() => Object.values(BASE_TEMPLATE_TYPES));
 
 const pdfUrl = computed(() => `${apiUrl}/resume/pdf/${props.resume.id}`)
 const pageUrl = computed(() => `${apiUrl}/resume/page/${props.resume.id}`)
 const showConfirmModal = ref(false);
-
-function togglePrompt() {
-  isOpen.value = !isOpen.value;
-}
-
-const shortPrompt = computed(() => {
-  const prompt = resume.value.prompt ?? '';
-
-  if (prompt.length > 120) {
-    shouldToggle.value = true;
-    return prompt.slice(0, 120);
-  }
-
-  shouldToggle.value = false;
-  return prompt;
-});
 
 const goToPdfUrl = async () => {
   if (!pdfUrl.value) return;
@@ -80,7 +64,7 @@ const removeResume = async () => {
 
 <template>
   <div class="group border rounded-2xl px-5 pb-5 bg-white shadow-sm hover:shadow-md transition-all duration-200"
-    @click="togglePrompt" :class="shouldToggle && 'cursor-pointer'">
+    @click="toggle" :class="shouldToggle && 'cursor-pointer'">
     <div class="py-4 flex justify-between items-center gap-4">
       <small class="text-gray-500">Criado em: {{ toHumanReadableDate(resume.createdAt ?? '') }}</small>
 
@@ -88,10 +72,10 @@ const removeResume = async () => {
         <RotateArrow :rotate="isOpen" v-if="shouldToggle" />
 
         <BaseDropdown>
-          <template #trigger="{ toggle, isOpen }">
-            <BaseButton @click.stop="toggle" aria-haspopup="true" :aria-expanded="isOpen" size="sm" variant="outline">
+          <template #trigger="{ toggle: toggleDropdown, isOpen: isDropdownOpen }">
+            <BaseButton @click.stop="toggleDropdown" aria-haspopup="true" :aria-expanded="isDropdownOpen" size="sm" variant="outline">
               <HtmlIcon />
-              <RotateArrow :rotate="isOpen" />
+              <RotateArrow :rotate="isDropdownOpen" />
             </BaseButton>
           </template>
 
@@ -114,7 +98,7 @@ const removeResume = async () => {
     </div>
 
     <CardContainer variant="text">
-      {{ isOpen ? resume.prompt : shortPrompt }}
+      {{ displayText }}
     </CardContainer>
   </div>
 

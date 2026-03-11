@@ -5,6 +5,8 @@ import { useToast } from '../../composables/useToast';
 import BaseButton from '../../components/ui/BaseButton.vue';
 import InputField from '../../components/ui/form/InputField.vue';
 import TextAreaField from '../../components/ui/form/TextAreaField.vue';
+import ExperienceFields from '../../components/ui/form/ExperienceFields.vue';
+import ProjectFields from '../../components/ui/form/ProjectFields.vue';
 import BaseModal from '../ui/modal/BaseModal.vue';
 import { useForm, useFieldArray } from 'vee-validate';
 import { baseDataSchema, INITIAL_VALUES, type BaseDataForm } from '../../validation/schemas/base-data.schema';
@@ -162,39 +164,30 @@ const modalTitle = `Editar Base de ${props.type === 'resume' ? 'Currículo' : 'P
 
 <template>
   <BaseModal :isOpen="isOpen" :title="modalTitle" size="xl" @close="handleClose">
-    <form @submit.prevent="save" id="save-base-data-form" class="space-y-4">
-      <TextAreaField name="summary" label="Resumo Profissional" placeholder="3-4 linhas, resultados, tecnologias" />
-      <InputField name="skillsString" label="Skills" placeholder="Node.js, NestJS, PostgreSQL" />
-
-      <div v-for="(field, i) in experienceFields" :key="field.key" class="border p-4 rounded-md space-y-2">
-        <h3 class="font-semibold">Experiência {{ i + 1 }}</h3>
-
-        <InputField :name="`experiences[${i}].title`" label="Cargo" />
-        <InputField :name="`experiences[${i}].company`" label="Empresa" />
-        <InputField :name="`experiences[${i}].period`" label="Período" />
-
-        <TextAreaField :name="`experiences[${i}].responsibilitiesString`" label="Responsabilidades" />
-
-        <InputField :name="`experiences[${i}].technologiesString`" label="Tecnologias" />
-
-        <BaseButton type="button" variant="ghost" @click="removeExperience(i)"> Remover </BaseButton>
+    <form @submit.prevent="save" id="save-base-data-form" class="space-y-6">
+      <div class="space-y-4">
+        <h2 class="text-lg font-bold border-b pb-2">Informações Gerais</h2>
+        <TextAreaField name="summary" label="Resumo Profissional" placeholder="3-4 linhas, resultados, tecnologias" />
+        <InputField name="skillsString" label="Skills" placeholder="Node.js, NestJS, PostgreSQL" />
       </div>
 
-      <BaseButton type="button" variant="ghost" @click="pushExperience(newExperience())">
-        + Adicionar Experiência
-      </BaseButton>
-
-      <div v-for="(field, i) in projectFields" :key="field.key" class="border p-4 rounded-md space-y-2">
-        <InputField :name="`projects[${i}].name`" label="Nome do projeto" />
-
-        <TextAreaField :name="`projects[${i}].highlightsString`" label="Destaques" />
-
-        <InputField :name="`projects[${i}].technologiesString`" label="Tecnologias" />
-
-        <BaseButton type="button" variant="ghost" @click="removeProject(i)"> Remover </BaseButton>
+      <div class="space-y-4">
+        <h2 class="text-lg font-bold border-b pb-2">Experiências Profissionais</h2>
+        <ExperienceFields
+          :fields="experienceFields"
+          :on-add="() => pushExperience(newExperience())"
+          :on-remove="removeExperience"
+        />
       </div>
 
-      <BaseButton type="button" variant="ghost" @click="pushProject(newProject())"> + Adicionar Projeto </BaseButton>
+      <div class="space-y-4">
+        <h2 class="text-lg font-bold border-b pb-2">Projetos em Destaque</h2>
+        <ProjectFields
+          :fields="projectFields"
+          :on-add="() => pushProject(newProject())"
+          :on-remove="removeProject"
+        />
+      </div>
     </form>
 
     <template #footer>

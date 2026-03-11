@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, reactive, onMounted, watch, onUnmounted } from 'vue'
+import { ref, reactive, onMounted, watch } from 'vue'
 import { useToast } from '../../composables/useToast'
 import { useForm } from 'vee-validate'
 import { reportSchema, type ReportForm } from '../../validation/schemas/report.schema'
@@ -12,7 +12,7 @@ import ReportPagination, { type Meta } from '../../components/report/ReportPagin
 import { useAuthStore } from '../../stores/auth'
 import { storeToRefs } from 'pinia'
 import { useReportApi } from '../../composables/api/useReportApi'
-import { sseService } from '../../services/sse.service'
+import { useSSE } from '../../composables/useSSE'
 
 const { user } = storeToRefs(useAuthStore())
 const { loading, request } = useReportApi()
@@ -85,15 +85,11 @@ const handleProgress = (data: any) => {
     )
 };
 
+useSSE('progress', handleProgress);
+useSSE('progress-finished', handleProgress);
+
 onMounted(async () => {
     await fetchReport();
-    sseService.on('progress', handleProgress);
-    sseService.on('progress-finished', handleProgress);
-});
-
-onUnmounted(() => {
-    sseService.off('progress', handleProgress);
-    sseService.off('progress-finished', handleProgress);
 });
 </script>
 

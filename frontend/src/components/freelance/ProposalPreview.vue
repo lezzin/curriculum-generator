@@ -6,6 +6,7 @@ import { toHumanReadableDate } from '../../helper/string.helper';
 import CardContainer from '../ui/card/CardContainer.vue';
 import { useToast } from '../../composables/useToast';
 import { useApi } from '../../composables/api/useApi';
+import { useToggleText } from '../../composables/useToggleText';
 import ConfirmModal from '../ui/modal/ConfirmModal.vue';
 import CopyIcon from '../icon/CopyIcon.vue';
 import TrashIcon from '../icon/TrashIcon.vue';
@@ -23,36 +24,9 @@ const emit = defineEmits<Emits>();
 
 const { show } = useToast();
 const { request, loading } = useApi();
+const { displayText, toggle } = useToggleText(props.proposal?.prompt);
 
-const editableText = ref('');
-const isOpen = ref(false);
 const showConfirmModal = ref(false);
-
-const formattedProposal = computed(() => {
-  if (!props.proposal) return '';
-
-  return `${props.proposal.message}
-
-Investimento: R$ ${props.proposal.bidAmount}
-Prazo estimado: ${props.proposal.deliveryDays} dias
-
-Portfólio:
-https://leandroadrian.vercel.app`;
-});
-
-const shortPrompt = computed(() => {
-  const prompt = props.proposal?.prompt ?? '';
-  if (!prompt) return '';
-  return prompt.length > 120 ? `${prompt.slice(0, 120)}...` : prompt;
-});
-
-watchEffect(() => {
-  editableText.value = formattedProposal.value;
-});
-
-function togglePrompt() {
-  isOpen.value = !isOpen.value;
-}
 
 const removeProposal = async () => {
   const { error } = await request('post', '/freelance/proposal/remove', {
@@ -69,10 +43,10 @@ const removeProposal = async () => {
 };
 
 async function copyProposal() {
-  if (!editableText.value) return;
+  if (!props.proposal.message) return;
 
   try {
-    await navigator.clipboard.writeText(editableText.value);
+    await navigator.clipboard.writeText(props.proposal.message);
     show({ message: 'Copiado com sucesso!', duration: 1500 });
   } catch (error) {
     console.error('Erro ao copiar:', error);
@@ -104,15 +78,15 @@ async function copyProposal() {
     <div class="space-y-1">
       <label class="text-sm font-medium text-zinc-700"> Solicitação </label>
 
-      <CardContainer variant="text" @click="togglePrompt" size="sm">
-        {{ isOpen ? proposal.prompt : shortPrompt }}
+      <CardContainer variant="text" @click="toggle" size="sm">
+        {{ displayText }}
       </CardContainer>
     </div>
 
     <div class="space-y-1">
       <label class="text-sm font-medium text-zinc-700"> Proposta </label>
 
-      <textarea v-model="editableText" rows="8"
+      <textarea v-model="proposal.message" rows="8"
         class="w-full resize-none text-sm leading-relaxed rounded-xl p-4 bg-zinc-50 text-zinc-700 border border-zinc-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all duration-300" />
     </div>
   </div>

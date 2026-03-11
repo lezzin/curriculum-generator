@@ -29,28 +29,29 @@ const containerClasses = computed(() => [
   'bg-gray-900',
   'text-white',
   'font-semibold',
+  'relative',
   sizeMap[props.size].container,
   sizeMap[props.size].text,
 ]);
 
 const altText = computed(() => `Foto de perfil de ${props.user?.name ?? 'usuário'}`);
-
 const firstLetter = computed(() => getFirstLetter(props.user?.name ?? ''));
-
 const imageLoaded = ref(false);
-
-function onImageLoad() {
-  imageLoaded.value = true;
-}
 </script>
 
 <template>
   <div :class="containerClasses">
-    <img v-if="user.picture && imageLoaded" :src="user.picture" :alt="altText" class="w-full h-full object-cover" />
-    <span v-else>
+    <span v-if="!imageLoaded">
       {{ firstLetter }}
     </span>
 
-    <img v-if="user.picture && !imageLoaded" :src="user.picture" @load="onImageLoad" class="hidden" />
+    <img
+      v-if="user.picture"
+      :src="user.picture"
+      :alt="altText"
+      @load="imageLoaded = true"
+      class="absolute inset-0 w-full h-full object-cover transition-opacity duration-300"
+      :class="imageLoaded ? 'opacity-100' : 'opacity-0'"
+    />
   </div>
 </template>

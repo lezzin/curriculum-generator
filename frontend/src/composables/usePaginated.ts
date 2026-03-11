@@ -3,10 +3,10 @@ import type { PaginatedResult } from '../interfaces/paginate.interfaces';
 import { useApi } from './api/useApi';
 import { useToast } from './useToast';
 
-const { request } = useApi();
-const { show } = useToast();
-
 export function usePaginated<T>(endpoint: string, pageSize = 10) {
+    const { request } = useApi();
+    const { show } = useToast();
+
     const items = shallowRef<T[]>([]);
     const total = ref(0);
     const page = ref(1);

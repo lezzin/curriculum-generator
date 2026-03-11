@@ -1,4 +1,6 @@
-export function toHumanReadableDate(date: Date): string {
+export function toHumanReadableDate(date: Date | string): string {
+  if (!date) return '-';
+  
   const options: Intl.DateTimeFormatOptions = {
     year: 'numeric',
     month: 'long',
