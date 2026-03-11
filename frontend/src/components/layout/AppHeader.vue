@@ -56,6 +56,13 @@ const menus: Menu[] = [
 ];
 
 const isMenuOpen = ref(false)
+
+const isMenuActive = (menu: Menu) => {
+  return menu.items.some(item => {
+    const routeName = (item.to as any).name;
+    return router.currentRoute.value.name === routeName;
+  });
+};
 </script>
 
 <template>
@@ -69,21 +76,38 @@ const isMenuOpen = ref(false)
       <nav
         class="flex flex-col md:flex-row py-16 md:py-0 gap-8 md:gap-0 items-center justify-between text-sm font-medium md:h-[inherit]">
         <div class="flex items-center flex-col md:flex-row gap-8">
-          <router-link :to="{ name: 'Home' }" class="text-gray-600 hover:text-black transition"> Início </router-link>
+          <router-link
+            :to="{ name: 'Home' }"
+            class="nav-link"
+            active-class="nav-link-active"
+          >
+            Início
+          </router-link>
 
           <div v-if="authStore.user?.id" class="flex flex-col md:flex-row items-center gap-8">
             <BaseDropdown v-for="menu in menus" :key="menu.label">
               <template #trigger="{ toggle, isOpen }">
-                <button @click="toggle" class="flex items-center gap-1 text-gray-600 hover:text-black transition"
-                  aria-haspopup="true" :aria-expanded="isOpen">
+                <button
+                  @click="toggle"
+                  class="flex items-center gap-1 nav-link"
+                  :class="{ 'text-black font-semibold': isMenuActive(menu) }"
+                  aria-haspopup="true"
+                  :aria-expanded="isOpen"
+                >
                   {{ menu.label }}
                   <RotateArrow :rotate="isOpen" />
                 </button>
               </template>
 
               <template #default="{ close }">
-                <router-link v-for="item in menu.items" :key="item.label" :to="item.to" @click="close"
-                  class="dropdown-item">
+                <router-link
+                  v-for="item in menu.items"
+                  :key="item.label"
+                  :to="item.to"
+                  @click="close"
+                  class="dropdown-item"
+                  active-class="dropdown-item-active"
+                >
                   {{ item.label }}
                 </router-link>
               </template>
@@ -127,7 +151,19 @@ const isMenuOpen = ref(false)
 </template>
 
 <style scoped lang="postcss">
+.nav-link {
+  @apply text-gray-600 hover:text-black transition-colors duration-200;
+}
+
+.nav-link-active {
+  @apply text-black font-semibold;
+}
+
 .dropdown-item {
-  @apply block px-4 py-2 text-gray-600 hover:bg-gray-100 hover:text-black transition;
+  @apply block px-4 py-2 text-gray-600 hover:bg-gray-100 hover:text-black transition-colors duration-200;
+}
+
+.dropdown-item-active {
+  @apply bg-gray-50 text-black font-medium border-l-4 border-black;
 }
 </style>

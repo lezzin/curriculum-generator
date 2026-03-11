@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, onBeforeUnmount } from 'vue';
+import { onBeforeUnmount, ref, watch, nextTick } from 'vue';
 import CloseIcon from '../../icon/CloseIcon.vue';
 
 interface Props {
@@ -20,6 +20,8 @@ const props = withDefaults(defineProps<Props>(), {
 });
 
 const emit = defineEmits<Emits>();
+const modalRef = ref<HTMLElement | null>(null);
+const previouslyFocusedElement = ref<HTMLElement | null>(null);
 
 const close = () => {
   if (props.persistent) return;
@@ -31,12 +33,48 @@ const handleEsc = (e: KeyboardEvent) => {
   if (e.key === 'Escape') close();
 };
 
-onMounted(() => {
-  window.addEventListener('keydown', handleEsc);
+const trapFocus = (e: KeyboardEvent) => {
+  if (e.key !== 'Tab' || !modalRef.value) return;
+
+  const focusableElements = modalRef.value.querySelectorAll<HTMLElement>(
+    'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+  );
+  const firstElement = focusableElements[0];
+  const lastElement = focusableElements[focusableElements.length - 1];
+
+  if (e.shiftKey) {
+    if (document.activeElement === firstElement) {
+      lastElement?.focus();
+      e.preventDefault();
+    }
+  } else {
+    if (document.activeElement === lastElement) {
+      firstElement?.focus();
+      e.preventDefault();
+    }
+  }
+};
+
+watch(() => props.isOpen, async (open) => {
+  if (open) {
+    previouslyFocusedElement.value = document.activeElement as HTMLElement;
+    window.addEventListener('keydown', handleEsc);
+    window.addEventListener('keydown', trapFocus);
+    await nextTick();
+    modalRef.value?.querySelector<HTMLElement>('button, input, [tabindex]')?.focus();
+    document.body.style.overflow = 'hidden';
+  } else {
+    window.removeEventListener('keydown', handleEsc);
+    window.removeEventListener('keydown', trapFocus);
+    previouslyFocusedElement.value?.focus();
+    document.body.style.overflow = '';
+  }
 });
 
 onBeforeUnmount(() => {
   window.removeEventListener('keydown', handleEsc);
+  window.removeEventListener('keydown', trapFocus);
+  document.body.style.overflow = '';
 });
 
 const sizeClasses = {
@@ -50,20 +88,21 @@ const sizeClasses = {
 <template>
   <Teleport to="body">
     <Transition name="fade">
-      <div v-if="isOpen" class="fixed inset-0 z-50 flex items-center justify-center">
-        <div class="absolute inset-0 bg-black/40" @click="close" />
+      <div v-if="isOpen" class="fixed inset-0 z-50 flex items-center justify-center p-4">
+        <div class="absolute inset-0 bg-black/40 backdrop-blur-sm" @click="close" />
 
         <Transition name="scale">
-          <div
-            class="relative bg-white rounded-2xl shadow-2xl w-full mx-4 max-h-[90vh] overflow-hidden flex flex-col"
-            :class="sizeClasses[size]"
-          >
+          <div ref="modalRef"
+            class="relative bg-white rounded-2xl shadow-2xl w-full max-h-[90vh] overflow-hidden flex flex-col"
+            :class="sizeClasses[size]" role="dialog" aria-modal="true"
+            :aria-labelledby="title ? 'modal-title' : undefined">
             <div v-if="title" class="flex items-center justify-between px-6 py-4 border-b">
-              <h2 class="text-lg font-semibold">
+              <h2 id="modal-title" class="text-lg font-semibold">
                 {{ title }}
               </h2>
 
-              <button class="text-gray-500 hover:text-gray-800 transition" @click="close">
+              <button class="p-2 -mr-2 text-gray-500 hover:text-gray-800 hover:bg-gray-100 rounded-full transition"
+                @click="close" aria-label="Fechar modal">
                 <CloseIcon />
               </button>
             </div>
