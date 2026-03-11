@@ -23,7 +23,7 @@ export class BaseDataController {
     private readonly upsertBaseDataUseCase: UpsertBaseDataUseCase,
     private readonly removeBaseDataUseCase: RemoveBaseDataUseCase,
     private readonly getAllBaseDataUseCase: GetAllBaseDataUseCase,
-  ) { }
+  ) {}
 
   @Post('upsert')
   @HttpCode(HttpStatus.NO_CONTENT)

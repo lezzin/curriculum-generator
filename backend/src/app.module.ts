@@ -40,4 +40,4 @@ import { AdminModule } from './modules/admin.module';
     InfrastructureCacheModule,
   ],
 })
-export class AppModule { }
+export class AppModule {}

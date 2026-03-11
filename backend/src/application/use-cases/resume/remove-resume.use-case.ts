@@ -8,7 +8,7 @@ export class RemoveResumeUseCase {
     private readonly resumeRepository: ResumeRepository,
     private readonly resumeDocumentService: ResumeDocumentService,
     private readonly cache: CacheRepository,
-  ) { }
+  ) {}
 
   async execute(body: RemoveResumeInput) {
     await this.resumeRepository.remove(body.resumeId);

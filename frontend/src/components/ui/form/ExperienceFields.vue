@@ -27,10 +27,14 @@ defineProps<{
       <InputField :name="`experiences[${i}].title`" label="Cargo" placeholder="Ex: Desenvolvedor Senior" />
       <InputField :name="`experiences[${i}].company`" label="Empresa" placeholder="Ex: Google" />
     </div>
-    
+
     <InputField :name="`experiences[${i}].period`" label="Período" placeholder="Ex: Jan 2020 - Dez 2022" />
 
-    <TextAreaField :name="`experiences[${i}].responsibilitiesString`" label="Responsabilidades" placeholder="Uma por linha..." />
+    <TextAreaField
+      :name="`experiences[${i}].responsibilitiesString`"
+      label="Responsabilidades"
+      placeholder="Uma por linha..."
+    />
 
     <InputField :name="`experiences[${i}].technologiesString`" label="Tecnologias" placeholder="Node.js, Vue, etc." />
   </div>

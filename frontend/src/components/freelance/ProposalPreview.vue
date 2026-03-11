@@ -28,7 +28,7 @@ const { request, loading } = useApi();
 const { displayText, toggle } = useToggleText(props.proposal?.prompt);
 
 const showConfirmModal = ref(false);
-const isCopied = ref(false)
+const isCopied = ref(false);
 
 const removeProposal = async () => {
   const { error } = await request('post', '/freelance/proposal/remove', {
@@ -51,7 +51,7 @@ async function copyProposal() {
     await navigator.clipboard.writeText(props.proposal.message);
     show({ message: 'Copiado com sucesso!', duration: 1500 });
     isCopied.value = true;
-    setTimeout(() => isCopied.value = false, 2000);
+    setTimeout(() => (isCopied.value = false), 2000);
   } catch (error) {
     console.error('Erro ao copiar:', error);
     show({ message: 'Erro ao copiar', type: 'error' });
@@ -60,8 +60,10 @@ async function copyProposal() {
 </script>
 
 <template>
-  <div v-if="proposal"
-    class="rounded-2xl p-6 space-y-5 shadow-sm bg-white border border-zinc-200 transition-all duration-300">
+  <div
+    v-if="proposal"
+    class="rounded-2xl p-6 space-y-5 shadow-sm bg-white border border-zinc-200 transition-all duration-300"
+  >
     <div class="flex items-center justify-between">
       <small class="text-gray-500">
         Criado em:
@@ -69,8 +71,12 @@ async function copyProposal() {
       </small>
 
       <div class="flex items-center gap-3">
-        <BaseButton @click="copyProposal" variant="outline" size="sm"
-          :class="{ '!border-green-500 !text-green-600': isCopied }">
+        <BaseButton
+          @click="copyProposal"
+          variant="outline"
+          size="sm"
+          :class="{ '!border-green-500 !text-green-600': isCopied }"
+        >
           <SuccessIcon v-if="isCopied" />
           <CopyIcon v-else />
         </BaseButton>
@@ -92,8 +98,11 @@ async function copyProposal() {
     <div class="space-y-1">
       <label class="text-sm font-medium text-zinc-700"> Proposta </label>
 
-      <textarea v-model="proposal.message" rows="8"
-        class="w-full resize-none text-sm leading-relaxed rounded-xl p-4 bg-zinc-50 text-zinc-700 border border-zinc-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all duration-300" />
+      <textarea
+        v-model="proposal.message"
+        rows="8"
+        class="w-full resize-none text-sm leading-relaxed rounded-xl p-4 bg-zinc-50 text-zinc-700 border border-zinc-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all duration-300"
+      />
     </div>
   </div>
 

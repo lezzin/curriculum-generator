@@ -55,10 +55,10 @@ const menus: Menu[] = [
   },
 ];
 
-const isMenuOpen = ref(false)
+const isMenuOpen = ref(false);
 
 const isMenuActive = (menu: Menu) => {
-  return menu.items.some(item => {
+  return menu.items.some((item) => {
     const routeName = (item.to as any).name;
     return router.currentRoute.value.name === routeName;
   });
@@ -70,19 +70,16 @@ const isMenuActive = (menu: Menu) => {
     <ListIcon />
   </BaseButton>
 
-  <header :class="!isMenuOpen && isMobile ? 'hidden' : ''"
-    class="absolute bg-white/80 backdrop-blur-md border-b md:sticky top-0 z-40 h-screen w-2/3 md:w-auto md:h-[68px]">
+  <header
+    :class="!isMenuOpen && isMobile ? 'hidden' : ''"
+    class="absolute bg-white/80 backdrop-blur-md border-b md:sticky top-0 z-40 h-screen w-2/3 md:w-auto md:h-[68px]"
+  >
     <AppContainer class="py-2 h-full">
       <nav
-        class="flex flex-col md:flex-row py-16 md:py-0 gap-8 md:gap-0 items-center justify-between text-sm font-medium md:h-[inherit]">
+        class="flex flex-col md:flex-row py-16 md:py-0 gap-8 md:gap-0 items-center justify-between text-sm font-medium md:h-[inherit]"
+      >
         <div class="flex items-center flex-col md:flex-row gap-8">
-          <router-link
-            :to="{ name: 'Home' }"
-            class="nav-link"
-            active-class="nav-link-active"
-          >
-            Início
-          </router-link>
+          <router-link :to="{ name: 'Home' }" class="nav-link" active-class="nav-link-active"> Início </router-link>
 
           <div v-if="authStore.user?.id" class="flex flex-col md:flex-row items-center gap-8">
             <BaseDropdown v-for="menu in menus" :key="menu.label">
@@ -120,8 +117,12 @@ const isMenuActive = (menu: Menu) => {
 
           <BaseDropdown v-else>
             <template #trigger="{ toggle, isOpen }">
-              <button @click="toggle" class="flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-gray-100 transition"
-                aria-haspopup="true" :aria-expanded="isOpen">
+              <button
+                @click="toggle"
+                class="flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-gray-100 transition"
+                aria-haspopup="true"
+                :aria-expanded="isOpen"
+              >
                 <UserAvatar :user="authStore.user" size="sm" />
 
                 <div class="text-left hidden sm:block">
@@ -138,8 +139,10 @@ const isMenuActive = (menu: Menu) => {
             <template #default="{ close }">
               <router-link :to="{ name: 'Profile' }" @click="close" class="dropdown-item"> Meu Perfil </router-link>
 
-              <button @click="handleLogout(close)"
-                class="w-full text-left px-4 py-2 text-red-500 hover:bg-red-50 transition">
+              <button
+                @click="handleLogout(close)"
+                class="w-full text-left px-4 py-2 text-red-500 hover:bg-red-50 transition"
+              >
                 Sair da conta
               </button>
             </template>

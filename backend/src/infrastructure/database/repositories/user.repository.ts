@@ -12,7 +12,7 @@ export class TypeOrmUserRepository implements UserRepository {
   constructor(
     @InjectRepository(UserEntity)
     private ormRepo: Repository<UserEntity>,
-  ) { }
+  ) {}
 
   async create(user: User): Promise<User> {
     const entity = this.toOrmEntity(user);
@@ -67,7 +67,7 @@ export class TypeOrmUserRepository implements UserRepository {
       entity.picture,
       entity.password,
       entity.refreshToken,
-      entity.role
+      entity.role,
     );
 
     if (entity.providers) {

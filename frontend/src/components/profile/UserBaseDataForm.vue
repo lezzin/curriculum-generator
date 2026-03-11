@@ -182,11 +182,7 @@ const modalTitle = `Editar Base de ${props.type === 'resume' ? 'Currículo' : 'P
 
       <div class="space-y-4">
         <h2 class="text-lg font-bold border-b pb-2">Projetos em Destaque</h2>
-        <ProjectFields
-          :fields="projectFields"
-          :on-add="() => pushProject(newProject())"
-          :on-remove="removeProject"
-        />
+        <ProjectFields :fields="projectFields" :on-add="() => pushProject(newProject())" :on-remove="removeProject" />
       </div>
     </form>
 

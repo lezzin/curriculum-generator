@@ -37,6 +37,11 @@ import { BcryptAdapter } from 'src/infrastructure/auth/bcrypt.service';
       inject: [UserRepository],
     },
   ],
-  exports: [UserRepository, GetUserUseCase, RegisterUserUseCase, HashRepository],
+  exports: [
+    UserRepository,
+    GetUserUseCase,
+    RegisterUserUseCase,
+    HashRepository,
+  ],
 })
 export class UserModule {}

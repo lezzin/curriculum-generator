@@ -32,8 +32,8 @@ const { isOpen, shouldToggle, displayText, toggle } = useToggleText(props.resume
 const resume = computed(() => props.resume);
 const templateTypes = computed(() => Object.values(BASE_TEMPLATE_TYPES));
 
-const pdfUrl = computed(() => `${apiUrl}/resume/pdf/${props.resume.id}`)
-const pageUrl = computed(() => `${apiUrl}/resume/page/${props.resume.id}`)
+const pdfUrl = computed(() => `${apiUrl}/resume/pdf/${props.resume.id}`);
+const pageUrl = computed(() => `${apiUrl}/resume/page/${props.resume.id}`);
 const showConfirmModal = ref(false);
 
 const goToPdfUrl = async () => {
@@ -45,7 +45,6 @@ const goToPageUrl = async (template: BaseTemplateType, callable: () => void) => 
   window.open(`${pageUrl.value}/${template}`, '_blank');
   callable();
 };
-
 
 const removeResume = async () => {
   const { error } = await request('post', '/resume/remove', {
@@ -63,8 +62,11 @@ const removeResume = async () => {
 </script>
 
 <template>
-  <div class="group border rounded-2xl px-5 pb-5 bg-white shadow-sm hover:shadow-md transition-all duration-200"
-    @click="toggle" :class="shouldToggle && 'cursor-pointer'">
+  <div
+    class="group border rounded-2xl px-5 pb-5 bg-white shadow-sm hover:shadow-md transition-all duration-200"
+    @click="toggle"
+    :class="shouldToggle && 'cursor-pointer'"
+  >
     <div class="py-4 flex justify-between items-center gap-4">
       <small class="text-gray-500">Criado em: {{ toHumanReadableDate(resume.createdAt ?? '') }}</small>
 
@@ -73,15 +75,28 @@ const removeResume = async () => {
 
         <BaseDropdown>
           <template #trigger="{ toggle: toggleDropdown, isOpen: isDropdownOpen }">
-            <BaseButton @click.stop="toggleDropdown" aria-haspopup="true" :aria-expanded="isDropdownOpen" size="sm" variant="outline">
+            <BaseButton
+              @click.stop="toggleDropdown"
+              aria-haspopup="true"
+              :aria-expanded="isDropdownOpen"
+              size="sm"
+              variant="outline"
+            >
               <HtmlIcon />
               <RotateArrow :rotate="isDropdownOpen" />
             </BaseButton>
           </template>
 
           <template #default="{ close }">
-            <BaseButton v-for="type in templateTypes" :key="type" :value="type" @click.stop="goToPageUrl(type, close)"
-              size="sm" variant="ghost" class="dropdown-item">
+            <BaseButton
+              v-for="type in templateTypes"
+              :key="type"
+              :value="type"
+              @click.stop="goToPageUrl(type, close)"
+              size="sm"
+              variant="ghost"
+              class="dropdown-item"
+            >
               {{ capitalize(type) }}
             </BaseButton>
           </template>

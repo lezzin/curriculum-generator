@@ -24,7 +24,7 @@ export class ResumeGenerationUseCase {
     private readonly resumeDocumentService: ResumeDocumentService,
     private readonly sseRepository: SseRepository,
     private readonly cache: CacheRepository,
-  ) { }
+  ) {}
 
   async execute(body: GenerateResumeInput) {
     const { userId, jobDescription, options } = body;

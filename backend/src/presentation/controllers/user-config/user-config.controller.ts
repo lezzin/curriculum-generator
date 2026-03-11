@@ -19,7 +19,7 @@ export class UserConfigController {
   constructor(
     private readonly upsertUserConfigUseCase: UpsertUserConfigUseCase,
     private readonly getByUserIdUserConfigUseCase: GetByUserIdUserConfigUseCase,
-  ) { }
+  ) {}
 
   @Post('upsert')
   @HttpCode(HttpStatus.NO_CONTENT)

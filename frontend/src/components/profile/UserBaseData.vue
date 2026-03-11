@@ -64,17 +64,28 @@ onMounted(loadBaseData);
 </script>
 
 <template>
-  <UserBaseDataForm v-model:isOpen="isModalOpen" :type="editingType" :initialData="baseData[editingType]"
-    @saved="handleSaved" />
+  <UserBaseDataForm
+    v-model:isOpen="isModalOpen"
+    :type="editingType"
+    :initialData="baseData[editingType]"
+    @saved="handleSaved"
+  />
 
   <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-    <BaseDataCard title="Base de Informações para Currículos"
+    <BaseDataCard
+      title="Base de Informações para Currículos"
       description="Essas informações servirão como contexto principal para gerar seus currículos automaticamente."
-      :content="baseData.resume" @edit="openForm('resume')" @remove="removeBaseData('resume')" />
+      :content="baseData.resume"
+      @edit="openForm('resume')"
+      @remove="removeBaseData('resume')"
+    />
 
-    <BaseDataCard title="Base para Propostas Freelance"
+    <BaseDataCard
+      title="Base para Propostas Freelance"
       description="Utilizada como contexto para gerar propostas personalizadas para clientes."
-      :content="baseData['freelance-proposal']" @edit="openForm('freelance-proposal')"
-      @remove="removeBaseData('freelance-proposal')" />
+      :content="baseData['freelance-proposal']"
+      @edit="openForm('freelance-proposal')"
+      @remove="removeBaseData('freelance-proposal')"
+    />
   </div>
 </template>

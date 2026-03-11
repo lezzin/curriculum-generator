@@ -53,10 +53,22 @@ const loginProvider = (provider: 'github' | 'google') => {
     <form class="space-y-5" @submit.prevent="login">
       <AppTitle title="Bem-vindo de volta 👋" subtitle="Entre na sua conta para continuar" />
 
-      <InputField label="Email" name="email" type="email" autocomplete="email" :disabled="loading"
-        placeholder="Lezzin" />
-      <InputField label="Senha" name="password" type="password" autocomplete="current-password" placeholder="********"
-        :disabled="loading" />
+      <InputField
+        label="Email"
+        name="email"
+        type="email"
+        autocomplete="email"
+        :disabled="loading"
+        placeholder="Lezzin"
+      />
+      <InputField
+        label="Senha"
+        name="password"
+        type="password"
+        autocomplete="current-password"
+        placeholder="********"
+        :disabled="loading"
+      />
 
       <BaseButton type="submit" class="w-full" :loading="loading" :disabled="loading || redirecting">
         Entrar
@@ -71,14 +83,24 @@ const loginProvider = (provider: 'github' | 'google') => {
         </div>
       </div>
 
-      <BaseButton type="button" variant="outline" class="w-full" :disabled="loading || redirecting"
-        @click="loginProvider('google')">
+      <BaseButton
+        type="button"
+        variant="outline"
+        class="w-full"
+        :disabled="loading || redirecting"
+        @click="loginProvider('google')"
+      >
         <GoogleIcon class="w-5 h-5 mr-2" />
         Continuar com Google
       </BaseButton>
 
-      <BaseButton type="button" variant="outline" class="w-full" :disabled="loading || redirecting"
-        @click="loginProvider('github')">
+      <BaseButton
+        type="button"
+        variant="outline"
+        class="w-full"
+        :disabled="loading || redirecting"
+        @click="loginProvider('github')"
+      >
         <GitHubIcon class="w-5 h-5 mr-2" />
         Continuar com GitHub
       </BaseButton>

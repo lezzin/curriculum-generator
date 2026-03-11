@@ -10,10 +10,7 @@ import { Resume } from 'src/domain/entities/resume.entity';
 import { User } from 'src/domain/entities/user.entity';
 import { UserConfig } from 'src/domain/entities/user.config.entity';
 import { StorageRepository } from 'src/domain/repositories/storage.repository';
-import {
-  Language,
-  SelectedTemplate,
-} from 'src/domain/enums/resume.enums';
+import { Language, SelectedTemplate } from 'src/domain/enums/resume.enums';
 
 @Injectable()
 export class ResumeDocumentService implements OnModuleInit, OnModuleDestroy {
@@ -26,7 +23,7 @@ export class ResumeDocumentService implements OnModuleInit, OnModuleDestroy {
     args: ['--no-sandbox', '--disable-setuid-sandbox'],
   };
 
-  constructor(private readonly storage: StorageRepository) { }
+  constructor(private readonly storage: StorageRepository) {}
 
   async onModuleInit() {
     this.browser = await puppeteer.launch(this.PUPPETEER_CONFIG);

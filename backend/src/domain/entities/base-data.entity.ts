@@ -7,7 +7,7 @@ export class BaseData {
     public userId: string,
     public type: BaseDataType,
     public readonly createdAt: Date,
-  ) { }
+  ) {}
 
   updateDescription(description: string) {
     this.description = description;

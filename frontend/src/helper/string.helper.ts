@@ -1,6 +1,6 @@
 export function toHumanReadableDate(date: Date | string): string {
   if (!date) return '-';
-  
+
   const options: Intl.DateTimeFormatOptions = {
     year: 'numeric',
     month: 'long',
@@ -25,10 +25,10 @@ export function nullToEmpty<T extends Record<string, any>>(obj: T): T {
 }
 
 export function handleDownload(url: string) {
-  const link = document.createElement('a')
-  link.href = url
-  link.download = ''
-  document.body.appendChild(link)
-  link.click()
-  document.body.removeChild(link)
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = '';
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
 }

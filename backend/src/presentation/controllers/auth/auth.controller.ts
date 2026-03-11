@@ -32,7 +32,7 @@ export class AuthController {
     private readonly socialLoginUseCase: SocialLoginUseCase,
     private readonly getUserUseCase: GetUserUseCase,
     private readonly setPasswordUseCase: SetPasswordUseCase,
-  ) { }
+  ) {}
 
   @Post('login')
   @HttpCode(HttpStatus.NO_CONTENT)
@@ -117,7 +117,7 @@ export class AuthController {
 
   @Get('google')
   @UseGuards(AuthGuard('google'))
-  googleAuth() { }
+  googleAuth() {}
 
   @Get('google/callback')
   @UseGuards(AuthGuard('google'))
@@ -127,7 +127,7 @@ export class AuthController {
 
   @Get('github')
   @UseGuards(AuthGuard('github'))
-  githubAuth() { }
+  githubAuth() {}
 
   @Get('github/callback')
   @UseGuards(AuthGuard('github'))

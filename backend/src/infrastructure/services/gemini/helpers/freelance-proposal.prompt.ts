@@ -1,14 +1,14 @@
 export interface FreelanceProposalResponse {
-   message: string;
-   bidAmount: number;
-   deliveryDays: number;
+  message: string;
+  bidAmount: number;
+  deliveryDays: number;
 }
 
 export function buildFreelanceProposalPrompt(
-   baseData: any,
-   solicitation: string,
+  baseData: any,
+  solicitation: string,
 ): string {
-   return `
+  return `
 You are a Brazilian freelance proposal specialist focused on writing short, persuasive proposals for platforms like 99freelas.
 
 Your task is to generate a clear, natural, and conversion-focused proposal based on the client's solicitation and the freelancer's base experience.

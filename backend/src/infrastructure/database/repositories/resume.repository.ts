@@ -11,7 +11,7 @@ export class TypeOrmResumeRepository implements ResumeRepository {
   constructor(
     @InjectRepository(ResumeEntity)
     private ormRepo: Repository<ResumeEntity>,
-  ) { }
+  ) {}
 
   async create(resume: Resume): Promise<Resume> {
     return (await this.ormRepo.save(resume)) as Resume;
@@ -20,23 +20,23 @@ export class TypeOrmResumeRepository implements ResumeRepository {
   async paginate(
     userId: string,
     page: number,
-    limit: number
+    limit: number,
   ): Promise<PaginatedResult<Resume>> {
     const query = this.ormRepo
       .createQueryBuilder('resume')
       .where('resume.userId = :userId', { userId })
       .orderBy('resume.createdAt', 'DESC')
       .skip((page - 1) * limit)
-      .take(limit)
+      .take(limit);
 
-    const [data, total] = await query.getManyAndCount()
+    const [data, total] = await query.getManyAndCount();
 
     return {
       data: data.map(this.toDomain),
       total,
       page,
-      limit
-    }
+      limit,
+    };
   }
 
   async findById(id: string): Promise<Resume | null> {
@@ -60,7 +60,7 @@ export class TypeOrmResumeRepository implements ResumeRepository {
       entity.experiences,
       entity.projects,
       entity.userId,
-      entity.createdAt
+      entity.createdAt,
     );
 
     return user;

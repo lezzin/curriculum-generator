@@ -36,7 +36,7 @@ export class ResumeController {
     private readonly getPdfUseCase: GetPdfUseCase,
     private readonly getPageUseCase: GetPageUseCase,
     private readonly generatePdfUseCase: GeneratePdfUseCase,
-  ) { }
+  ) {}
 
   @Post('/generate')
   @HttpCode(HttpStatus.ACCEPTED)
@@ -51,18 +51,18 @@ export class ResumeController {
   @HttpCode(HttpStatus.NO_CONTENT)
   async remove(
     @CurrentUser('id') userId: string,
-    @Body() body: { resume_id: string }
+    @Body() body: { resume_id: string },
   ) {
     await this.removeResumeUseCase.execute({
       resumeId: body.resume_id,
-      userId
+      userId,
     });
   }
 
   @Get('/all')
   async getAllResumes(
     @CurrentUser('id') userId: any,
-    @Query() query: PaginateDto
+    @Query() query: PaginateDto,
   ) {
     return await this.getAllResumesUseCase.execute({ ...query, userId });
   }

@@ -11,7 +11,7 @@ export class TypeOrmFreelanceProposalRepository implements FreelanceProposalRepo
   constructor(
     @InjectRepository(FreelanceProposalEntity)
     private ormRepo: Repository<FreelanceProposalEntity>,
-  ) { }
+  ) {}
 
   async create(
     freelanceProposal: FreelanceProposal,
@@ -22,23 +22,23 @@ export class TypeOrmFreelanceProposalRepository implements FreelanceProposalRepo
   async paginate(
     userId: string,
     page: number,
-    limit: number
+    limit: number,
   ): Promise<PaginatedResult<FreelanceProposal>> {
     const query = this.ormRepo
       .createQueryBuilder('proposal')
       .where('proposal.userId = :userId', { userId })
       .orderBy('proposal.createdAt', 'DESC')
       .skip((page - 1) * limit)
-      .take(limit)
+      .take(limit);
 
-    const [data, total] = await query.getManyAndCount()
+    const [data, total] = await query.getManyAndCount();
 
     return {
       data: data.map(this.toDomain),
       total,
       page,
-      limit
-    }
+      limit,
+    };
   }
 
   async remove(id: string): Promise<void> {
@@ -53,7 +53,7 @@ export class TypeOrmFreelanceProposalRepository implements FreelanceProposalRepo
       entity.bidAmount,
       entity.deliveryDays,
       entity.userId,
-      entity.createdAt
+      entity.createdAt,
     );
 
     return user;

@@ -51,12 +51,30 @@ watch(
     <form class="space-y-5" @submit.prevent="signup">
       <AppTitle title="Crie sua conta 🚀" subtitle="Leva menos de 1 minuto para começar" />
 
-      <InputField label="Nome de usuário" name="name" type="text" autocomplete="username" :disabled="loading"
-        placeholder="Lezzin" />
-      <InputField label="Email" name="email" type="email" autocomplete="email" :disabled="loading"
-        placeholder="lezzin@gmail.com" />
-      <InputField label="Senha" name="password" type="password" autocomplete="new-password" :disabled="loading"
-        placeholder="********" />
+      <InputField
+        label="Nome de usuário"
+        name="name"
+        type="text"
+        autocomplete="username"
+        :disabled="loading"
+        placeholder="Lezzin"
+      />
+      <InputField
+        label="Email"
+        name="email"
+        type="email"
+        autocomplete="email"
+        :disabled="loading"
+        placeholder="lezzin@gmail.com"
+      />
+      <InputField
+        label="Senha"
+        name="password"
+        type="password"
+        autocomplete="new-password"
+        :disabled="loading"
+        placeholder="********"
+      />
 
       <BaseButton type="submit" class="w-full" :loading="loading" :disabled="loading"> Criar conta </BaseButton>
 

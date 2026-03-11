@@ -1,7 +1,7 @@
-import { Module } from "@nestjs/common";
-import { AdminController } from "src/presentation/controllers/admin/admin.controller";
+import { Module } from '@nestjs/common';
+import { AdminController } from 'src/presentation/controllers/admin/admin.controller';
 
 @Module({
-    controllers: [AdminController]
+  controllers: [AdminController],
 })
-export class AdminModule { }
+export class AdminModule {}

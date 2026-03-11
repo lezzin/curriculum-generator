@@ -85,19 +85,35 @@ onMounted(loadUserConfig);
 
     <form class="space-y-6" @submit.prevent="upsertUserConfigData">
       <div class="grid md:grid-cols-2 gap-4">
-        <InputField label="Telefone" name="cellphone" placeholder="(35) 99999-9999"
-          helper=" Número que poderá aparecer em seus documentos." />
+        <InputField
+          label="Telefone"
+          name="cellphone"
+          placeholder="(35) 99999-9999"
+          helper=" Número que poderá aparecer em seus documentos."
+        />
 
-        <InputField label="LinkedIn" name="linkedin" placeholder=" https://linkedin.com/in/seu-usuario"
-          helper="Link público do seu perfil profissional." />
+        <InputField
+          label="LinkedIn"
+          name="linkedin"
+          placeholder=" https://linkedin.com/in/seu-usuario"
+          helper="Link público do seu perfil profissional."
+        />
       </div>
 
       <div class="grid md:grid-cols-2 gap-4">
-        <InputField label="GitHub" name="github" placeholder="https://github.com/seu-usuario"
-          helper=" Repositórios e projetos públicos." />
+        <InputField
+          label="GitHub"
+          name="github"
+          placeholder="https://github.com/seu-usuario"
+          helper=" Repositórios e projetos públicos."
+        />
 
-        <InputField label="Portfólio" name="portfolio" placeholder="https://seuportfolio.com"
-          helper="Site pessoal ou página com seus trabalhos." />
+        <InputField
+          label="Portfólio"
+          name="portfolio"
+          placeholder="https://seuportfolio.com"
+          helper="Site pessoal ou página com seus trabalhos."
+        />
       </div>
 
       <BaseButton type="submit" class="w-full" :disabled="isLoading" :loading="isLoading">

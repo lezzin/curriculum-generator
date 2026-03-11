@@ -11,8 +11,8 @@ export class User {
     public picture?: string | null,
     public password?: string | null,
     public refreshToken?: string | null,
-    public role: UserRole = UserRole.USER
-  ) { }
+    public role: UserRole = UserRole.USER,
+  ) {}
 
   addProvider(provider: UserProvider) {
     const exists = this.providers.find((p) => p.provider === provider.provider);

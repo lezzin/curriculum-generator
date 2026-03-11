@@ -33,22 +33,33 @@ onMounted(async () => {
 });
 
 function removeFromList(id: string) {
-  remove(id, item => item.id);
+  remove(id, (item) => item.id);
 }
 </script>
 
 <template>
-  <AppTitle title="Minhas Propostas Geradas"
-    subtitle="Visualize e acompanhe as propostas criadas a partir das oportunidades selecionadas." />
+  <AppTitle
+    title="Minhas Propostas Geradas"
+    subtitle="Visualize e acompanhe as propostas criadas a partir das oportunidades selecionadas."
+  />
 
   <div v-if="proposals.length">
     <div class="grid gap-4 md:grid-cols-2">
-      <ProposalPreview v-for="proposal in proposals" :key="proposal.id" :proposal="proposal"
-        @remove="() => removeFromList(proposal.id)" />
+      <ProposalPreview
+        v-for="proposal in proposals"
+        :key="proposal.id"
+        :proposal="proposal"
+        @remove="() => removeFromList(proposal.id)"
+      />
     </div>
 
-    <BasePagination :items="proposals" :hasMore="hasMore" :isFetching="isFetching"
-      :loadMore="() => fetch(item => item.id)" :total="total" />
+    <BasePagination
+      :items="proposals"
+      :hasMore="hasMore"
+      :isFetching="isFetching"
+      :loadMore="() => fetch((item) => item.id)"
+      :total="total"
+    />
   </div>
 
   <div v-else-if="isFetching" class="grid gap-4 md:grid-cols-2">
@@ -56,9 +67,7 @@ function removeFromList(id: string) {
   </div>
 
   <div v-else class="text-center space-y-3">
-    <p class="text-gray-500">
-      Você ainda não gerou nenhuma proposta personalizada.
-    </p>
+    <p class="text-gray-500">Você ainda não gerou nenhuma proposta personalizada.</p>
 
     <router-link :to="{ name: 'FreelanceProposalGenerate' }" class="text-primary font-medium hover:underline">
       Criar minha primeira proposta

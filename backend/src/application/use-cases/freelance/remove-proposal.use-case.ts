@@ -6,7 +6,7 @@ export class RemoveProposalUseCase {
   constructor(
     private readonly freelanceProposalRepository: FreelanceProposalRepository,
     private readonly cache: CacheRepository,
-  ) { }
+  ) {}
 
   async execute(body: RemoveProposalInput) {
     await this.freelanceProposalRepository.remove(body.proposalId);

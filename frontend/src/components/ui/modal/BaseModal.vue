@@ -55,21 +55,24 @@ const trapFocus = (e: KeyboardEvent) => {
   }
 };
 
-watch(() => props.isOpen, async (open) => {
-  if (open) {
-    previouslyFocusedElement.value = document.activeElement as HTMLElement;
-    window.addEventListener('keydown', handleEsc);
-    window.addEventListener('keydown', trapFocus);
-    await nextTick();
-    modalRef.value?.querySelector<HTMLElement>('button, input, [tabindex]')?.focus();
-    document.body.style.overflow = 'hidden';
-  } else {
-    window.removeEventListener('keydown', handleEsc);
-    window.removeEventListener('keydown', trapFocus);
-    previouslyFocusedElement.value?.focus();
-    document.body.style.overflow = '';
+watch(
+  () => props.isOpen,
+  async (open) => {
+    if (open) {
+      previouslyFocusedElement.value = document.activeElement as HTMLElement;
+      window.addEventListener('keydown', handleEsc);
+      window.addEventListener('keydown', trapFocus);
+      await nextTick();
+      modalRef.value?.querySelector<HTMLElement>('button, input, [tabindex]')?.focus();
+      document.body.style.overflow = 'hidden';
+    } else {
+      window.removeEventListener('keydown', handleEsc);
+      window.removeEventListener('keydown', trapFocus);
+      previouslyFocusedElement.value?.focus();
+      document.body.style.overflow = '';
+    }
   }
-});
+);
 
 onBeforeUnmount(() => {
   window.removeEventListener('keydown', handleEsc);
@@ -92,17 +95,24 @@ const sizeClasses = {
         <div class="absolute inset-0 bg-black/40 backdrop-blur-sm" @click="close" />
 
         <Transition name="scale">
-          <div ref="modalRef"
+          <div
+            ref="modalRef"
             class="relative bg-white rounded-2xl shadow-2xl w-full max-h-[90vh] overflow-hidden flex flex-col"
-            :class="sizeClasses[size]" role="dialog" aria-modal="true"
-            :aria-labelledby="title ? 'modal-title' : undefined">
+            :class="sizeClasses[size]"
+            role="dialog"
+            aria-modal="true"
+            :aria-labelledby="title ? 'modal-title' : undefined"
+          >
             <div v-if="title" class="flex items-center justify-between px-6 py-4 border-b">
               <h2 id="modal-title" class="text-lg font-semibold">
                 {{ title }}
               </h2>
 
-              <button class="p-2 -mr-2 text-gray-500 hover:text-gray-800 hover:bg-gray-100 rounded-full transition"
-                @click="close" aria-label="Fechar modal">
+              <button
+                class="p-2 -mr-2 text-gray-500 hover:text-gray-800 hover:bg-gray-100 rounded-full transition"
+                @click="close"
+                aria-label="Fechar modal"
+              >
                 <CloseIcon />
               </button>
             </div>

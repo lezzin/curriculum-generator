@@ -48,9 +48,8 @@ import { SseRepository } from 'src/domain/repositories/sse.repository';
     },
     {
       provide: GetAllProposalsUseCase,
-      useFactory: (
-        freelanceProposalRepository: FreelanceProposalRepository,
-      ) => new GetAllProposalsUseCase(freelanceProposalRepository),
+      useFactory: (freelanceProposalRepository: FreelanceProposalRepository) =>
+        new GetAllProposalsUseCase(freelanceProposalRepository),
       inject: [FreelanceProposalRepository],
     },
     {
@@ -82,11 +81,10 @@ import { SseRepository } from 'src/domain/repositories/sse.repository';
       useFactory: (
         freelanceProposalRepository: FreelanceProposalRepository,
         cache: CacheRepository,
-      ) =>
-        new RemoveProposalUseCase(freelanceProposalRepository, cache),
+      ) => new RemoveProposalUseCase(freelanceProposalRepository, cache),
       inject: [FreelanceProposalRepository, CacheRepository],
     },
   ],
   exports: [GenerateProposalUseCase],
 })
-export class FreelanceModule { }
+export class FreelanceModule {}

@@ -1,4 +1,4 @@
 export interface RemoveProposalInput {
-    proposalId: string
-    userId: string
+  proposalId: string;
+  userId: string;
 }

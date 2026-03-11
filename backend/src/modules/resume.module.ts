@@ -73,9 +73,8 @@ import { SseRepository } from 'src/domain/repositories/sse.repository';
     },
     {
       provide: GetAllResumesUseCase,
-      useFactory: (
-        resumeRepository: ResumeRepository
-      ) => new GetAllResumesUseCase(resumeRepository),
+      useFactory: (resumeRepository: ResumeRepository) =>
+        new GetAllResumesUseCase(resumeRepository),
       inject: [ResumeRepository],
     },
     {
@@ -143,4 +142,4 @@ import { SseRepository } from 'src/domain/repositories/sse.repository';
     },
   ],
 })
-export class ResumeModule { }
+export class ResumeModule {}

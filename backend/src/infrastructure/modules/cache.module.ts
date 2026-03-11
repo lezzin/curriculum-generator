@@ -30,4 +30,4 @@ import { redisStore } from 'cache-manager-redis-yet';
   ],
   exports: [CacheRepository],
 })
-export class InfrastructureCacheModule { }
+export class InfrastructureCacheModule {}

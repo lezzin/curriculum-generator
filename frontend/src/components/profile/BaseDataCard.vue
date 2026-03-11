@@ -37,13 +37,13 @@ const resume = computed<ResumeContent | null>(() => {
 });
 
 const toggleModal = () => {
-  showZoomModal.value = !showZoomModal.value
-}
+  showZoomModal.value = !showZoomModal.value;
+};
 
 const handleRemove = () => {
   showConfirmModal.value = false;
   emit('remove');
-}
+};
 </script>
 
 <template>

@@ -5,12 +5,16 @@ import { PaginatedResult } from 'src/domain/interfaces/paginate.interfaces';
 import { ResumeRepository } from 'src/domain/repositories/resume.repository';
 
 export class GetAllResumesUseCase {
-  constructor(
-    private readonly resumeRepository: ResumeRepository,
-  ) { }
+  constructor(private readonly resumeRepository: ResumeRepository) {}
 
-  async execute(body: PaginateInput): Promise<PaginatedResult<ResumeItemOutput>> {
-    const resumes = await this.resumeRepository.paginate(body.userId, body.page, body.limit);
+  async execute(
+    body: PaginateInput,
+  ): Promise<PaginatedResult<ResumeItemOutput>> {
+    const resumes = await this.resumeRepository.paginate(
+      body.userId,
+      body.page,
+      body.limit,
+    );
 
     return {
       ...resumes,

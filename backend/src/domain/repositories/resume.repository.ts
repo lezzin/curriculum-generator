@@ -8,8 +8,8 @@ export abstract class ResumeRepository {
   abstract paginate(
     userId: string,
     page: number,
-    limit: number
-  ): Promise<PaginatedResult<Resume>>
+    limit: number,
+  ): Promise<PaginatedResult<Resume>>;
 
   abstract remove(resumeId: string): Promise<void>;
 }

@@ -1,4 +1,4 @@
 export interface RemoveResumeInput {
-    resumeId: string
-    userId: string
+  resumeId: string;
+  userId: string;
 }

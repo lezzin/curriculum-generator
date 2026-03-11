@@ -9,10 +9,10 @@ import { RedisSubscriberService } from '../sse/redis-subscriber.service';
   providers: [
     {
       provide: SseRepository,
-      useClass: RedisSseRepository
+      useClass: RedisSseRepository,
     },
     RedisSubscriberService,
   ],
   exports: [SseRepository],
 })
-export class SseModule { }
+export class SseModule {}

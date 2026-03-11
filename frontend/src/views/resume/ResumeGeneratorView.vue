@@ -41,8 +41,10 @@ const generateResume = handleSubmit(async (form) => {
 </script>
 
 <template>
-  <AppTitle title="Gerar Currículo Personalizado"
-    subtitle="Crie um currículo estratégico com base em uma vaga específica." />
+  <AppTitle
+    title="Gerar Currículo Personalizado"
+    subtitle="Crie um currículo estratégico com base em uma vaga específica."
+  />
 
   <BaseModal :is-open="isTemplatePreviewModalOpen" @close="isTemplatePreviewModalOpen = false">
     <TemplatePreview :key="values.templateType" :template="values.templateType" />
@@ -97,9 +99,14 @@ const generateResume = handleSubmit(async (form) => {
       </div>
 
       <div class="space-y-4">
-        <TextAreaField label="Descrição completa da vaga" name="jobText" :rows="10" :max-length="MAX_LENGTH"
+        <TextAreaField
+          label="Descrição completa da vaga"
+          name="jobText"
+          :rows="10"
+          :max-length="MAX_LENGTH"
           :show-length="true"
-          placeholder="Cole aqui a descrição completa da vaga. Quanto mais detalhes, melhor será a personalização do currículo." />
+          placeholder="Cole aqui a descrição completa da vaga. Quanto mais detalhes, melhor será a personalização do currículo."
+        />
 
         <BaseButton type="submit" :disabled="isLoading" :loading="isLoading">
           Gerar currículo personalizado

@@ -13,8 +13,9 @@ const routes: RouteRecordRaw[] = [
     component: NotFoundView,
     meta: {
       requiresAuth: false,
-    }
-  }];
+    },
+  },
+];
 
 export const router = createRouter({
   history: createWebHistory(),

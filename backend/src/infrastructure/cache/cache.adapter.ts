@@ -10,7 +10,7 @@ export class CacheAdapter implements CacheRepository {
   constructor(
     @Inject(CACHE_MANAGER)
     private readonly cache: Cache,
-  ) { }
+  ) {}
 
   async get<T>(key: string): Promise<T | null> {
     return (await this.cache.get(key)) as T;
@@ -26,12 +26,21 @@ export class CacheAdapter implements CacheRepository {
     await this.cache.set(key, value, ttlInMs);
   }
 
-  async rememberByScope<T>(scope: string, userId: string, ttl: number, callback: () => Promise<T>): Promise<T> {
+  async rememberByScope<T>(
+    scope: string,
+    userId: string,
+    ttl: number,
+    callback: () => Promise<T>,
+  ): Promise<T> {
     const key = this.buildScopedKey(scope, userId);
     return this.remember(key, ttl, callback);
   }
 
-  async rememberByHash<T>(rawKey: string, ttl: number, callback: () => Promise<T>): Promise<T> {
+  async rememberByHash<T>(
+    rawKey: string,
+    ttl: number,
+    callback: () => Promise<T>,
+  ): Promise<T> {
     const key = this.buildHashedKey(rawKey);
     return this.remember(key, ttl, callback);
   }

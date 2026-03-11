@@ -20,7 +20,7 @@ export class ProposalGenerationUseCase {
     private readonly geminiService: GeminiService,
     private readonly sseRepository: SseRepository,
     private readonly cache: CacheRepository,
-  ) { }
+  ) {}
 
   async execute(body: GenerateProposalInput) {
     const { solicitation, userId } = body;

@@ -26,7 +26,5 @@ defineProps<{
     <InputField :name="`projects[${i}].technologiesString`" label="Tecnologias" placeholder="React, AWS, etc." />
   </div>
 
-  <BaseButton type="button" variant="outline" size="sm" @click="onAdd" class="w-full">
-    + Adicionar Projeto
-  </BaseButton>
+  <BaseButton type="button" variant="outline" size="sm" @click="onAdd" class="w-full"> + Adicionar Projeto </BaseButton>
 </template>

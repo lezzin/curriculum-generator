@@ -11,15 +11,7 @@ import ResumePreviewSkeleton from '../../components/resume/ResumePreviewSkeleton
 
 const authStore = useAuthStore();
 
-const {
-  items: resumes,
-  hasMore,
-  isFetching,
-  total,
-  fetch,
-  remove,
-  prepend
-} = usePaginated<Resume>('/resume/all', 10);
+const { items: resumes, hasMore, isFetching, total, fetch, remove, prepend } = usePaginated<Resume>('/resume/all', 10);
 
 function handleResumeGenerated(data: Resume) {
   if (data.userId !== authStore.user?.id) return;
@@ -33,20 +25,31 @@ onMounted(async () => {
 });
 
 function removeFromList(id: string) {
-  remove(id, item => item.id);
+  remove(id, (item) => item.id);
 }
 </script>
 
 <template>
-  <AppTitle title="Meus Currículos Gerados"
-    subtitle="Acompanhe, visualize e gerencie os currículos criados com base nas vagas enviadas." />
+  <AppTitle
+    title="Meus Currículos Gerados"
+    subtitle="Acompanhe, visualize e gerencie os currículos criados com base nas vagas enviadas."
+  />
 
   <div v-if="resumes.length" class="grid gap-4">
-    <ResumePreview v-for="resume in resumes" :key="resume.id" :resume="resume"
-      @remove="() => removeFromList(resume.id)" />
+    <ResumePreview
+      v-for="resume in resumes"
+      :key="resume.id"
+      :resume="resume"
+      @remove="() => removeFromList(resume.id)"
+    />
 
-    <BasePagination :items="resumes" :hasMore="hasMore" :isFetching="isFetching"
-      :loadMore="() => fetch(item => item.id)" :total="total" />
+    <BasePagination
+      :items="resumes"
+      :hasMore="hasMore"
+      :isFetching="isFetching"
+      :loadMore="() => fetch((item) => item.id)"
+      :total="total"
+    />
   </div>
 
   <div v-else-if="isFetching" class="grid gap-4">

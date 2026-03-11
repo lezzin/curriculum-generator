@@ -11,7 +11,7 @@ export class TypeOrmBaseDataRepository implements BaseDataRepository {
   constructor(
     @InjectRepository(BaseDataEntity)
     private ormRepo: Repository<BaseDataEntity>,
-  ) { }
+  ) {}
 
   async save(baseData: BaseData): Promise<void> {
     await this.ormRepo.upsert(

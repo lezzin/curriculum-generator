@@ -7,14 +7,20 @@ import { FreelanceProposalRepository } from 'src/domain/repositories/freelance-p
 export class GetAllProposalsUseCase {
   constructor(
     private readonly freelanceProposalRepository: FreelanceProposalRepository,
-  ) { }
+  ) {}
 
-  async execute(body: PaginateInput): Promise<PaginatedResult<ProposalItemOutput>> {
-    const proposals = await this.freelanceProposalRepository.paginate(body.userId, body.page, body.limit);
+  async execute(
+    body: PaginateInput,
+  ): Promise<PaginatedResult<ProposalItemOutput>> {
+    const proposals = await this.freelanceProposalRepository.paginate(
+      body.userId,
+      body.page,
+      body.limit,
+    );
 
     return {
       ...proposals,
-      data: proposals.data.map(this.toOutput)
+      data: proposals.data.map(this.toOutput),
     };
   }
 
