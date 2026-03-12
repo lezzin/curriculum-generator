@@ -79,7 +79,7 @@ const isMenuActive = (menu: Menu) => {
         class="flex flex-col md:flex-row py-16 md:py-0 gap-8 md:gap-0 items-center justify-between text-sm font-medium md:h-[inherit]"
       >
         <div class="flex items-center flex-col md:flex-row gap-8">
-          <router-link :to="{ name: 'Home' }" class="nav-link" active-class="nav-link-active"> Início </router-link>
+          <router-link :to="{ name: 'Home' }" class="nav-link" exact-active-class="nav-link-active"> Início </router-link>
 
           <div v-if="authStore.user?.id" class="flex flex-col md:flex-row items-center gap-8">
             <BaseDropdown v-for="menu in menus" :key="menu.label">
@@ -103,7 +103,7 @@ const isMenuActive = (menu: Menu) => {
                   :to="item.to"
                   @click="close"
                   class="dropdown-item"
-                  active-class="dropdown-item-active"
+                  exact-active-class="dropdown-item-active"
                 >
                   {{ item.label }}
                 </router-link>
