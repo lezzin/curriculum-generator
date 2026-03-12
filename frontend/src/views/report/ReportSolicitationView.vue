@@ -1,23 +1,21 @@
 <script setup lang="ts">
 import { reactive } from 'vue';
-import ResumeRequestForm from '../../components/report/requests/ResumeRequestForm.vue';
-import ProposalRequestForm from '../../components/report/requests/ProposalRequestForm.vue';
+import ReportRequestForm from '../../components/report/requests/ReportRequestForm.vue';
+import { reportRequestSchema } from '../../validation/schemas/report-request.schema';
+import InputField from '../../components/ui/form/InputField.vue';
 import ConfirmModal from '../../components/ui/modal/ConfirmModal.vue';
+import BaseAccordion from '../../components/ui/BaseAccordion.vue';
 import { useRouter } from 'vue-router';
 import AppTitle from '../../components/layout/AppTitle.vue';
 
 const router = useRouter();
 
-type Form = 'resume' | 'proposal' | 'confirm_modal';
-
-const modalStates = reactive<Record<Form, boolean>>({
-  resume: false,
-  proposal: false,
+const modalStates = reactive({
   confirm_modal: false,
 });
 
-const setModalState = (modal: Form, value: boolean) => {
-  modalStates[modal] = value;
+const setModalState = (value: boolean) => {
+  modalStates.confirm_modal = value;
 };
 
 const goToReportScreen = () => {
@@ -32,17 +30,35 @@ const goToReportScreen = () => {
       subtitle="Envie solicitações de relatórios que serão gerados em segundo plano"
     />
 
-    <ResumeRequestForm
-      v-model:isOpen="modalStates.resume"
-      @close="() => setModalState('resume', false)"
-      @saved="() => setModalState('confirm_modal', true)"
-    />
+    <div class="space-y-4">
+      <BaseAccordion
+        title="Relatório de Currículos"
+        description="Gere um relatório detalhado de todos os currículos criados no período"
+      >
+        <ReportRequestForm
+          endpoint="/reports/resume"
+          :schema="reportRequestSchema"
+          @saved="() => setModalState(true)"
+        >
+          <InputField type="date" label="Data inicial" name="initial_date_creation" />
+          <InputField type="date" label="Data final" name="final_date_creation" />
+        </ReportRequestForm>
+      </BaseAccordion>
 
-    <ProposalRequestForm
-      v-model:isOpen="modalStates.proposal"
-      @close="() => setModalState('proposal', false)"
-      @saved="() => setModalState('confirm_modal', true)"
-    />
+      <BaseAccordion
+        title="Relatório de Propostas"
+        description="Visualize o desempenho e as solicitações de propostas de freelance"
+      >
+        <ReportRequestForm
+          endpoint="/reports/proposal"
+          :schema="reportRequestSchema"
+          @saved="() => setModalState(true)"
+        >
+          <InputField type="date" label="Data inicial" name="initial_date_creation" />
+          <InputField type="date" label="Data final" name="final_date_creation" />
+        </ReportRequestForm>
+      </BaseAccordion>
+    </div>
 
     <ConfirmModal
       title="Redirecionamento"
@@ -50,7 +66,7 @@ const goToReportScreen = () => {
       confirmVariant="default"
       cancelVariant="destructive"
       :is-open="modalStates.confirm_modal"
-      @cancel="() => setModalState('confirm_modal', false)"
+      @cancel="() => setModalState(false)"
       @confirm="goToReportScreen"
     />
   </div>
