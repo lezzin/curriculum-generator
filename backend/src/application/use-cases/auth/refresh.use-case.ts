@@ -1,5 +1,5 @@
 import { UnauthorizedException } from 'src/domain/exceptions';
-import { RefreshInput } from 'src/application/models/input/refresh.input';
+import { RefreshInput } from 'src/application/models/input/auth.input';
 import { UserRepository } from 'src/domain/repositories/user.repository';
 import { JwtAdapter } from 'src/infrastructure/auth/jwt.service';
 import { HashRepository } from 'src/domain/repositories/hash.repository';

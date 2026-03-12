@@ -1,4 +1,4 @@
-import { GetPageInput } from 'src/application/models/input/get-page.input';
+import { GetPageInput } from 'src/application/models/input/resume.input';
 import { NotFoundException } from 'src/domain/exceptions';
 import { ResumeRepository } from 'src/domain/repositories/resume.repository';
 import { UserConfigRepository } from 'src/domain/repositories/user-config.repository';

@@ -1,6 +1,6 @@
 import { InjectQueue } from '@nestjs/bullmq';
 import { Queue } from 'bullmq';
-import { GenerateResumeInput } from 'src/application/models/input/generate-resume.input';
+import { GenerateResumeInput } from 'src/application/models/input/resume.input';
 import { ResumeQueue } from 'src/application/queues/resume-queue';
 
 export class BullMQResumeQueue implements ResumeQueue {

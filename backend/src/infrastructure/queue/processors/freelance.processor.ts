@@ -1,7 +1,7 @@
 import { OnWorkerEvent, Processor, WorkerHost } from '@nestjs/bullmq';
 import { Job } from 'bullmq';
 import { Logger } from '@nestjs/common';
-import { GenerateProposalInput } from 'src/application/models/input/generate-proposal.input';
+import { GenerateProposalInput } from 'src/application/models/input/freelance.input';
 import { ProposalGenerationUseCase } from 'src/application/use-cases/freelance/proposal-generation.use-case';
 
 @Processor('freelance.queue')

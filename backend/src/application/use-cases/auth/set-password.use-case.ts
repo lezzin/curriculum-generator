@@ -1,5 +1,5 @@
 import { BadRequestException } from 'src/domain/exceptions';
-import { SetPasswordInput } from 'src/application/models/input/set-password.input';
+import { SetPasswordInput } from 'src/application/models/input/auth.input';
 import { UserRepository } from 'src/domain/repositories/user.repository';
 import { HashRepository } from 'src/domain/repositories/hash.repository';
 

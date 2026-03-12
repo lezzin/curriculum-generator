@@ -19,3 +19,13 @@ export interface GenerateResumeInput {
   jobDescription: string;
   options: ResumeOptions;
 }
+
+export interface GetPageInput {
+  id: string;
+  template?: SelectedTemplate;
+}
+
+export interface RemoveResumeInput {
+  resumeId: string;
+  userId: string;
+}

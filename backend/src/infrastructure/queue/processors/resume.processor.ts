@@ -1,7 +1,7 @@
 import { OnWorkerEvent, Processor, WorkerHost } from '@nestjs/bullmq';
 import { Job } from 'bullmq';
 import { Logger } from '@nestjs/common';
-import { GenerateResumeInput } from 'src/application/models/input/generate-resume.input';
+import { GenerateResumeInput } from 'src/application/models/input/resume.input';
 import { ResumeGenerationUseCase } from 'src/application/use-cases/resume/resume-generation.use-case';
 
 @Processor('resume.queue')

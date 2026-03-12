@@ -1,4 +1,4 @@
-import { GenerateProposalInput } from 'src/application/models/input/generate-proposal.input';
+import { GenerateProposalInput } from 'src/application/models/input/freelance.input';
 import { ProposalQueue } from 'src/application/queues/proposal-queue';
 
 export class GenerateProposalUseCase {

@@ -1,4 +1,4 @@
-import { RemoveProposalInput } from 'src/application/models/input/remove-proposal.input';
+import { RemoveProposalInput } from 'src/application/models/input/freelance.input';
 import { CacheRepository } from 'src/domain/repositories/cache.repository';
 import { FreelanceProposalRepository } from 'src/domain/repositories/freelance-proposal.repository';
 

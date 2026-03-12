@@ -1,5 +1,9 @@
 import { Language, SelectedTemplate } from 'src/domain/enums/resume.enums';
 import {
+  ResumeExperience,
+  ResumeProject,
+} from 'src/domain/types/resume.types';
+import {
   Column,
   CreateDateColumn,
   Entity,
@@ -33,10 +37,10 @@ export class ResumeEntity {
   skills: string[];
 
   @Column('jsonb')
-  experiences: any;
+  experiences: ResumeExperience[];
 
   @Column('jsonb', { nullable: true })
-  projects: any;
+  projects: ResumeProject[];
 
   @Column({ name: 'user_id' })
   userId: string;

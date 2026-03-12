@@ -1,5 +1,5 @@
 import { randomUUID } from 'crypto';
-import { GenerateResumeInput } from 'src/application/models/input/generate-resume.input';
+import { GenerateResumeInput } from 'src/application/models/input/resume.input';
 import { ResumeItemOutput } from 'src/application/models/output/get-all-resumes.output';
 import { Resume } from 'src/domain/entities/resume.entity';
 import { BaseDataRepository } from 'src/domain/repositories/base-data.repository';

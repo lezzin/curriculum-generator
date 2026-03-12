@@ -1,5 +1,5 @@
 import { randomUUID } from 'crypto';
-import { GenerateProposalInput } from 'src/application/models/input/generate-proposal.input';
+import { GenerateProposalInput } from 'src/application/models/input/freelance.input';
 import { ProposalItemOutput } from 'src/application/models/output/get-all-proposals.output';
 import { FreelanceProposal } from 'src/domain/entities/freelance-proposal.entity';
 import { BaseDataRepository } from 'src/domain/repositories/base-data.repository';

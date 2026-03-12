@@ -1,4 +1,4 @@
-import { RemoveResumeInput } from 'src/application/models/input/remove-resume.input';
+import { RemoveResumeInput } from 'src/application/models/input/resume.input';
 import { CacheRepository } from 'src/domain/repositories/cache.repository';
 import { ResumeRepository } from 'src/domain/repositories/resume.repository';
 import { ResumeDocumentService } from 'src/infrastructure/services/resume-document.service';
