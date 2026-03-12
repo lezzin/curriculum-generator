@@ -8,13 +8,7 @@ import InputField from '../ui/form/InputField.vue';
 import { nullToEmpty } from '../../helper/string.helper';
 import { useForm } from 'vee-validate';
 import { userConfigSchema, type UserConfigForm } from '../../validation/schemas/user-config.schema';
-
-interface UserConfig {
-  linkedin: string;
-  github: string;
-  portfolio: string;
-  cellphone: string;
-}
+import type { UserConfig } from '../../interfaces/user.interfaces';
 
 const { handleSubmit, resetForm, values } = useForm<UserConfigForm>({
   validationSchema: userConfigSchema,

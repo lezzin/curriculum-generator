@@ -1,27 +1,7 @@
 <script setup lang="ts">
+import type { ResumeContent } from '../../interfaces/resume.interfaces';
 import BaseBadge from '../ui/BaseBadge.vue';
 import CardContainer from '../ui/card/CardContainer.vue';
-
-interface Experience {
-  title: string;
-  company: string;
-  period: string;
-  responsibilities: string[];
-  technologies: string[];
-}
-
-interface Project {
-  name: string;
-  highlights: string[];
-  technologies: string[];
-}
-
-export interface ResumeContent {
-  summary: string;
-  skills: string[];
-  experiences: Experience[];
-  projects: Project[];
-}
 
 interface Props {
   resume: ResumeContent | null;

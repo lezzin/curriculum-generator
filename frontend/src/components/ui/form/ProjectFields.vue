@@ -1,10 +1,11 @@
 <script setup lang="ts">
+import type { FieldEntry } from 'vee-validate';
 import InputField from './InputField.vue';
 import TextAreaField from './TextAreaField.vue';
 import BaseButton from '../BaseButton.vue';
 
 defineProps<{
-  fields: any[];
+  fields: FieldEntry<any>[];
   onRemove: (index: number) => void;
   onAdd: () => void;
 }>();

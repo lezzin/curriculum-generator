@@ -2,6 +2,7 @@ import { ref } from 'vue';
 import type { AxiosInstance } from 'axios';
 import type { HttpMethod } from './types/http-method.types';
 import { extractErrorMessage } from '../../helper/error.helper';
+import type { ApiResponse, ApiRequestParams } from '../../interfaces/api.interfaces';
 
 export function createApi(api: AxiosInstance) {
   const loading = ref(false);
@@ -10,9 +11,9 @@ export function createApi(api: AxiosInstance) {
   async function request<T>(
     method: HttpMethod,
     path: string,
-    params?: any,
+    params?: ApiRequestParams,
     useLoading = true
-  ): Promise<{ data: T | null; error: string | null }> {
+  ): Promise<ApiResponse<T>> {
     if (useLoading) loading.value = true;
 
     try {

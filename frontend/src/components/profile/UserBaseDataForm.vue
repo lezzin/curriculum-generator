@@ -10,9 +10,11 @@ import ProjectFields from '../../components/ui/form/ProjectFields.vue';
 import BaseModal from '../ui/modal/BaseModal.vue';
 import { useForm, useFieldArray } from 'vee-validate';
 import { baseDataSchema, INITIAL_VALUES, type BaseDataForm } from '../../validation/schemas/base-data.schema';
+import type { UserBaseType } from '../../interfaces/base-data.interfaces';
+import type { ResumeExperience, ResumeProject } from '../../interfaces/resume.interfaces';
 
 interface Props {
-  type: string | null;
+  type: UserBaseType | null;
   initialData: string | null;
   isOpen: boolean;
 }
@@ -82,12 +84,12 @@ const initForm = () => {
       values: {
         summary: data.summary ?? '',
         skillsString: (data.skills ?? []).join(', '),
-        experiences: (data.experiences ?? []).map((e: any) => ({
+        experiences: (data.experiences ?? []).map((e: ResumeExperience) => ({
           ...e,
           responsibilitiesString: (e.responsibilities ?? []).join('\n'),
           technologiesString: (e.technologies ?? []).join(', '),
         })),
-        projects: (data.projects ?? []).map((p: any) => ({
+        projects: (data.projects ?? []).map((p: ResumeProject) => ({
           ...p,
           highlightsString: (p.highlights ?? []).join('\n'),
           technologiesString: (p.technologies ?? []).join(', '),

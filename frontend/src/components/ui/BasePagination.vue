@@ -1,8 +1,8 @@
-<script setup lang="ts">
+<script setup lang="ts" generic="T">
 import BaseButton from './BaseButton.vue';
 
-const props = defineProps<{
-  items: any[];
+defineProps<{
+  items: T[];
   hasMore: boolean;
   total: number;
   isFetching: boolean;

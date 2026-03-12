@@ -4,17 +4,7 @@ import { useApi } from '../../composables/api/useApi';
 import { useToast } from '../../composables/useToast';
 import BaseDataCard from './BaseDataCard.vue';
 import UserBaseDataForm from './UserBaseDataForm.vue';
-
-type UserBaseType = 'resume' | 'freelance-proposal';
-
-type UserBaseDataItem = {
-  id: string;
-  type: UserBaseType;
-  description: string;
-  userId: string;
-  createdAt: string;
-  updatedAt: string;
-};
+import type { UserBaseType, UserBaseDataItem } from '../../interfaces/base-data.interfaces';
 
 const { request } = useApi();
 const { show } = useToast();

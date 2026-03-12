@@ -3,6 +3,7 @@ import { useReportApi } from '../../composables/api/useReportApi';
 import { useToast } from '../../composables/useToast';
 import { handleDownload } from '../../helper/string.helper';
 import { PROCESS_STATUS, type ProcessStatus } from '../../types/report.types';
+import type { ReportItem } from '../../interfaces/report.interfaces';
 
 import BaseButton from '../ui/BaseButton.vue';
 import CardContainer from '../ui/card/CardContainer.vue';
@@ -21,12 +22,12 @@ const STATUS_CONFIG: Record<number, StatusConfig> = {
 };
 
 const props = defineProps<{
-  items: any[];
+  items: ReportItem[];
   loading: boolean;
 }>();
 
 const emit = defineEmits<{
-  (e: 'update:items', items: any[]): void;
+  (e: 'update:items', items: ReportItem[]): void;
 }>();
 
 const { request, loading: loadingReportRequest } = useReportApi();

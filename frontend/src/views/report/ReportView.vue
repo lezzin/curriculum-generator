@@ -14,25 +14,14 @@ import { storeToRefs } from 'pinia';
 import { useReportApi } from '../../composables/api/useReportApi';
 import { useSSE } from '../../composables/useSSE';
 
+import type { ReportItem, Meta } from '../../interfaces/report.interfaces';
+import type { PaginatedResult } from '../../interfaces/paginate.interfaces';
+
 const { user } = storeToRefs(useAuthStore());
 const { loading, request } = useReportApi();
 const { show } = useToast();
 
 const page = ref(1);
-
-interface ReportItem {
-  id: string;
-  progress_id: string;
-  total_records: number;
-  report_name: string;
-  processed_records: number;
-  final_file_path: string;
-  started_at: string;
-  finished_at: string;
-  created_at: string;
-  status_id: number;
-  status_name: string;
-}
 
 const reportData = reactive<{
   items: ReportItem[];
@@ -52,7 +41,7 @@ const { handleSubmit, values } = useForm<ReportForm>({
 });
 
 const fetchReport = async () => {
-  const { data, error } = await request<any>('get', '/reports', {
+  const { data, error } = await request<PaginatedResult<ReportItem>>('get', '/reports', {
     user_uuid: user.value?.id,
     page: page.value,
     limit: values.limit,
@@ -61,8 +50,8 @@ const fetchReport = async () => {
   });
 
   if (!error) {
-    reportData.items = data.data;
-    reportData.meta = data.meta as Meta;
+    reportData.items = data?.data || [];
+    reportData.meta = (data?.meta as any) as Meta;
     return;
   }
 
@@ -82,7 +71,7 @@ watch(
   }
 );
 
-const handleProgress = (data: any) => {
+const handleProgress = (data: ReportItem) => {
   reportData.items = reportData.items.map((item) => (item.progress_id == data.progress_id ? data : item));
 };
 

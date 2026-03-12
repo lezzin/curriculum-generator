@@ -3,10 +3,25 @@ export type Seniority = 'Junior' | 'Mid-level';
 export type FocusArea = 'Backend' | 'Fullstack' | 'Microservices' | 'DevOps';
 export type Market = 'Brazil' | 'US' | 'Europe';
 
+export interface ResumeExperience {
+  title: string;
+  company: string;
+  period: string;
+  responsibilities: string[];
+  technologies: string[];
+}
+
 export interface ResumeProject {
   name: string;
   highlights: string[];
   technologies: string[];
+}
+
+export interface ResumeContent {
+  summary: string;
+  skills: string[];
+  experiences: ResumeExperience[];
+  projects: ResumeProject[];
 }
 
 export interface Resume {

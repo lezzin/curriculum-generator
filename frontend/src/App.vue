@@ -5,6 +5,7 @@ import { useToast } from './composables/useToast';
 import { sseService } from './services/sse.service';
 import type { Resume } from './interfaces/resume.interfaces';
 import type { FreelanceProposal } from './interfaces/freelance.interfaces';
+import type { ReportItem } from './interfaces/report.interfaces';
 import LoadContainer from './components/ui/LoadContainer.vue';
 import AppHeader from './components/layout/AppHeader.vue';
 import BaseToast from './components/ui/BaseToast.vue';
@@ -36,7 +37,7 @@ const setupSSE = () => {
     }
   });
 
-  sseService.on('progress-finished', () => {
+  sseService.on<ReportItem>('progress-finished', () => {
     if (route.name !== 'HomeReport') {
       show({
         message: 'Novo relatório gerado com sucesso!',

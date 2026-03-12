@@ -1,14 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import BaseButton from '../ui/BaseButton.vue';
-
-export interface Meta {
-  current_page: number;
-  last_page: number;
-  from: number;
-  to: number;
-  total: number;
-}
+import type { Meta } from '../../interfaces/report.interfaces';
 
 const props = defineProps<{
   meta: Meta;
