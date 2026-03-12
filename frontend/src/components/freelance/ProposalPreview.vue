@@ -68,9 +68,9 @@ Portfólio: [LINK_DO_PORTFOLIO]`))
 
 <template>
   <div v-if="proposal"
-    class="rounded-2xl p-6 space-y-5 shadow-sm bg-white border border-zinc-200 transition-all duration-300">
+    class="rounded-2xl p-6 space-y-5 shadow-sm bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 transition-all duration-300">
     <div class="flex items-center justify-between">
-      <small class="text-gray-500">
+      <small class="text-gray-500 dark:text-zinc-400">
         Criado em:
         {{ toHumanReadableDate(proposal.createdAt ?? '') }}
       </small>
@@ -89,7 +89,7 @@ Portfólio: [LINK_DO_PORTFOLIO]`))
     </div>
 
     <div class="space-y-1">
-      <label class="text-sm font-medium text-zinc-700"> Solicitação </label>
+      <label class="text-sm font-medium text-zinc-700 dark:text-zinc-300"> Solicitação </label>
 
       <CardContainer variant="text" @click="toggle" size="sm">
         {{ displayText }}
@@ -97,10 +97,10 @@ Portfólio: [LINK_DO_PORTFOLIO]`))
     </div>
 
     <div class="space-y-1">
-      <label class="text-sm font-medium text-zinc-700"> Proposta </label>
+      <label class="text-sm font-medium text-zinc-700 dark:text-zinc-300"> Proposta </label>
 
       <textarea v-model="formattedProposal" rows="8"
-        class="w-full resize-none text-sm leading-relaxed rounded-xl p-4 bg-zinc-50 text-zinc-700 border border-zinc-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all duration-300" />
+        class="w-full resize-none text-sm leading-relaxed rounded-xl p-4 bg-zinc-50 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 border border-zinc-200 dark:border-zinc-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all duration-300" />
     </div>
   </div>
 

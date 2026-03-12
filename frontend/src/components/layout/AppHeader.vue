@@ -10,10 +10,14 @@ import { useAuthStore } from '../../stores/auth';
 import { ref } from 'vue';
 import ListIcon from '../icon/ListIcon.vue';
 import { useMobile } from '../../composables/useMobile';
+import { useTheme } from '../../composables/useTheme';
+import SunIcon from '../icon/SunIcon.vue';
+import MoonIcon from '../icon/MoonIcon.vue';
 
 const router = useRouter();
 const authStore = useAuthStore();
 const { isMobile } = useMobile();
+const { isDark, toggleTheme } = useTheme();
 
 function handleLogout(close: () => void) {
   authStore.logout();
@@ -70,41 +74,29 @@ const isMenuActive = (menu: Menu) => {
     <ListIcon />
   </BaseButton>
 
-  <header
-    :class="!isMenuOpen && isMobile ? 'hidden' : ''"
-    class="absolute bg-white/80 backdrop-blur-md border-b md:sticky top-0 z-40 h-screen w-2/3 md:w-auto md:h-[68px]"
-  >
+  <header :class="!isMenuOpen && isMobile ? 'hidden' : ''"
+    class="fixed bg-white/80 dark:bg-zinc-900/80 backdrop-blur-md border-b dark:border-zinc-800 top-0 z-40 h-screen w-2/3 md:w-full md:h-[68px]">
     <AppContainer class="py-2 h-full">
       <nav
-        class="flex flex-col md:flex-row py-16 md:py-0 gap-8 md:gap-0 items-center justify-between text-sm font-medium md:h-[inherit]"
-      >
+        class="flex flex-col md:flex-row py-16 md:py-0 gap-8 md:gap-0 items-center justify-between text-sm font-medium md:h-[inherit]">
         <div class="flex items-center flex-col md:flex-row gap-8">
-          <router-link :to="{ name: 'Home' }" class="nav-link" exact-active-class="nav-link-active"> Início </router-link>
+          <router-link :to="{ name: 'Home' }" class="nav-link" exact-active-class="nav-link-active"> Início
+          </router-link>
 
           <div v-if="authStore.user?.id" class="flex flex-col md:flex-row items-center gap-8">
             <BaseDropdown v-for="menu in menus" :key="menu.label">
               <template #trigger="{ toggle, isOpen }">
-                <button
-                  @click="toggle"
-                  class="flex items-center gap-1 nav-link"
-                  :class="{ 'text-black font-semibold': isMenuActive(menu) }"
-                  aria-haspopup="true"
-                  :aria-expanded="isOpen"
-                >
+                <button @click="toggle" class="flex items-center gap-1 nav-link"
+                  :class="{ 'text-black font-semibold': isMenuActive(menu) }" aria-haspopup="true"
+                  :aria-expanded="isOpen">
                   {{ menu.label }}
                   <RotateArrow :rotate="isOpen" />
                 </button>
               </template>
 
               <template #default="{ close }">
-                <router-link
-                  v-for="item in menu.items"
-                  :key="item.label"
-                  :to="item.to"
-                  @click="close"
-                  class="dropdown-item"
-                  exact-active-class="dropdown-item-active"
-                >
+                <router-link v-for="item in menu.items" :key="item.label" :to="item.to" @click="close"
+                  class="dropdown-item" exact-active-class="dropdown-item-active">
                   {{ item.label }}
                 </router-link>
               </template>
@@ -113,23 +105,27 @@ const isMenuActive = (menu: Menu) => {
         </div>
 
         <div class="flex items-center gap-4">
+          <BaseButton variant="ghost" size="icon" @click="toggleTheme"
+            class="text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-zinc-800"
+            :title="isDark ? 'Ativar modo claro' : 'Ativar modo escuro'">
+            <SunIcon v-if="isDark" />
+            <MoonIcon v-else />
+          </BaseButton>
+
           <BaseButton v-if="!authStore.user?.id" as="router-link" :to="{ name: 'Login' }"> Entrar </BaseButton>
 
           <BaseDropdown v-else>
             <template #trigger="{ toggle, isOpen }">
-              <button
-                @click="toggle"
-                class="flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-gray-100 transition"
-                aria-haspopup="true"
-                :aria-expanded="isOpen"
-              >
+              <button @click="toggle"
+                class="flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-gray-100 dark:hover:bg-zinc-800 transition"
+                aria-haspopup="true" :aria-expanded="isOpen">
                 <UserAvatar :user="authStore.user" size="sm" />
 
                 <div class="text-left hidden sm:block">
-                  <p class="text-sm font-medium leading-none">
+                  <p class="text-sm font-medium leading-none dark:text-white mb-1">
                     {{ authStore.user.name }}
                   </p>
-                  <p class="text-xs text-gray-500 leading-none mt-0.5">Minha conta</p>
+                  <p class="text-xs text-gray-500 dark:text-gray-400 leading-none">Minha conta</p>
                 </div>
 
                 <RotateArrow :rotate="isOpen" />
@@ -139,10 +135,8 @@ const isMenuActive = (menu: Menu) => {
             <template #default="{ close }">
               <router-link :to="{ name: 'Profile' }" @click="close" class="dropdown-item"> Meu Perfil </router-link>
 
-              <button
-                @click="handleLogout(close)"
-                class="w-full text-left px-4 py-2 text-red-500 hover:bg-red-50 transition"
-              >
+              <button @click="handleLogout(close)"
+                class="w-full text-left px-4 py-2 text-red-500 hover:bg-red-50 transition">
                 Sair da conta
               </button>
             </template>
@@ -155,18 +149,18 @@ const isMenuActive = (menu: Menu) => {
 
 <style scoped lang="postcss">
 .nav-link {
-  @apply text-gray-600 hover:text-black transition-colors duration-200;
+  @apply text-gray-600 dark:text-gray-300 hover:text-black dark:hover:text-white transition-colors duration-200;
 }
 
 .nav-link-active {
-  @apply text-black font-semibold;
+  @apply text-black dark:text-white font-semibold;
 }
 
 .dropdown-item {
-  @apply block px-4 py-2 text-gray-600 hover:bg-gray-100 hover:text-black transition-colors duration-200;
+  @apply block px-4 py-2 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-zinc-800 hover:text-black dark:hover:text-white transition-colors duration-200;
 }
 
 .dropdown-item-active {
-  @apply bg-gray-50 text-black font-medium border-l-4 border-black;
+  @apply bg-gray-50 dark:bg-zinc-800 text-black dark:text-white font-medium border-l-4 border-black dark:border-white;
 }
 </style>

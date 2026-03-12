@@ -18,7 +18,7 @@ const props = withDefaults(defineProps<Props>(), {
     <template v-if="resume">
       <section>
         <h3 class="font-semibold text-sm mb-1">Descrição</h3>
-        <p class="text-sm text-gray-700">
+        <p class="text-sm text-gray-700 dark:text-gray-400">
           {{ resume.summary }}
         </p>
       </section>

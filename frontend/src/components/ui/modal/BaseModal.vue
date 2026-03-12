@@ -97,19 +97,19 @@ const sizeClasses = {
         <Transition name="scale">
           <div
             ref="modalRef"
-            class="relative bg-white rounded-2xl shadow-2xl w-full max-h-[90vh] overflow-hidden flex flex-col"
+            class="relative bg-white dark:bg-zinc-900 rounded-2xl shadow-2xl w-full max-h-[90vh] overflow-hidden flex flex-col border dark:border-zinc-800"
             :class="sizeClasses[size]"
             role="dialog"
             aria-modal="true"
             :aria-labelledby="title ? 'modal-title' : undefined"
           >
-            <div v-if="title" class="flex items-center justify-between px-6 py-4 border-b">
-              <h2 id="modal-title" class="text-lg font-semibold">
+            <div v-if="title" class="flex items-center justify-between px-6 py-4 border-b dark:border-zinc-800">
+              <h2 id="modal-title" class="text-lg font-semibold text-zinc-900 dark:text-zinc-50">
                 {{ title }}
               </h2>
 
               <button
-                class="p-2 -mr-2 text-gray-500 hover:text-gray-800 hover:bg-gray-100 rounded-full transition"
+                class="p-2 -mr-2 text-gray-500 hover:text-gray-800 dark:hover:text-zinc-300 hover:bg-gray-100 dark:hover:bg-zinc-800 rounded-full transition"
                 @click="close"
                 aria-label="Fechar modal"
               >
@@ -121,7 +121,7 @@ const sizeClasses = {
               <slot />
             </div>
 
-            <div v-if="$slots.footer" class="px-6 py-4 border-t bg-gray-50">
+            <div v-if="$slots.footer" class="px-6 py-4 border-t dark:border-zinc-800 bg-gray-50 dark:bg-zinc-800/50">
               <slot name="footer" />
             </div>
           </div>

@@ -15,19 +15,19 @@ const router = useRouter();
 const typeIcons: Record<ToastType, { svg: Component; color: string }> = {
   success: {
     svg: SuccessIcon,
-    color: 'text-green-500 bg-green-100',
+    color: 'text-green-500 bg-green-100 dark:bg-green-950',
   },
   error: {
     svg: ErrorIcon,
-    color: 'text-red-500 bg-red-100',
+    color: 'text-red-500 bg-red-100 dark:bg-red-950',
   },
   warning: {
     svg: WarningIcon,
-    color: 'text-yellow-500 bg-yellow-100',
+    color: 'text-yellow-500 bg-yellow-100 dark:bg-yellow-950',
   },
   info: {
     svg: InfoIcon,
-    color: 'text-blue-500 bg-blue-100',
+    color: 'text-blue-500 bg-blue-100 dark:bg-blue-950',
   },
 };
 
@@ -51,15 +51,10 @@ function handleLink(toast: Toast) {
   <div class="fixed bottom-5 right-5 z-50">
     <transition-group name="toast" tag="div" class="flex flex-col gap-2 items-end">
       <div
-        class="flex items-center p-4 text-gray-500 bg-white rounded-lg border shadow-sm max-w-lg"
-        role="alert"
-        v-for="toast in toasts"
-        :key="toast.id"
-      >
-        <div
-          class="inline-flex items-center justify-center shrink-0 w-8 h-8 rounded-lg"
-          :class="typeIcons[toast.type].color"
-        >
+        class="flex items-center p-4 text-gray-500 dark:text-zinc-400 bg-white dark:bg-zinc-900 rounded-lg border dark:border-zinc-800 shadow-sm max-w-lg"
+        role="alert" v-for="toast in toasts" :key="toast.id">
+        <div class="inline-flex items-center justify-center shrink-0 w-8 h-8 rounded-lg"
+          :class="typeIcons[toast.type].color">
           <component :is="typeIcons[toast.type].svg" class="w-5 h-5" />
           <span class="sr-only">Check icon</span>
         </div>
@@ -67,11 +62,8 @@ function handleLink(toast: Toast) {
         <div class="ms-4 me-8">
           <p class="text-sm font-normal">{{ toast.message }}</p>
 
-          <button
-            v-if="toast.link"
-            @click="handleLink(toast)"
-            class="text-sm font-medium text-blue-600 hover:underline"
-          >
+          <button v-if="toast.link" @click="handleLink(toast)"
+            class="text-sm font-medium text-blue-600 hover:underline">
             {{ toast.link.label }}
           </button>
         </div>

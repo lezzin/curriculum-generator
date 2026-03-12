@@ -12,9 +12,9 @@ defineProps<{
 </script>
 
 <template>
-  <div v-for="(field, i) in fields" :key="field.key" class="border p-4 rounded-md space-y-2">
+  <div v-for="(field, i) in fields" :key="field.key" class="border dark:border-zinc-800 p-4 rounded-md space-y-2">
     <div class="flex justify-between items-center">
-      <h3 class="font-semibold text-gray-700">Experiência {{ i + 1 }}</h3>
+      <h3 class="font-semibold text-gray-700 dark:text-gray-400">Experiência {{ i + 1 }}</h3>
       <BaseButton type="button" variant="ghost" size="sm" @click="onRemove(i)" class="text-red-500 hover:text-red-700">
         Remover
       </BaseButton>
@@ -27,11 +27,8 @@ defineProps<{
 
     <InputField :name="`experiences[${i}].period`" label="Período" placeholder="Ex: Jan 2020 - Dez 2022" />
 
-    <TextAreaField
-      :name="`experiences[${i}].responsibilitiesString`"
-      label="Responsabilidades"
-      placeholder="Uma por linha..."
-    />
+    <TextAreaField :name="`experiences[${i}].responsibilitiesString`" label="Responsabilidades"
+      placeholder="Uma por linha..." />
 
     <InputField :name="`experiences[${i}].technologiesString`" label="Tecnologias" placeholder="Node.js, Vue, etc." />
   </div>

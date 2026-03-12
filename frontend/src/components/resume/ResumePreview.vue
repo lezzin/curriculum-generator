@@ -63,40 +63,27 @@ const removeResume = async () => {
 
 <template>
   <div
-    class="group border rounded-2xl px-5 pb-5 bg-white shadow-sm hover:shadow-md transition-all duration-200"
-    @click="toggle"
-    :class="shouldToggle && 'cursor-pointer'"
-  >
+    class="group border rounded-2xl px-5 pb-5 bg-white dark:bg-zinc-900 shadow-sm hover:shadow-md dark:hover:shadow-zinc-800/50 border-zinc-200 dark:border-zinc-800 transition-all duration-200"
+    @click="toggle" :class="shouldToggle && 'cursor-pointer'">
     <div class="py-4 flex justify-between items-center gap-4">
-      <small class="text-gray-500">Criado em: {{ toHumanReadableDate(resume.createdAt ?? '') }}</small>
+      <small class="text-gray-500 dark:text-zinc-400">Criado em: {{ toHumanReadableDate(resume.createdAt ?? '')
+      }}</small>
 
       <div class="flex items-center gap-3">
         <RotateArrow :rotate="isOpen" v-if="shouldToggle" />
 
         <BaseDropdown>
           <template #trigger="{ toggle: toggleDropdown, isOpen: isDropdownOpen }">
-            <BaseButton
-              @click.stop="toggleDropdown"
-              aria-haspopup="true"
-              :aria-expanded="isDropdownOpen"
-              size="sm"
-              variant="outline"
-            >
+            <BaseButton @click.stop="toggleDropdown" aria-haspopup="true" :aria-expanded="isDropdownOpen" size="sm"
+              variant="outline">
               <HtmlIcon />
               <RotateArrow :rotate="isDropdownOpen" />
             </BaseButton>
           </template>
 
           <template #default="{ close }">
-            <BaseButton
-              v-for="type in templateTypes"
-              :key="type"
-              :value="type"
-              @click.stop="goToPageUrl(type, close)"
-              size="sm"
-              variant="ghost"
-              class="dropdown-item"
-            >
+            <BaseButton v-for="type in templateTypes" :key="type" :value="type" @click.stop="goToPageUrl(type, close)"
+              size="sm" variant="ghost" class="dropdown-item">
               {{ capitalize(type) }}
             </BaseButton>
           </template>
@@ -122,6 +109,6 @@ const removeResume = async () => {
 
 <style scoped lang="postcss">
 .dropdown-item {
-  @apply w-full px-4 py-2 text-gray-600 hover:bg-gray-100 hover:text-black transition;
+  @apply w-full px-4 py-2 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-zinc-800 hover:text-black transition;
 }
 </style>

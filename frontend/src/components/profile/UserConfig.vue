@@ -66,12 +66,13 @@ onMounted(loadUserConfig);
   <CardContainer class="space-y-6">
     <div class="space-y-2">
       <div class="flex justify-between items-center">
-        <h2 class="text-lg font-semibold">Informações Públicas</h2>
+        <h2 class="text-lg font-semibold text-zinc-900 dark:text-zinc-50">Informações Públicas</h2>
 
-        <span class="text-xs bg-gray-200 px-2 py-1 rounded-full"> Perfil {{ completionPercentage }}% completo </span>
+        <span class="text-xs bg-gray-200 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 px-2 py-1 rounded-full">
+          Perfil {{ completionPercentage }}% completo </span>
       </div>
 
-      <p class="text-sm text-gray-600">
+      <p class="text-sm text-gray-600 dark:text-gray-400">
         Esses dados serão utilizados na geração automática de currículos e propostas. Preencha apenas o que desejar
         exibir.
       </p>
@@ -79,35 +80,19 @@ onMounted(loadUserConfig);
 
     <form class="space-y-6" @submit.prevent="upsertUserConfigData">
       <div class="grid md:grid-cols-2 gap-4">
-        <InputField
-          label="Telefone"
-          name="cellphone"
-          placeholder="(35) 99999-9999"
-          helper=" Número que poderá aparecer em seus documentos."
-        />
+        <InputField label="Telefone" name="cellphone" placeholder="(35) 99999-9999"
+          helper=" Número que poderá aparecer em seus documentos." />
 
-        <InputField
-          label="LinkedIn"
-          name="linkedin"
-          placeholder=" https://linkedin.com/in/seu-usuario"
-          helper="Link público do seu perfil profissional."
-        />
+        <InputField label="LinkedIn" name="linkedin" placeholder=" https://linkedin.com/in/seu-usuario"
+          helper="Link público do seu perfil profissional." />
       </div>
 
       <div class="grid md:grid-cols-2 gap-4">
-        <InputField
-          label="GitHub"
-          name="github"
-          placeholder="https://github.com/seu-usuario"
-          helper=" Repositórios e projetos públicos."
-        />
+        <InputField label="GitHub" name="github" placeholder="https://github.com/seu-usuario"
+          helper=" Repositórios e projetos públicos." />
 
-        <InputField
-          label="Portfólio"
-          name="portfolio"
-          placeholder="https://seuportfolio.com"
-          helper="Site pessoal ou página com seus trabalhos."
-        />
+        <InputField label="Portfólio" name="portfolio" placeholder="https://seuportfolio.com"
+          helper="Site pessoal ou página com seus trabalhos." />
       </div>
 
       <BaseButton type="submit" class="w-full" :disabled="isLoading" :loading="isLoading">

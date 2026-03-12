@@ -76,10 +76,10 @@ const loginProvider = (provider: 'github' | 'google') => {
 
       <div class="relative my-4">
         <div class="absolute inset-0 flex items-center">
-          <div class="w-full border-t border-gray-200"></div>
+          <div class="w-full border-t border-gray-200 dark:border-zinc-800"></div>
         </div>
         <div class="relative flex justify-center text-sm">
-          <span class="bg-white px-2 text-gray-500"> ou continue com </span>
+          <span class="bg-white dark:bg-zinc-900 px-2 text-gray-500 dark:text-zinc-400"> ou continue com </span>
         </div>
       </div>
 

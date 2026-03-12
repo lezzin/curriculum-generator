@@ -24,21 +24,16 @@ const { value, errorMessage, handleBlur } = useField<string>(props.name);
       {{ label }}
     </label>
 
-    <textarea
-      v-model="value"
-      :rows="rows ?? 6"
-      :placeholder="placeholder"
-      :disabled="disabled"
-      @blur="handleBlur"
-      :class="errorMessage && 'error-field'"
-    ></textarea>
+    <textarea v-model="value" :rows="rows ?? 6" :placeholder="placeholder" :disabled="disabled" @blur="handleBlur"
+      :class="errorMessage && 'error-field'"></textarea>
 
     <div class="flex items-center justify-between mt-1">
       <p v-if="errorMessage" class="error-text">
         {{ errorMessage }}
       </p>
 
-      <small v-if="showLength" class="text-gray-700 ms-auto"> {{ value?.length ?? 0 }}/{{ maxLength }} </small>
+      <small v-if="showLength" class="text-gray-700 dark:text-gray-500 ms-auto"> {{ value?.length ?? 0 }}/{{ maxLength
+        }} </small>
     </div>
   </div>
 </template>

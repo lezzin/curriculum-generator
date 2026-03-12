@@ -11,7 +11,7 @@ defineProps<{
 </script>
 
 <template>
-  <div class="flex flex-col items-center py-6 gap-2">
+  <div class="flex flex-col items-center py-6 gap-3 mt-5">
     <BaseButton v-if="hasMore" :disabled="isFetching" @click.prevent="loadMore" type="button">
       <span v-if="isFetching">Carregando...</span>
       <span v-else>Carregar mais</span>

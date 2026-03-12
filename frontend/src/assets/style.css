@@ -4,19 +4,31 @@
 
 html {
   scroll-behavior: smooth;
+  @apply text-white;
+
+  &.dark {
+    input[type="date"]::-webkit-calendar-picker-indicator {
+      filter: invert(1);
+      cursor: pointer;
+    }
+  }
 }
 
 .form-control {
   @apply flex flex-col gap-1;
 
-  > label {
-    @apply text-sm font-medium;
+  >label {
+    @apply text-sm font-medium text-zinc-700 dark:text-zinc-300;
   }
 
   select,
   textarea,
   input {
-    @apply w-full h-10 px-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50;
+    @apply w-full h-10 px-2 border border-gray-300 dark:border-zinc-800 rounded-lg bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-50 focus:outline-none focus:ring-2 focus:ring-offset-2 dark:focus:ring-offset-zinc-950 disabled:opacity-50;
+
+    &.error-field {
+      @apply border-red-500 focus:ring-red-500;
+    }
   }
 
   select {
@@ -30,13 +42,9 @@ html {
   .has-button-helper {
     @apply rounded-e-none border-r-0;
 
-    ~ button {
+    ~button {
       @apply rounded-s-none;
     }
-  }
-
-  .error-field {
-    @apply border-red-500 focus:ring-red-500;
   }
 
   .error-text {

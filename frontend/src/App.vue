@@ -12,10 +12,12 @@ import BaseToast from './components/ui/BaseToast.vue';
 import AppContainer from './components/layout/AppContainer.vue';
 import { api } from './services/api/api';
 import { useAuthStore } from './stores/auth';
+import { useTheme } from './composables/useTheme';
 
 const route = useRoute();
 const authStore = useAuthStore();
 const { show } = useToast();
+useTheme();
 
 const setupSSE = () => {
   sseService.init(api);
@@ -83,10 +85,12 @@ onUnmounted(() => {
 <template>
   <AppHeader />
 
-  <LoadContainer :loading="authStore.isAuthLoading">
-    <AppContainer :class="route.name !== 'Home' ? 'pt-8 space-y-8 pb-16' : 'max-w-full'">
-      <router-view></router-view>
-      <BaseToast />
-    </AppContainer>
-  </LoadContainer>
+  <main class="dark:bg-zinc-950 min-h-screen">
+    <LoadContainer :loading="authStore.isAuthLoading">
+      <AppContainer :class="route.name !== 'Home' ? 'pt-[calc(68px_+_2rem)] space-y-8 pb-16' : 'max-w-full'">
+        <router-view></router-view>
+        <BaseToast />
+      </AppContainer>
+    </LoadContainer>
+  </main>
 </template>

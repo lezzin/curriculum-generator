@@ -168,22 +168,20 @@ const modalTitle = `Editar Base de ${props.type === 'resume' ? 'Currículo' : 'P
   <BaseModal :isOpen="isOpen" :title="modalTitle" size="xl" @close="handleClose">
     <form @submit.prevent="save" id="save-base-data-form" class="space-y-6">
       <div class="space-y-4">
-        <h2 class="text-lg font-bold border-b pb-2">Informações Gerais</h2>
+        <h2 class="text-lg font-bold border-b dark:border-zinc-800 pb-2 dark:text-zinc-50">Informações Gerais</h2>
         <TextAreaField name="summary" label="Resumo Profissional" placeholder="3-4 linhas, resultados, tecnologias" />
         <InputField name="skillsString" label="Skills" placeholder="Node.js, NestJS, PostgreSQL" />
       </div>
 
       <div class="space-y-4">
-        <h2 class="text-lg font-bold border-b pb-2">Experiências Profissionais</h2>
-        <ExperienceFields
-          :fields="experienceFields"
-          :on-add="() => pushExperience(newExperience())"
-          :on-remove="removeExperience"
-        />
+        <h2 class="text-lg font-bold border-b dark:border-zinc-800 pb-2 dark:text-zinc-50">Experiências Profissionais
+        </h2>
+        <ExperienceFields :fields="experienceFields" :on-add="() => pushExperience(newExperience())"
+          :on-remove="removeExperience" />
       </div>
 
       <div class="space-y-4">
-        <h2 class="text-lg font-bold border-b pb-2">Projetos em Destaque</h2>
+        <h2 class="text-lg font-bold border-b dark:border-zinc-800 pb-2 dark:text-zinc-50">Projetos em Destaque</h2>
         <ProjectFields :fields="projectFields" :on-add="() => pushProject(newProject())" :on-remove="removeProject" />
       </div>
     </form>
