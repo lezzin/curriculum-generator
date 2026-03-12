@@ -8,7 +8,7 @@ import { getTodayDate } from '../../helper/string.helper';
 import AppTitle from '../../components/layout/AppTitle.vue';
 import ReportFilters from '../../components/report/ReportFilters.vue';
 import ReportTable from '../../components/report/ReportTable.vue';
-import ReportPagination, { type Meta } from '../../components/report/ReportPagination.vue';
+import ReportPagination from '../../components/report/ReportPagination.vue';
 import { useAuthStore } from '../../stores/auth';
 import { storeToRefs } from 'pinia';
 import { useReportApi } from '../../composables/api/useReportApi';
