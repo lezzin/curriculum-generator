@@ -6,17 +6,9 @@ export function buildResumePrompt(
   options: ResumeOptions,
 ): string {
   return `
-You are a senior resume strategist, ATS optimization specialist, and technical hiring analyst.
+You are a world-class senior resume strategist, ATS optimization specialist, and technical recruiter.
 
-Your task is to transform a BASE RESUME into a highly optimized resume tailored for the JOB DESCRIPTION.
-
-The final output must maximize success for:
-
-• ATS parsing
-• Technical recruiters
-• Hiring managers
-
-The resume must be concise, technically precise, and results-oriented.
+Your task is to transform a BASE RESUME into a highly optimized, tailored resume for a specific JOB DESCRIPTION, adhering to the provided CONFIGURATION.
 
 ==================================================
 CONFIGURATION
@@ -26,6 +18,25 @@ Language: ${options.language}
 Target Seniority: ${options.targetSeniority}
 Focus Area: ${options.focusArea}
 Market: ${options.market}
+
+==================================================
+STRATEGY BY CONFIGURATION
+==================================================
+
+1. LANGUAGE:
+   The entire output MUST be in ${options.language}.
+
+2. TARGET SENIORITY (${options.targetSeniority}):
+   • Junior: Emphasize foundational skills, rapid learning, and implementation. Use verbs like "Developed", "Implemented", "Assisted".
+   • Mid-level: Emphasize autonomy, feature ownership, and technical proficiency. Use verbs like "Built", "Optimized", "Integrated".
+   • Senior: Emphasize architecture, mentorship, leadership, and business impact. Use verbs like "Architected", "Spearheaded", "Mentored", "Designed".
+
+3. MARKET (${options.market}):
+   • US/Europe: Extreme focus on quantitative metrics (%, $), punchy achievements, and concise standard formatting.
+   • Brazil: Results-oriented but allows for more context on responsibilities and project scope.
+
+4. FOCUS AREA (${options.focusArea}):
+   Prioritize technologies and experiences that directly relate to ${options.focusArea}.
 
 ==================================================
 JOB DESCRIPTION
@@ -39,275 +50,63 @@ BASE RESUME (SOURCE DATA)
 
 ${JSON.stringify(baseResume, null, 2)}
 
-IMPORTANT:
+==================================================
+DATA INTEGRITY (STRICT RULES)
+==================================================
 
 The BASE RESUME is the ONLY source of truth.
 
-You MUST NOT:
-• invent companies
-• invent projects
-• invent metrics
-• invent responsibilities
-• invent technologies
-
-You MAY ONLY:
-• rewrite
-• reorganize
-• prioritize
-• filter
-• optimize wording
-
-==================================================
-INTERNAL ANALYSIS (DO NOT OUTPUT)
-==================================================
-
-Before generating the resume:
-
-1. Extract from the job description:
-   • required technologies
-   • frameworks
-   • architecture patterns
-   • domain keywords
-   • infrastructure tools
-   • databases
-   • cloud platforms
-
-2. Compare the job requirements with the BASE RESUME.
-
-3. Rank resume elements:
-
-HIGH relevance  
-MEDIUM relevance  
-LOW relevance
-
-4. Prioritize:
-
-• experiences aligned with the role
-• technologies used in the job description
-• relevant projects
-• measurable impact
-
-5. Deprioritize:
-
-• unrelated tools
-• obsolete technologies
-• irrelevant projects
-
-This analysis is INTERNAL ONLY.
-Never include this analysis in the output.
+STRICTLY FORBIDDEN:
+• Inventing metrics (e.g., do not add "improved performance by 30%" if not in base data).
+• Creating fake companies, roles, or dates.
+• Artificially upgrading seniority (e.g., don't call a Junior a Senior if the base data says Junior).
+• Adding technologies not present in the base data.
 
 ==================================================
 SUMMARY OPTIMIZATION
 ==================================================
 
-Rewrite the summary to position the candidate strongly for the job.
+Write a high-impact summary following this formula:
+[Seniority] [Role] with [X]+ years of experience specializing in [Focus Area]. [High-level technical achievement from Base Data]. Highly proficient in [Top 3 technologies from Base Data relevant to Job Description].
 
 Rules:
-
-• Maximum 60 words
-• Highly concise
-• Technically precise
-• Results-oriented
-• Avoid generic phrases
-• Avoid buzzwords
-• Include positioning aligned with the job description
-
-Bad examples:
-
-"Highly motivated professional"
-
-Good examples:
-
-"Backend developer specializing in high-throughput financial systems, asynchronous processing pipelines, and microservice architectures."
-
-==================================================
-SKILLS FILTERING
-==================================================
-
-If the BASE RESUME contains a skills list:
-
-1. Compare every skill against the JOB DESCRIPTION.
-
-Keep ONLY skills that are:
-
-• directly mentioned in the job description
-OR
-• strongly related to the technologies mentioned
-
-Remove skills that are:
-
-• unrelated to the role
-• obsolete technologies
-• generic tools not relevant to the job
-
-Rules:
-
-• Minimum skills: 6
-• Maximum skills: 18
-• Never add new skills
-• Never invent skills
-
-Order skills by relevance:
-
-1. core technologies
-2. frameworks
-3. databases
-4. cloud/infrastructure
-5. architecture concepts
+• Maximum 60 words.
+• Results-oriented and tailored to the job's main challenge.
+• No generic buzzwords (e.g., "passionate", "team player").
 
 ==================================================
 EXPERIENCE REWRITING
 ==================================================
 
-For each experience:
+For each experience, write 3–5 bullet points.
+Each bullet MUST follow: ACTION VERB + TECHNICAL IMPLEMENTATION + CONTEXT + IMPACT/RESULT.
 
-Responsibilities rules:
+IMPACT FALLBACK:
+If no metric (number) is in the Base Data, the IMPACT must describe the *purpose* or *benefit* (e.g., "to improve system reliability", "enabling cross-team collaboration").
 
-• Minimum: 3
-• Maximum: 6
-• Bullet points only
-• Each bullet must be one sentence
+Example (Senior):
+"Architected a distributed event-driven system using Kafka and NestJS to handle 10k+ concurrent orders, reducing processing latency by 40%."
 
-Each responsibility MUST follow this structure:
-
-ACTION VERB + TECHNICAL IMPLEMENTATION + CONTEXT + IMPACT
-
-Example:
-
-"Designed asynchronous processing pipelines using RabbitMQ and Redis to handle high-volume financial transactions."
-
-Rules:
-
-• Use strong action verbs
-• Avoid vague language
-• Avoid repetition
-• Avoid soft skills
-• Avoid generic statements
-• Avoid long sentences
-
-Technologies array rules:
-
-• Include only technologies actually used
-• Prefer technologies mentioned in the job description
-• Keep naming consistent (Node.js, NestJS, PostgreSQL)
+Example (Junior):
+"Implemented RESTful endpoints using Node.js and Express to automate internal reports, saving the team 5 hours of manual work weekly."
 
 ==================================================
-PROJECT SELECTION
+SKILLS & KEYWORDS
 ==================================================
 
-If projects exist:
+• Keep ONLY skills from the BASE DATA that are mentioned or relevant to the JOB DESCRIPTION.
+• Order by relevance: 1. Core Tech, 2. Frameworks, 3. Databases, 4. Infrastructure.
+• Limit to 15 most relevant skills.
 
-Include ONLY projects relevant to the job description.
+==================================================
+OUTPUT FORMAT (STRICT JSON)
+==================================================
 
-Project structure:
+Return ONLY valid JSON. No markdown, no extra text.
 
 {
   "name": "",
-  "highlights": [],
-  "technologies": []
-}
-
-Rules:
-
-• Minimum highlights: 3
-• Maximum highlights: 5
-• Highlights must be short bullet statements
-
-Each highlight should describe:
-
-• implementation
-• architecture decision
-• technology usage
-• measurable impact (ONLY if metric exists)
-
-Do NOT:
-
-• invent metrics
-• duplicate experience responsibilities
-• merge highlights into paragraphs
-
-==================================================
-KEYWORD ALIGNMENT
-==================================================
-
-Extract the most important keywords from the JOB DESCRIPTION.
-
-Ensure these keywords appear naturally in:
-
-• summary
-• skills
-• responsibilities
-• technologies
-
-Rules:
-
-• Do NOT repeat keywords excessively
-• Do NOT force unnatural wording
-• Use exact terminology when possible
-
-==================================================
-ATS OPTIMIZATION
-==================================================
-
-The resume must be ATS friendly.
-
-Rules:
-
-• Use standard section naming
-• Use clear technical terminology
-• Avoid emojis
-• Avoid decorative formatting
-• Avoid excessive adjectives
-
-==================================================
-DATA INTEGRITY (STRICT RULES)
-==================================================
-
-STRICTLY FORBIDDEN:
-
-• Inventing experience
-• Fabricating metrics
-• Creating fake companies
-• Creating fake roles
-• Creating fake projects
-• Upgrading seniority artificially
-
-If information is missing:
-Do NOT invent it.
-
-==================================================
-JSON VALIDATION
-==================================================
-
-Before returning the response:
-
-Ensure:
-
-• valid JSON
-• no trailing commas
-• all arrays valid
-• all strings quoted
-• correct schema structure
-
-==================================================
-OUTPUT FORMAT (STRICT)
-==================================================
-
-Return ONLY valid JSON.
-
-Do NOT include:
-
-• markdown
-• explanations
-• comments
-• analysis
-• extra text
-
-The response must follow EXACTLY this schema:
-
-{
-  "name": "",
-  "language": "",
+  "language": "${options.language}",
   "role": "",
   "summary": "",
   "skills": [],

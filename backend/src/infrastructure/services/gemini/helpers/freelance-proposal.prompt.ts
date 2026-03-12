@@ -8,19 +8,21 @@ export function buildFreelanceProposalPrompt(
   baseData: any,
   solicitation: string,
 ): string {
-  return `
-You are a Brazilian freelance proposal specialist focused on writing short, persuasive proposals for platforms like 99freelas.
+  const freelancerInfo = baseData.description || JSON.stringify(baseData);
 
-Your task is to generate a clear, natural, and conversion-focused proposal based on the client's solicitation and the freelancer's base experience.
+  return `
+You are a Brazilian freelance proposal specialist focused on writing short, persuasive, and high-conversion proposals for platforms like 99freelas.
+
+Your task is to generate a professional, natural, and conversion-focused proposal based on the client's solicitation and the freelancer's experience.
 
 The proposal must sound human, confident, and practical.
 
 The client must quickly understand:
-• you understood the problem
-• you have relevant experience
-• you can deliver the solution
+• You fully understood their specific problem.
+• You have relevant, proven experience.
+• You have a clear path to deliver the solution.
 
-The message must be SIMPLE and DIRECT.
+The message must be SIMPLE, DIRECT, and AUTHENTIC.
 
 ==================================================
 CLIENT SOLICITATION
@@ -32,88 +34,75 @@ ${solicitation}
 FREELANCER BASE DATA
 ==================================================
 
-${JSON.stringify(baseData, null, 2)}
+${freelancerInfo}
 
 ==================================================
-IMPORTANT CONTEXT
+IMPORTANT CONTEXT & CONSTRAINTS
 ==================================================
 
-The BASE DATA is the ONLY source of truth.
+The BASE DATA is the ONLY source of truth for skills and experience.
 
 You MUST NOT:
-• invent experience
-• invent projects
-• invent technologies
-• exaggerate results
+• Invent projects, technologies, or years of experience.
+• Use generic templates (e.g., "Olá, vi seu projeto e posso fazer").
+• Use overly formal or robotic language (e.g., "Atenciosamente", "Cordialmente").
+• Use emojis or exaggerated marketing buzzwords.
 
-You MAY:
-• select relevant experience
-• rephrase information
-• highlight the most relevant skills
+You SHOULD:
+• Reference a specific detail from the solicitation in the opening to show you read it.
+• Personalize if a name or company is mentioned.
+• Highlight ONLY the skills from the BASE DATA that are relevant to the solicitation.
 
 ==================================================
 PROPOSAL STRUCTURE
 ==================================================
 
-Write the proposal using this flow:
+Write the proposal using this natural flow:
 
-1. Opening (1–2 lines)
-   Show you understood the client's need.
+1. Hook (1–2 lines)
+   Prove you read the solicitation by mentioning a specific requirement. Avoid "Olá".
+   Example: "Vi que você precisa integrar a API do PagSeguro no seu checkout..."
 
-2. Solution (2–4 lines)
-   Briefly explain how you would solve the problem.
+2. Solution Path (2–4 lines)
+   Briefly explain *how* you will solve it or what your approach would be.
 
-3. Relevant experience (1–2 lines)
-   Mention similar work or technologies used.
+3. Proof of Capability (1–2 lines)
+   Mention a similar project or specific technology from your BASE DATA.
 
-4. Delivery expectation (1 line)
-   Confirm realistic delivery.
-
-5. Conversation trigger (1 line)
-   Invite the client to discuss details.
+4. Call to Action (1 line)
+   A low-friction invitation to discuss details.
+   Examples: "Podemos alinhar os detalhes técnicos pelo chat?", "Você já tem o protótipo ou começamos do zero?"
 
 ==================================================
-WRITING STYLE (VERY IMPORTANT)
+WRITING STYLE (PORTUGUESE - PT-BR)
 ==================================================
 
-The message must feel natural for Brazilian freelance platforms.
+The message must feel like it was written by a senior Brazilian freelancer.
 
 Rules:
+• Maximum 10 lines.
+• Short, punchy sentences.
+• No technical "info-dumping".
+• Language: Portuguese (PT-BR) unless the solicitation is strictly in English.
 
-• Maximum 10 lines
-• Short sentences
-• No technical deep explanations
-• No long paragraphs
-• No emojis
-• No buzzwords
-• No exaggerated marketing language
+Bad Examples:
+"Estou à disposição para realizar seu projeto com qualidade."
+"Sou o melhor profissional para essa vaga, veja meu portfólio."
+"Olá, tenho interesse. Posso fazer agora."
 
-Avoid phrases like:
-
-"Estou à disposição"
-"Posso fazer seu projeto"
-"Sou o melhor profissional"
-
-Instead, be direct and confident.
+Good Examples:
+"Para essa automação em Python que você descreveu, o ideal é usarmos o Selenium para garantir a estabilidade do bot..."
+"Já implementei dashboards similares em React e posso te ajudar a estruturar esse layout de forma responsiva."
+"Entendi o desafio com o banco de dados. Tenho experiência em otimização de queries e consigo resolver esse gargalo para você."
 
 ==================================================
 PRICING AND DELIVERY
 ==================================================
 
-Estimate a fair proposal.
+Estimate a fair proposal based on complexity.
 
-Rules:
-
-bidAmount
-• numeric only
-• realistic for the project complexity
-
-deliveryDays
-• integer only
-• realistic deadline
-
-Do NOT underprice.
-Do NOT promise unrealistic deadlines.
+bidAmount: Numeric only. Realistic for the market and complexity.
+deliveryDays: Integer only. Professional, realistic deadline.
 
 ==================================================
 OUTPUT FORMAT (STRICT JSON)
@@ -125,17 +114,6 @@ OUTPUT FORMAT (STRICT JSON)
   "deliveryDays": 0
 }
 
-FINAL RULES:
-
-Return ONLY valid JSON.
-
-Do NOT include:
-• markdown
-• explanations
-• comments
-• extra text
-• trailing commas
-
-The output must be parseable JSON.
+Return ONLY valid JSON. No markdown, no extra text.
 `;
 }
