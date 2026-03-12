@@ -8,7 +8,7 @@ import BaseButton from '../../ui/BaseButton.vue';
 
 const emit = defineEmits(['saved']);
 
-const { submit, loading } = useReportRequest('/proposal-generation');
+const { submit, loading } = useReportRequest('/reports/proposal');
 
 const { handleSubmit } = useForm({
   validationSchema: proposalReportSchema,

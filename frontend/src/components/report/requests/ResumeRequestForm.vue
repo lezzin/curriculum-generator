@@ -8,7 +8,7 @@ import BaseButton from '../../ui/BaseButton.vue';
 
 const emit = defineEmits(['saved']);
 
-const { submit, loading } = useReportRequest('/resume-generation');
+const { submit, loading } = useReportRequest('/reports/resume');
 
 const { handleSubmit } = useForm({
   validationSchema: resumeReportSchema,

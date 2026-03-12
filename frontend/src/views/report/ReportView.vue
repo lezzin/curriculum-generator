@@ -52,7 +52,7 @@ const { handleSubmit, values } = useForm<ReportForm>({
 });
 
 const fetchReport = async () => {
-  const { data, error } = await request<any>('get', '/report', {
+  const { data, error } = await request<any>('get', '/reports', {
     user_uuid: user.value?.id,
     page: page.value,
     limit: values.limit,
@@ -102,12 +102,7 @@ onMounted(async () => {
 
     <ReportTable v-model:items="reportData.items" :loading="loading" />
 
-    <ReportPagination
-      v-if="(reportData?.items.length || 0) > 0 && reportData.meta"
-      :meta="reportData.meta"
-      :loading="loading"
-      v-model:page="page"
-      @change="fetchReport"
-    />
+    <ReportPagination v-if="(reportData?.items.length || 0) > 0 && reportData.meta" :meta="reportData.meta"
+      :loading="loading" v-model:page="page" @change="fetchReport" />
   </div>
 </template>

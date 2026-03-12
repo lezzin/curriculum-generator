@@ -45,7 +45,7 @@ function getProgressColor(statusId: ProcessStatus, percent: number): string {
 }
 
 async function handleDownloadFile(path: string) {
-  const { data, error } = await request<{ url: string }>('get', '/report/download-file', { path });
+  const { data, error } = await request<{ url: string }>('get', '/reports/download', { path });
 
   if (error) {
     show({ message: error, type: 'error' });
@@ -61,7 +61,7 @@ async function handleDownloadFile(path: string) {
 }
 
 async function handleChangeProcessStatus(processId: string, statusId: ProcessStatus) {
-  const { data, error } = await request<any>('post', '/report/change-status', {
+  const { data, error } = await request<any>('post', '/reports/status', {
     process_id: processId,
     status_id: statusId,
   });
@@ -94,11 +94,8 @@ async function handleChangeProcessStatus(processId: string, statusId: ProcessSta
         </thead>
 
         <tbody class="divide-y divide-gray-100">
-          <tr
-            v-for="item in props.items"
-            :key="item.id"
-            class="hover:bg-blue-50/40 transition-colors duration-150 text-left"
-          >
+          <tr v-for="item in props.items" :key="item.id"
+            class="hover:bg-blue-50/40 transition-colors duration-150 text-left">
             <td class="px-3 py-3 max-w-0">
               <span class="block truncate font-medium text-gray-800" :title="item.report_name">
                 {{ item.report_name }}
@@ -113,14 +110,10 @@ async function handleChangeProcessStatus(processId: string, statusId: ProcessSta
                   <span class="font-semibold text-gray-700"> {{ item.percentage }}% </span>
                 </div>
                 <div class="w-full bg-gray-200 rounded-full h-2 overflow-hidden">
-                  <div
-                    class="h-2 rounded-full transition-all duration-500"
-                    :class="[
-                      getProgressColor(item.status_id, item.percentage),
-                      item.status_id === PROCESS_STATUS.PROCESSING ? 'animate-pulse' : '',
-                    ]"
-                    :style="{ width: item.percentage + '%' }"
-                  />
+                  <div class="h-2 rounded-full transition-all duration-500" :class="[
+                    getProgressColor(item.status_id, item.percentage),
+                    item.status_id === PROCESS_STATUS.PROCESSING ? 'animate-pulse' : '',
+                  ]" :style="{ width: item.percentage + '%' }" />
                 </div>
               </div>
             </td>
@@ -134,32 +127,23 @@ async function handleChangeProcessStatus(processId: string, statusId: ProcessSta
 
             <td class="px-3 py-3">
               <div class="flex gap-2">
-                <BaseButton
-                  v-if="getStatusConfig(item.status_id).download && item.final_file_path"
-                  size="sm"
+                <BaseButton v-if="getStatusConfig(item.status_id).download && item.final_file_path" size="sm"
                   variant="outline"
                   :disabled="loadingReportRequest || getStatusConfig(item.status_id).download === 'expired'"
-                  @click="handleDownloadFile(item.final_file_path)"
-                >
+                  @click="handleDownloadFile(item.final_file_path)">
                   Download
                 </BaseButton>
 
-                <BaseButton
-                  v-if="getStatusConfig(item.status_id).cancel"
-                  size="sm"
-                  variant="destructive"
+                <BaseButton v-if="getStatusConfig(item.status_id).cancel" size="sm" variant="destructive"
                   :disabled="loadingReportRequest"
-                  @click="handleChangeProcessStatus(item.progress_id, PROCESS_STATUS.CANCELLED)"
-                >
+                  @click="handleChangeProcessStatus(item.progress_id, PROCESS_STATUS.CANCELLED)">
                   Cancelar
                 </BaseButton>
 
-                <span
-                  v-if="
-                    (!getStatusConfig(item.status_id).download && !getStatusConfig(item.status_id).cancel) ||
-                    !item.final_file_path
-                  "
-                >
+                <span v-if="
+                  (!getStatusConfig(item.status_id).download && !getStatusConfig(item.status_id).cancel) ||
+                  !item.final_file_path
+                ">
                   -
                 </span>
               </div>
