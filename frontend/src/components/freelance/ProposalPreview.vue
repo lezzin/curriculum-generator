@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 import type { FreelanceProposal } from '../../interfaces/freelance.interfaces';
 import BaseButton from '../ui/BaseButton.vue';
 import { toHumanReadableDate } from '../../helper/string.helper';
@@ -57,13 +57,18 @@ async function copyProposal() {
     show({ message: 'Erro ao copiar', type: 'error' });
   }
 }
+
+const formattedProposal = computed(() => (`${props.proposal.message}
+
+Investimento: R$ ${props.proposal.bidAmount}
+Prazo estimado: ${props.proposal.deliveryDays} dias
+
+Portfólio: [LINK_DO_PORTFOLIO]`))
 </script>
 
 <template>
-  <div
-    v-if="proposal"
-    class="rounded-2xl p-6 space-y-5 shadow-sm bg-white border border-zinc-200 transition-all duration-300"
-  >
+  <div v-if="proposal"
+    class="rounded-2xl p-6 space-y-5 shadow-sm bg-white border border-zinc-200 transition-all duration-300">
     <div class="flex items-center justify-between">
       <small class="text-gray-500">
         Criado em:
@@ -71,12 +76,8 @@ async function copyProposal() {
       </small>
 
       <div class="flex items-center gap-3">
-        <BaseButton
-          @click="copyProposal"
-          variant="outline"
-          size="sm"
-          :class="{ '!border-green-500 !text-green-600': isCopied }"
-        >
+        <BaseButton @click="copyProposal" variant="outline" size="sm"
+          :class="{ '!border-green-500 !text-green-600': isCopied }">
           <SuccessIcon v-if="isCopied" />
           <CopyIcon v-else />
         </BaseButton>
@@ -98,11 +99,8 @@ async function copyProposal() {
     <div class="space-y-1">
       <label class="text-sm font-medium text-zinc-700"> Proposta </label>
 
-      <textarea
-        v-model="proposal.message"
-        rows="8"
-        class="w-full resize-none text-sm leading-relaxed rounded-xl p-4 bg-zinc-50 text-zinc-700 border border-zinc-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all duration-300"
-      />
+      <textarea v-model="formattedProposal" rows="8"
+        class="w-full resize-none text-sm leading-relaxed rounded-xl p-4 bg-zinc-50 text-zinc-700 border border-zinc-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all duration-300" />
     </div>
   </div>
 
