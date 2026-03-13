@@ -637,8 +637,8 @@
                     <h1 class="hero-name">{{name}}</h1>
                     <p class="hero-role">{{role}}</p>
                     {{#if summary}}<p class="hero-summary">{{summary}}</p>{{/if}}
-                    {{#if contactsHtml}}
-                    <div class="hero-contacts">{{{contactsHtml}}}</div>
+                    {{#if contacts}}
+                    <div class="hero-contacts">{{formatContacts contacts format}}</div>
                     {{/if}}
                 </div>
                 <div class="hero-visual reveal" style="transition-delay: 0.2s;">

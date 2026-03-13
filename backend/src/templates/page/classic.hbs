@@ -683,8 +683,8 @@
                     <div class="hero-rule"></div>
                     <p class="hero-role">{{role}}</p>
                     {{#if summary}}<p class="hero-summary">{{summary}}</p>{{/if}}
-                    {{#if contactsHtml}}
-                    <div class="hero-contacts">{{{contactsHtml}}}</div>
+                    {{#if contacts}}
+                    <div class="hero-contacts">{{formatContacts contacts format}}</div>
                     {{/if}}
                 </div>
                 <div class="hero-portrait reveal" style="transition-delay: 0.15s;">

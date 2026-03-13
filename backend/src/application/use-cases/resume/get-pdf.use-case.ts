@@ -1,13 +1,12 @@
 import { NotFoundException } from 'src/domain/exceptions';
-import { BaseDataRepository } from 'src/domain/repositories/base-data.repository';
+import { ResumeDocumentRepository } from 'src/domain/repositories/resume-document.repository';
 import { ResumeRepository } from 'src/domain/repositories/resume.repository';
 import { UserConfigRepository } from 'src/domain/repositories/user-config.repository';
 import { UserRepository } from 'src/domain/repositories/user.repository';
-import { ResumeDocumentService } from 'src/infrastructure/services/resume-document.service';
 
 export class GetPdfUseCase {
   constructor(
-    private readonly resumeDocumentService: ResumeDocumentService,
+    private readonly resumeDocumentRepository: ResumeDocumentRepository,
     private readonly resumeRepository: ResumeRepository,
     private readonly userRepository: UserRepository,
     private readonly userConfigRepository: UserConfigRepository,
@@ -28,7 +27,7 @@ export class GetPdfUseCase {
 
     const contactData = await this.userConfigRepository.findByUserId(resume.userId);
 
-    const stream = await this.resumeDocumentService.getPdfById(resume, userData, contactData);
+    const stream = await this.resumeDocumentRepository.generatePdf(resume, userData, contactData);
 
     if (!stream) {
       throw new NotFoundException('PDF não encontrado!');

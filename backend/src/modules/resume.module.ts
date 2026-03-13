@@ -26,6 +26,7 @@ import { GetPageUseCase } from 'src/application/use-cases/resume/get-page.use-ca
 import { RemoveResumeUseCase } from 'src/application/use-cases/resume/remove-resume.use-case';
 import { GeminiService } from 'src/infrastructure/services/gemini/gemini.service';
 import { SseRepository } from 'src/domain/repositories/sse.repository';
+import { ResumeDocumentRepository } from 'src/domain/repositories/resume-document.repository';
 
 @Module({
   imports: [
@@ -46,26 +47,29 @@ import { SseRepository } from 'src/domain/repositories/sse.repository';
       useClass: TypeOrmResumeRepository,
     },
     GeminiService,
-    ResumeDocumentService,
+    {
+      provide: ResumeDocumentRepository,
+      useClass: ResumeDocumentService,
+    },
     DiscordService,
     BullMQResumeQueue,
     ResumeProcessor,
     {
       provide: GetPdfUseCase,
       useFactory: (
-        resumeDocumentService: ResumeDocumentService,
+        resumeDocumentRepository: ResumeDocumentRepository,
         resumeRepository: ResumeRepository,
         userRepository: UserRepository,
         userConfigRepository: UserConfigRepository,
       ) =>
         new GetPdfUseCase(
-          resumeDocumentService,
+          resumeDocumentRepository,
           resumeRepository,
           userRepository,
           userConfigRepository,
         ),
       inject: [
-        ResumeDocumentService,
+        ResumeDocumentRepository,
         ResumeRepository,
         UserRepository,
         UserConfigRepository,
@@ -88,8 +92,8 @@ import { SseRepository } from 'src/domain/repositories/sse.repository';
       useFactory: (
         resumeRepository: ResumeRepository,
         baseDataRepository: BaseDataRepository,
-        geminiService: GeminiService,
         userRepository: UserRepository,
+        geminiService: GeminiService,
         sseRepository: SseRepository,
         cache: CacheRepository,
       ) =>
@@ -104,10 +108,8 @@ import { SseRepository } from 'src/domain/repositories/sse.repository';
       inject: [
         ResumeRepository,
         BaseDataRepository,
-        GeminiService,
-        UserConfigRepository,
         UserRepository,
-        ResumeDocumentService,
+        GeminiService,
         SseRepository,
         CacheRepository,
       ],
@@ -115,19 +117,19 @@ import { SseRepository } from 'src/domain/repositories/sse.repository';
     {
       provide: GetPageUseCase,
       useFactory: (
-        resumeDocumentService: ResumeDocumentService,
+        resumeDocumentRepository: ResumeDocumentRepository,
         resumeRepository: ResumeRepository,
         userConfigRepository: UserConfigRepository,
         userRepository: UserRepository,
       ) =>
         new GetPageUseCase(
-          resumeDocumentService,
+          resumeDocumentRepository,
           resumeRepository,
           userConfigRepository,
           userRepository,
         ),
       inject: [
-        ResumeDocumentService,
+        ResumeDocumentRepository,
         ResumeRepository,
         UserConfigRepository,
         UserRepository,
@@ -139,7 +141,7 @@ import { SseRepository } from 'src/domain/repositories/sse.repository';
         resumeRepository: ResumeRepository,
         cache: CacheRepository,
       ) => new RemoveResumeUseCase(resumeRepository, cache),
-      inject: [ResumeRepository, ResumeDocumentService, CacheRepository],
+      inject: [ResumeRepository, CacheRepository],
     },
   ],
 })

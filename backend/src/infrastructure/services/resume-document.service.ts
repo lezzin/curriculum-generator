@@ -1,4 +1,4 @@
-import { Injectable, OnModuleInit, OnModuleDestroy } from '@nestjs/common';
+import { Injectable, OnModuleInit, OnModuleDestroy, InternalServerErrorException } from '@nestjs/common';
 import * as puppeteer from 'puppeteer';
 import * as Handlebars from 'handlebars';
 import * as fs from 'fs';
@@ -9,9 +9,10 @@ import { Resume } from 'src/domain/entities/resume.entity';
 import { User } from 'src/domain/entities/user.entity';
 import { UserConfig } from 'src/domain/entities/user.config.entity';
 import { Language, SelectedTemplate } from 'src/domain/enums/resume.enums';
+import { ResumeDocumentRepository } from 'src/domain/repositories/resume-document.repository';
 
 @Injectable()
-export class ResumeDocumentService implements OnModuleInit, OnModuleDestroy {
+export class ResumeDocumentService extends ResumeDocumentRepository implements OnModuleInit, OnModuleDestroy {
   private browser: puppeteer.Browser;
 
   private readonly PUPPETEER_TIMEOUT = 60000; // 60S
@@ -23,51 +24,83 @@ export class ResumeDocumentService implements OnModuleInit, OnModuleDestroy {
 
   async onModuleInit() {
     this.browser = await puppeteer.launch(this.PUPPETEER_CONFIG);
+    this.registerHandlebarsHelpers();
   }
 
   async onModuleDestroy() {
-    await this.browser.close();
+    if (this.browser) {
+      await this.browser.close();
+    }
   }
 
-  generateResumeHtml(
+  private registerHandlebarsHelpers() {
+    Handlebars.registerHelper('add', (value: number, increment: number) => value + increment);
+
+    Handlebars.registerHelper('formatContacts', (contacts: any, format: 'page' | 'pdf') => {
+      const parts: string[] = [];
+
+      if (contacts.email) {
+        parts.push(`<a href="mailto:${contacts.email}">${contacts.email}</a>`);
+      }
+
+      if (contacts.cellphone) {
+        parts.push(`<a href="tel:+55${contacts.cellphone}">${contacts.cellphone}</a>`);
+      }
+
+      if (contacts.linkedin) {
+        parts.push(`<a href="${contacts.linkedin}">LinkedIn</a>`);
+      }
+
+      if (contacts.github) {
+        parts.push(`<a href="${contacts.github}">GitHub</a>`);
+      }
+
+      if (contacts.portfolio) {
+        parts.push(`<a href="${contacts.portfolio}">Portfólio</a>`);
+      }
+
+      const separator = format === 'page' ? ' ' : ' | ';
+      return new Handlebars.SafeString(parts.join(separator));
+    });
+  }
+
+  generateHtml(
     resume: Resume,
     user: User,
     userConfig: UserConfig | null,
-    templateFolder: 'page' | 'pdf',
+    format: 'page' | 'pdf',
   ): string {
-    const template = this.loadTemplate(resume.template, templateFolder);
-    const labels =
-      SECTION_LABELS[resume.language] ?? SECTION_LABELS[Language.PT];
-
-    Handlebars.registerHelper(
-      'add',
-      function (value: number, increment: number) {
-        return value + increment;
-      },
-    );
+    const template = this.loadTemplate(resume.template, format);
+    const labels = SECTION_LABELS[resume.language] ?? SECTION_LABELS[Language.PT];
 
     return template({
       name: user.name,
       summary: resume.summary,
-      initials: user.name,
+      initials: this.getInitials(user.name),
       role: resume.role,
       skills: resume.skills,
       experiences: resume.experiences,
       projects: resume.projects,
-
       labels,
-      contactsHtml: this.getContactHTML(user, userConfig, templateFolder),
+      contacts: {
+        email: user.email,
+        cellphone: userConfig?.cellphone,
+        linkedin: userConfig?.linkedin,
+        github: userConfig?.github,
+        portfolio: userConfig?.portfolio,
+      },
+      format,
     });
   }
 
-  async getPdfById(resume: Resume,
+  async generatePdf(
+    resume: Resume,
     user: User,
     userConfig: UserConfig | null,
   ): Promise<Buffer | null> {
     await this.ensureBrowser();
 
-    const html = this.generateResumeHtml(resume, user, userConfig, 'pdf');
-
+    const html = this.generateHtml(resume, user, userConfig, 'pdf');
     const page = await this.browser.newPage();
 
     try {
@@ -84,8 +117,9 @@ export class ResumeDocumentService implements OnModuleInit, OnModuleDestroy {
       });
 
       return Buffer.from(pdf);
-    } catch {
-      return null
+    } catch (error) {
+      console.error('Error generating PDF:', error);
+      return null;
     } finally {
       await page.close();
     }
@@ -96,42 +130,30 @@ export class ResumeDocumentService implements OnModuleInit, OnModuleDestroy {
     folder: 'page' | 'pdf',
   ) {
     const file = templateType ?? SelectedTemplate.DEFAULT;
-
     const templatePath = path.join(
       __dirname,
-      `../../templates/${folder}/${file}.hbs`,
+      '..',
+      '..',
+      'templates',
+      folder,
+      `${file}.hbs`,
     );
 
-    const content = fs.readFileSync(templatePath, 'utf-8');
-
-    return Handlebars.compile(content);
+    try {
+      const content = fs.readFileSync(templatePath, 'utf-8');
+      return Handlebars.compile(content);
+    } catch (error) {
+      throw new InternalServerErrorException(`Template ${file} not found in ${folder}`);
+    }
   }
 
-  private getContactHTML(
-    user: User,
-    userConfig: UserConfig | null,
-    templateFolder: 'page' | 'pdf',
-  ) {
-    const contacts: string[] = [];
-
-    if (user?.email)
-      contacts.push(`<a href="mailto:${user.email}">(${user.email})</a>`);
-
-    if (userConfig?.cellphone)
-      contacts.push(
-        `<a href="tel:+55${userConfig.cellphone}">(${userConfig.cellphone})</a>`,
-      );
-
-    if (userConfig?.linkedin)
-      contacts.push(`<a href="${userConfig.linkedin}">LinkedIn</a>`);
-
-    if (userConfig?.github)
-      contacts.push(`<a href="${userConfig.github}">GitHub</a>`);
-
-    if (userConfig?.portfolio)
-      contacts.push(`<a href="${userConfig.portfolio}">Portfólio</a>`);
-
-    return contacts.join(templateFolder === 'page' ? ' ' : ' | ');
+  private getInitials(name: string): string {
+    return name
+      .split(' ')
+      .map((n) => n[0])
+      .join('')
+      .toUpperCase()
+      .substring(0, 2);
   }
 
   private async ensureBrowser() {

@@ -249,9 +249,9 @@
                 </nav>
             </div>
 
-            {{#if contactsHtml}}
+            {{#if contacts}}
             <div class="contacts">
-                {{{contactsHtml}}}
+                {{formatContacts contacts format}}
             </div>
             {{/if}}
         </aside>

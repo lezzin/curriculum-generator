@@ -1,13 +1,13 @@
 import { GetPageInput } from 'src/application/models/input/resume.input';
 import { NotFoundException } from 'src/domain/exceptions';
+import { ResumeDocumentRepository } from 'src/domain/repositories/resume-document.repository';
 import { ResumeRepository } from 'src/domain/repositories/resume.repository';
 import { UserConfigRepository } from 'src/domain/repositories/user-config.repository';
 import { UserRepository } from 'src/domain/repositories/user.repository';
-import { ResumeDocumentService } from 'src/infrastructure/services/resume-document.service';
 
 export class GetPageUseCase {
   constructor(
-    private readonly resumeDocumentService: ResumeDocumentService,
+    private readonly resumeDocumentRepository: ResumeDocumentRepository,
     private readonly resumeRepository: ResumeRepository,
     private readonly userConfigRepository: UserConfigRepository,
     private readonly userRepository: UserRepository,
@@ -32,7 +32,7 @@ export class GetPageUseCase {
       resume.userId,
     );
 
-    return this.resumeDocumentService.generateResumeHtml(
+    return this.resumeDocumentRepository.generateHtml(
       resume,
       user,
       userConfig,

@@ -73,7 +73,7 @@
   <header class="section">
     <h1>{{name}}</h1>
     <h2>{{role}}</h2>
-    {{#if contactsHtml}}<p class="contact">{{{contactsHtml}}}</p>{{/if}}
+    {{#if contacts}}<p class="contact">{{formatContacts contacts format}}</p>{{/if}}
     {{#if summary}}<p>{{summary}}</p>{{/if}}
   </header>
 
