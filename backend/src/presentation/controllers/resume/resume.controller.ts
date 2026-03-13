@@ -19,7 +19,6 @@ import { GetAllResumesUseCase } from 'src/application/use-cases/resume/get-all-r
 import { CurrentUser } from 'src/infrastructure/auth/current-user.decorator';
 import { JwtAuthGuard } from 'src/infrastructure/auth/guards/jwt-auth.guard';
 import { GenerateResumeDto, GetPageParamsDto } from './resume.dto';
-import { GeneratePdfUseCase } from 'src/application/use-cases/resume/generate-pdf.use-case';
 import { GetPageUseCase } from 'src/application/use-cases/resume/get-page.use-case';
 import { HtmlExceptionFilter } from 'src/infrastructure/http/filters/html-exception.filter';
 import { IsPublic } from 'src/infrastructure/auth/is-public.decorator';
@@ -35,8 +34,7 @@ export class ResumeController {
     private readonly removeResumeUseCase: RemoveResumeUseCase,
     private readonly getPdfUseCase: GetPdfUseCase,
     private readonly getPageUseCase: GetPageUseCase,
-    private readonly generatePdfUseCase: GeneratePdfUseCase,
-  ) {}
+  ) { }
 
   @Post('/generate')
   @HttpCode(HttpStatus.ACCEPTED)
@@ -70,14 +68,14 @@ export class ResumeController {
   @Get('/pdf/:id')
   @UseFilters(HtmlExceptionFilter)
   async getPdfById(@Param('id') id: string, @Res() res: Response) {
-    const stream = await this.getPdfUseCase.execute(id);
+    const buffer = await this.getPdfUseCase.execute(id);
 
     res.set({
       'Content-Type': 'application/pdf',
       'Content-Disposition': `inline; filename="${id}.pdf"`,
     });
 
-    stream.pipe(res);
+    res.end(buffer);
   }
 
   @IsPublic()
@@ -86,21 +84,5 @@ export class ResumeController {
   @Header('Content-Type', 'text/html')
   async getPageById(@Param() params: GetPageParamsDto) {
     return await this.getPageUseCase.execute(params);
-  }
-
-  @Post('/pdf/generate')
-  async generatePdf(
-    @Body() body: any,
-    @CurrentUser('id') userId: string,
-    @Res() res: Response,
-  ) {
-    const buffer = await this.generatePdfUseCase.execute({ ...body, userId });
-
-    res.set({
-      'Content-Type': 'application/pdf',
-      'Content-Disposition': `inline; filename="resume.pdf"`,
-    });
-
-    res.end(buffer);
   }
 }

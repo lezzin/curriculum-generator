@@ -3,13 +3,11 @@ import * as puppeteer from 'puppeteer';
 import * as Handlebars from 'handlebars';
 import * as fs from 'fs';
 import * as path from 'path';
-import * as stream from 'node:stream';
 
 import { SECTION_LABELS } from './constants/resume-labels.constants';
 import { Resume } from 'src/domain/entities/resume.entity';
 import { User } from 'src/domain/entities/user.entity';
 import { UserConfig } from 'src/domain/entities/user.config.entity';
-import { StorageRepository } from 'src/domain/repositories/storage.repository';
 import { Language, SelectedTemplate } from 'src/domain/enums/resume.enums';
 
 @Injectable()
@@ -22,8 +20,6 @@ export class ResumeDocumentService implements OnModuleInit, OnModuleDestroy {
     headless: true,
     args: ['--no-sandbox', '--disable-setuid-sandbox'],
   };
-
-  constructor(private readonly storage: StorageRepository) {}
 
   async onModuleInit() {
     this.browser = await puppeteer.launch(this.PUPPETEER_CONFIG);
@@ -64,11 +60,10 @@ export class ResumeDocumentService implements OnModuleInit, OnModuleDestroy {
     });
   }
 
-  async generateResumePdf(
-    resume: Resume,
+  async getPdfById(resume: Resume,
     user: User,
     userConfig: UserConfig | null,
-  ): Promise<Buffer> {
+  ): Promise<Buffer | null> {
     await this.ensureBrowser();
 
     const html = this.generateResumeHtml(resume, user, userConfig, 'pdf');
@@ -89,37 +84,11 @@ export class ResumeDocumentService implements OnModuleInit, OnModuleDestroy {
       });
 
       return Buffer.from(pdf);
+    } catch {
+      return null
     } finally {
       await page.close();
     }
-  }
-
-  async generateAndStorePdf(
-    resume: Resume,
-    user: User,
-    userConfig: UserConfig | null,
-  ) {
-    const bucket = 'resumes';
-    const fileName = `${resume.id}.pdf`;
-
-    await this.storage.createBucket(bucket);
-
-    if (!(await this.storage.hasFile(bucket, fileName))) {
-      const pdf = await this.generateResumePdf(resume, user, userConfig);
-      await this.storage.uploadFile(bucket, fileName, pdf, 'application/pdf');
-    }
-  }
-
-  async getPdfById(id: string): Promise<stream.Readable | null> {
-    try {
-      return await this.storage.getFile('resumes', `${id}.pdf`);
-    } catch {
-      return null;
-    }
-  }
-
-  async deletePdfById(id: string): Promise<void> {
-    await this.storage.removeFile('resumes', `${id}.pdf`);
   }
 
   private loadTemplate(

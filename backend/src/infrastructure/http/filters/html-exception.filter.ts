@@ -52,6 +52,8 @@ export class HtmlExceptionFilter implements ExceptionFilter {
     let message = 'Ocorreu um erro inesperado.';
     let description: string | undefined;
 
+    console.log(exception);
+
     if (exception instanceof HttpException) {
       status = exception.getStatus();
 

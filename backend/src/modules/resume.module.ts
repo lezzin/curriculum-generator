@@ -13,13 +13,11 @@ import { GenerateResumeUseCase } from 'src/application/use-cases/resume/generate
 import { GetAllResumesUseCase } from 'src/application/use-cases/resume/get-all-resumes.use-case';
 import { ResumeProcessor } from 'src/infrastructure/queue/processors/resume.processor';
 import { ResumeDocumentService } from 'src/infrastructure/services/resume-document.service';
-import { StorageModule } from 'src/infrastructure/modules/storage.module';
 import { SseModule } from 'src/infrastructure/modules/sse.module';
 import { GetPdfUseCase } from 'src/application/use-cases/resume/get-pdf.use-case';
 import { CacheRepository } from 'src/domain/repositories/cache.repository';
 import { BaseDataRepository } from 'src/domain/repositories/base-data.repository';
 import { ResumeGenerationUseCase } from 'src/application/use-cases/resume/resume-generation.use-case';
-import { GeneratePdfUseCase } from 'src/application/use-cases/resume/generate-pdf.use-case';
 import { UserConfigRepository } from 'src/domain/repositories/user-config.repository';
 import { UserConfigModule } from './user-config.module';
 import { UserRepository } from 'src/domain/repositories/user.repository';
@@ -34,7 +32,6 @@ import { SseRepository } from 'src/domain/repositories/sse.repository';
     TypeOrmModule.forFeature([ResumeEntity]),
     BaseDataModule,
     BullMQModule,
-    StorageModule,
     SseModule,
     UserModule,
     UserConfigModule,
@@ -54,16 +51,25 @@ import { SseRepository } from 'src/domain/repositories/sse.repository';
     BullMQResumeQueue,
     ResumeProcessor,
     {
-      provide: GeneratePdfUseCase,
-      useFactory: (pdfService: ResumeDocumentService) =>
-        new GeneratePdfUseCase(pdfService),
-      inject: [ResumeDocumentService],
-    },
-    {
       provide: GetPdfUseCase,
-      useFactory: (pdfService: ResumeDocumentService) =>
-        new GetPdfUseCase(pdfService),
-      inject: [ResumeDocumentService],
+      useFactory: (
+        resumeDocumentService: ResumeDocumentService,
+        resumeRepository: ResumeRepository,
+        userRepository: UserRepository,
+        userConfigRepository: UserConfigRepository,
+      ) =>
+        new GetPdfUseCase(
+          resumeDocumentService,
+          resumeRepository,
+          userRepository,
+          userConfigRepository,
+        ),
+      inject: [
+        ResumeDocumentService,
+        ResumeRepository,
+        UserRepository,
+        UserConfigRepository,
+      ],
     },
     {
       provide: GenerateResumeUseCase,
@@ -83,19 +89,15 @@ import { SseRepository } from 'src/domain/repositories/sse.repository';
         resumeRepository: ResumeRepository,
         baseDataRepository: BaseDataRepository,
         geminiService: GeminiService,
-        userConfigRepository: UserConfigRepository,
         userRepository: UserRepository,
-        pdfService: ResumeDocumentService,
         sseRepository: SseRepository,
         cache: CacheRepository,
       ) =>
         new ResumeGenerationUseCase(
           resumeRepository,
           baseDataRepository,
-          userConfigRepository,
           userRepository,
           geminiService,
-          pdfService,
           sseRepository,
           cache,
         ),
@@ -135,11 +137,10 @@ import { SseRepository } from 'src/domain/repositories/sse.repository';
       provide: RemoveResumeUseCase,
       useFactory: (
         resumeRepository: ResumeRepository,
-        pdfService: ResumeDocumentService,
         cache: CacheRepository,
-      ) => new RemoveResumeUseCase(resumeRepository, pdfService, cache),
+      ) => new RemoveResumeUseCase(resumeRepository, cache),
       inject: [ResumeRepository, ResumeDocumentService, CacheRepository],
     },
   ],
 })
-export class ResumeModule {}
+export class ResumeModule { }

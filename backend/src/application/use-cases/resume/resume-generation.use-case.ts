@@ -5,26 +5,22 @@ import { Resume } from 'src/domain/entities/resume.entity';
 import { BaseDataRepository } from 'src/domain/repositories/base-data.repository';
 import { CacheRepository } from 'src/domain/repositories/cache.repository';
 import { ResumeRepository } from 'src/domain/repositories/resume.repository';
-import { UserConfigRepository } from 'src/domain/repositories/user-config.repository';
 import { UserRepository } from 'src/domain/repositories/user.repository';
 import { BaseDataType } from 'src/domain/enums/base-data-type.enum';
 import { SelectedTemplate } from 'src/domain/enums/resume.enums';
 import { GeminiService } from 'src/infrastructure/services/gemini/gemini.service';
 import { buildResumePrompt } from 'src/infrastructure/services/gemini/helpers/resume-prompt.helper';
-import { ResumeDocumentService } from 'src/infrastructure/services/resume-document.service';
 import { SseRepository } from 'src/domain/repositories/sse.repository';
 
 export class ResumeGenerationUseCase {
   constructor(
     private readonly resumeRepository: ResumeRepository,
     private readonly baseDataRepository: BaseDataRepository,
-    private readonly userConfigRepository: UserConfigRepository,
     private readonly userRepository: UserRepository,
     private readonly geminiService: GeminiService,
-    private readonly resumeDocumentService: ResumeDocumentService,
     private readonly sseRepository: SseRepository,
     private readonly cache: CacheRepository,
-  ) {}
+  ) { }
 
   async execute(body: GenerateResumeInput) {
     const { userId, jobDescription, options } = body;
@@ -79,14 +75,7 @@ export class ResumeGenerationUseCase {
       ),
     );
 
-    const contactData = await this.userConfigRepository.findByUserId(userId);
-
     await this.invalidateCaches(userId, jobDescription);
-    await this.resumeDocumentService.generateAndStorePdf(
-      savedResume,
-      userData,
-      contactData,
-    );
     this.sseRepository.sendEvent<ResumeItemOutput>(userId, 'resume-generated', {
       id: savedResume.id,
       userId: savedResume.userId,
