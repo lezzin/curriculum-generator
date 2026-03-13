@@ -28,23 +28,24 @@ import BaseButton from '../components/ui/BaseButton.vue';
 
       <div class="grid md:grid-cols-3 gap-6 text-center">
         <router-link :to="{ name: 'ResumeGenerate' }"
-          class="p-6 border dark:border-zinc-800 rounded-2xl hover:shadow-md transition">
-          <h3 class="font-semibold mb-2">Gerar currículo</h3>
-          <p class="text-gray-600 text-sm">Crie um currículo personalizado com IA.</p>
+          class="p-6 border border-app-border rounded-2xl hover:shadow-md transition bg-app-surface">
+          <h3 class="font-semibold mb-2 text-app-text">Gerar currículo</h3>
+          <p class="text-app-text-muted text-sm">Crie um currículo personalizado com IA.</p>
         </router-link>
 
         <router-link :to="{ name: 'FreelanceProposalGenerate' }"
-          class="p-6 border dark:border-zinc-800 rounded-2xl hover:shadow-md transition">
-          <h3 class="font-semibold mb-2">Gerar proposta</h3>
-          <p class="text-gray-600 text-sm">Crie propostas profissionais para freelances.</p>
+          class="p-6 border border-app-border rounded-2xl hover:shadow-md transition bg-app-surface">
+          <h3 class="font-semibold mb-2 text-app-text">Gerar proposta</h3>
+          <p class="text-app-text-muted text-sm">Crie propostas profissionais para freelances.</p>
         </router-link>
 
         <router-link :to="{ name: 'Profile' }"
-          class="p-6 border dark:border-zinc-800 rounded-2xl hover:shadow-md transition">
-          <h3 class="font-semibold mb-2">Seu perfil</h3>
-          <p class="text-gray-600 text-sm">Gerencie suas informações e preferências.</p>
+          class="p-6 border border-app-border rounded-2xl hover:shadow-md transition bg-app-surface">
+          <h3 class="font-semibold mb-2 text-app-text">Seu perfil</h3>
+          <p class="text-app-text-muted text-sm">Gerencie suas informações e preferências.</p>
         </router-link>
       </div>
+
     </div>
   </section>
 </template>

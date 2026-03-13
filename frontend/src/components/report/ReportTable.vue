@@ -81,9 +81,9 @@ async function handleChangeProcessStatus(processId: string, statusId: ProcessSta
 
 <template>
   <CardContainer v-if="props.items.length" size="lg">
-    <div class="overflow-x-auto border dark:border-zinc-800 rounded-lg shadow-sm text-sm">
+    <div class="overflow-x-auto border border-app-border rounded-lg shadow-sm text-sm">
       <table class="table-fixed w-full border-collapse">
-        <thead class="bg-gray-100 dark:bg-zinc-800 text-left text-gray-600 dark:text-zinc-400 text-xs uppercase tracking-wide">
+        <thead class="bg-app-surface-muted text-left text-app-text-muted text-xs uppercase tracking-wide">
           <tr>
             <th class="px-3 py-3 w-52">Nome</th>
             <th class="px-3 py-3 w-52">Progresso</th>
@@ -94,23 +94,23 @@ async function handleChangeProcessStatus(processId: string, statusId: ProcessSta
           </tr>
         </thead>
 
-        <tbody class="divide-y divide-gray-100 dark:divide-zinc-800">
+        <tbody class="divide-y border-app-border">
           <tr v-for="item in props.items" :key="item.id"
-            class="hover:bg-blue-50/40 dark:hover:bg-zinc-800/50 transition-colors duration-150 text-left">
+            class="hover:bg-app-surface-muted transition-colors duration-150 text-left">
             <td class="px-3 py-3 max-w-0">
-              <span class="block truncate font-medium text-gray-800 dark:text-zinc-200" :title="item.report_name">
+              <span class="block truncate font-medium text-app-text" :title="item.report_name">
                 {{ item.report_name }}
               </span>
             </td>
 
             <td class="px-3 py-3">
               <div class="flex flex-col gap-1">
-                <div class="flex justify-between items-center text-xs text-gray-500 dark:text-zinc-400">
+                <div class="flex justify-between items-center text-xs text-app-text-muted">
                   <span> {{ item.processed_records ?? 0 }} / {{ item.total_records ?? '?' }} registros </span>
 
-                  <span class="font-semibold text-gray-700 dark:text-zinc-300"> {{ item.percentage }}% </span>
+                  <span class="font-semibold text-app-text"> {{ item.percentage }}% </span>
                 </div>
-                <div class="w-full bg-gray-200 dark:bg-zinc-800 rounded-full h-2 overflow-hidden">
+                <div class="w-full bg-app-surface-muted rounded-full h-2 overflow-hidden">
                   <div class="h-2 rounded-full transition-all duration-500" :class="[
                     getProgressColor(item.status_id, item.percentage),
                     item.status_id === PROCESS_STATUS.PROCESSING ? 'animate-pulse' : '',
@@ -119,8 +119,8 @@ async function handleChangeProcessStatus(processId: string, statusId: ProcessSta
               </div>
             </td>
 
-            <td class="px-3 py-3 text-gray-600 dark:text-zinc-400">{{ item.started_at ?? '-' }}</td>
-            <td class="px-3 py-3 text-gray-600 dark:text-zinc-400">{{ item.finished_at ?? '-' }}</td>
+            <td class="px-3 py-3 text-app-text-muted">{{ item.started_at ?? '-' }}</td>
+            <td class="px-3 py-3 text-app-text-muted">{{ item.finished_at ?? '-' }}</td>
 
             <td class="px-3 py-3">
               <ReportStatusBadge :text="item.status_name" :status-id="item.status_id" />

@@ -5,19 +5,19 @@ const authStore = useAuthStore();
 </script>
 
 <template>
-  <header class="flex items-center gap-4 mb-8 p-4 bg-gray-50 dark:bg-zinc-900 rounded-lg border dark:border-zinc-800">
+  <header class="flex items-center gap-4 mb-8 p-4 bg-app-surface-muted rounded-lg border border-app-border">
     <UserAvatar v-if="authStore.user?.id" :user="authStore.user" />
 
     <div class="flex flex-col">
-      <p class="text-lg font-semibold text-zinc-900 dark:text-zinc-50">
+      <p class="text-lg font-semibold text-app-text">
         {{ authStore.user?.name }}
       </p>
 
-      <p class="text-sm text-gray-600 dark:text-zinc-400">
+      <p class="text-sm text-app-text-muted">
         {{ authStore.user?.email }}
       </p>
 
-      <p class="text-xs text-gray-500 dark:text-zinc-500 mt-1">Essas informações estão vinculadas à sua conta.</p>
+      <p class="text-xs text-app-text-muted opacity-80 mt-1">Essas informações estão vinculadas à sua conta.</p>
     </div>
   </header>
 </template>

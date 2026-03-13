@@ -1,5 +1,5 @@
 <template>
-  <div class="text-black pt-[68px] dark:text-zinc-50 bg-gray-50 dark:bg-zinc-950 overflow-x-hidden relative z-10">
+  <div class="text-app-text pt-[68px] bg-app-bg overflow-x-hidden relative z-10">
     <div class="absolute inset-0 z-0">
       <div class="absolute inset-0" style="
           background-image:
@@ -54,7 +54,7 @@
 
       <div class="relative z-10 hidden lg:flex items-center ms-20">
         <div
-          class="bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-2xl p-5 shadow-[0_4px_24px_rgba(0,0,0,0.06),0_1px_4px_rgba(0,0,0,0.04)] relative w-[220px] flex-shrink-0 animate-[float_4s_ease-in-out_infinite]">
+          class="bg-app-surface border border-app-border rounded-2xl p-5 shadow-[0_4px_24px_rgba(0,0,0,0.06),0_1px_4px_rgba(0,0,0,0.04)] relative w-[220px] flex-shrink-0 animate-[float_4s_ease-in-out_infinite]">
           <div
             class="absolute -top-2.5 left-1/2 -translate-x-1/2 bg-[#0a0e14] dark:bg-zinc-50 text-white dark:text-zinc-900 text-[0.6rem] font-semibold px-2.5 py-[3px] rounded-full whitespace-nowrap tracking-[0.03em]">
             Currículo Base
@@ -62,7 +62,7 @@
           <div class="flex gap-3 items-center mb-4">
             <div class="w-9 h-9 bg-gradient-to-br from-green-400 to-green-700 rounded-full flex-shrink-0"></div>
             <div class="flex-1 flex flex-col gap-1.5">
-              <div class="h-1.5 rounded-full bg-gray-100 dark:bg-zinc-800 w-[85%]"></div>
+              <div class="h-1.5 rounded-full bg-app-surface-muted border border-app-border w-[85%]"></div>
               <div class="h-1.5 rounded-full bg-green-200/50 dark:bg-green-900/30 w-[65%]"></div>
             </div>
           </div>
@@ -70,9 +70,9 @@
             <div class="text-[0.6rem] font-bold uppercase tracking-[0.08em] text-gray-400 mb-2">
               Resumo Profissional
             </div>
-            <div class="h-1.5 rounded-full bg-gray-100 dark:bg-zinc-800 w-full mb-1"></div>
-            <div class="h-1.5 rounded-full bg-gray-100 dark:bg-zinc-800 w-[85%] mb-1"></div>
-            <div class="h-1.5 rounded-full bg-gray-100 dark:bg-zinc-800 w-[65%]"></div>
+            <div class="h-1.5 rounded-full bg-app-surface-muted border border-app-border w-full mb-1"></div>
+            <div class="h-1.5 rounded-full bg-app-surface-muted border border-app-border w-[85%] mb-1"></div>
+            <div class="h-1.5 rounded-full bg-app-surface-muted border border-app-border w-[65%]"></div>
           </div>
           <div>
             <div class="text-[0.6rem] font-bold uppercase tracking-[0.08em] text-gray-400 mb-2">Habilidades</div>
@@ -101,34 +101,34 @@
 
         <div class="flex flex-col gap-3">
           <div
-            class="bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-2xl p-5 shadow-[0_4px_24px_rgba(0,0,0,0.06),0_1px_4px_rgba(0,0,0,0.04)] w-[180px] animate-[float_4s_ease-in-out_infinite]">
+            class="bg-app-surface border border-app-border rounded-2xl p-5 shadow-[0_4px_24px_rgba(0,0,0,0.06),0_1px_4px_rgba(0,0,0,0.04)] w-[180px] animate-[float_4s_ease-in-out_infinite]">
             <div
               class="text-[0.65rem] font-semibold text-green-700 dark:text-green-400 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 px-2 py-[2px] rounded-full mb-2.5 inline-block">
               Vaga Frontend
             </div>
-            <div class="h-1.5 rounded-full bg-gray-100 dark:bg-zinc-800 w-[65%] mb-1"></div>
+            <div class="h-1.5 rounded-full bg-app-surface-muted border border-app-border w-[65%] mb-1"></div>
             <div class="h-1.5 rounded-full bg-green-300/40 dark:bg-green-800/30 w-[85%] mb-1"></div>
-            <div class="h-1.5 rounded-full bg-gray-100 dark:bg-zinc-800 w-[45%]"></div>
+            <div class="h-1.5 rounded-full bg-app-surface-muted border border-app-border w-[45%]"></div>
             <div class="flex items-center gap-1.5 mt-2.5 text-[0.6rem] font-semibold text-gray-500 dark:text-zinc-400">
               <span>ATS</span>
-              <div class="flex-1 h-[5px] bg-gray-100 dark:bg-zinc-800 rounded-full overflow-hidden">
+              <div class="flex-1 h-[5px] bg-app-surface-muted border border-app-border rounded-full overflow-hidden">
                 <div class="h-full bg-gradient-to-r from-green-400 to-green-700 rounded-full" style="width: 92%"></div>
               </div>
               <span>92%</span>
             </div>
           </div>
           <div
-            class="bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-2xl p-5 shadow-[0_4px_24px_rgba(0,0,0,0.06),0_1px_4px_rgba(0,0,0,0.04)] w-[180px] animate-[float_4s_ease-in-out_infinite_0.8s]">
+            class="bg-app-surface border border-app-border rounded-2xl p-5 shadow-[0_4px_24px_rgba(0,0,0,0.06),0_1px_4px_rgba(0,0,0,0.04)] w-[180px] animate-[float_4s_ease-in-out_infinite_0.8s]">
             <div
               class="text-[0.65rem] font-semibold text-green-700 dark:text-green-400 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 px-2 py-[2px] rounded-full mb-2.5 inline-block">
               Vaga Backend
             </div>
-            <div class="h-1.5 rounded-full bg-gray-100 dark:bg-zinc-800 w-[65%] mb-1"></div>
+            <div class="h-1.5 rounded-full bg-app-surface-muted border border-app-border w-[65%] mb-1"></div>
             <div class="h-1.5 rounded-full bg-green-300/40 dark:bg-green-800/30 w-[85%] mb-1"></div>
-            <div class="h-1.5 rounded-full bg-gray-100 dark:bg-zinc-800 w-[45%]"></div>
+            <div class="h-1.5 rounded-full bg-app-surface-muted border border-app-border w-[45%]"></div>
             <div class="flex items-center gap-1.5 mt-2.5 text-[0.6rem] font-semibold text-gray-500 dark:text-zinc-400">
               <span>ATS</span>
-              <div class="flex-1 h-[5px] bg-gray-100 dark:bg-zinc-800 rounded-full overflow-hidden">
+              <div class="flex-1 h-[5px] bg-app-surface-muted border border-app-border rounded-full overflow-hidden">
                 <div class="h-full bg-gradient-to-r from-green-400 to-green-700 rounded-full" style="width: 87%"></div>
               </div>
               <span>87%</span>
@@ -139,13 +139,13 @@
     </section>
 
     <section id="como-funciona"
-      class="px-8 lg:px-24 py-28 bg-white dark:bg-zinc-900 border-t border-gray-100 dark:border-zinc-800">
+      class="px-8 lg:px-24 py-28 bg-app-surface border-t border-app-border">
       <div class="max-w-[900px] mx-auto">
         <div class="text-center mb-16">
           <p class="text-[0.8rem] font-semibold uppercase tracking-[0.1em] text-green-700 dark:text-green-500 mb-3">
             Processo simples</p>
           <h2
-            class="lp-font text-[clamp(1.8rem,3vw,2.8rem)] font-extrabold tracking-[-0.03em] text-[#0a0e14] dark:text-zinc-50 mb-4">
+            class="lp-font text-[clamp(1.8rem,3vw,2.8rem)] font-extrabold tracking-[-0.03em] text-app-text dark:text-zinc-50 mb-4">
             Como funciona
           </h2>
           <p class="text-gray-500 dark:text-zinc-400 text-base font-light">Do seu perfil ao currículo ideal em poucos
@@ -162,7 +162,7 @@
                 <circle cx="12" cy="7" r="4" />
               </svg>
             </div>
-            <h3 class="lp-font text-base font-bold text-[#0a0e14] dark:text-zinc-50 mb-2 tracking-[-0.01em]">Cadastre
+            <h3 class="lp-font text-base font-bold text-app-text dark:text-zinc-50 mb-2 tracking-[-0.01em]">Cadastre
               seu perfil base</h3>
             <p class="text-[0.875rem] text-gray-500 dark:text-zinc-400 leading-relaxed font-light">
               Adicione seu resumo profissional, experiências, habilidades e projetos. Isso é feito uma única vez e serve
@@ -196,7 +196,7 @@
                 <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
               </svg>
             </div>
-            <h3 class="lp-font text-base font-bold text-[#0a0e14] dark:text-zinc-50 mb-2 tracking-[-0.01em]">Cole a
+            <h3 class="lp-font text-base font-bold text-app-text dark:text-zinc-50 mb-2 tracking-[-0.01em]">Cole a
               descrição da vaga</h3>
             <p class="text-[0.875rem] text-gray-500 dark:text-zinc-400 leading-relaxed font-light">
               Copie e cole a descrição da vaga que você deseja se candidatar. Nossa IA analisa os requisitos e
@@ -229,7 +229,7 @@
                 <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
               </svg>
             </div>
-            <h3 class="lp-font text-base font-bold text-[#0a0e14] dark:text-zinc-50 mb-2 tracking-[-0.01em]">
+            <h3 class="lp-font text-base font-bold text-app-text dark:text-zinc-50 mb-2 tracking-[-0.01em]">
               Receba seu currículo otimizado
             </h3>
             <p class="text-[0.875rem] text-gray-500 dark:text-zinc-400 leading-relaxed font-light">
@@ -241,20 +241,20 @@
       </div>
     </section>
 
-    <section class="px-8 lg:px-24 py-28 bg-[#fafaf9] dark:bg-zinc-950">
+    <section class="px-8 lg:px-24 py-28 bg-app-bg">
       <div class="max-w-[900px] mx-auto">
         <div class="text-center mb-16">
           <p class="text-[0.8rem] font-semibold uppercase tracking-[0.1em] text-green-700 dark:text-green-500 mb-3">Por
             que usar</p>
           <h2
-            class="lp-font text-[clamp(1.8rem,3vw,2.8rem)] font-extrabold tracking-[-0.03em] text-[#0a0e14] dark:text-zinc-50">
+            class="lp-font text-[clamp(1.8rem,3vw,2.8rem)] font-extrabold tracking-[-0.03em] text-app-text dark:text-zinc-50">
             Tudo o que você precisa para se destacar
           </h2>
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
           <div
-            class="bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-[20px] p-8 transition-all duration-200 hover:shadow-[0_8px_32px_rgba(0,0,0,0.08)] dark:hover:shadow-[0_8px_32px_rgba(0,0,0,0.4)] hover:-translate-y-0.5 lg:col-span-2 grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+            class="bg-app-surface border border-app-border rounded-[20px] p-8 transition-all duration-200 hover:shadow-[0_8px_32px_rgba(0,0,0,0.08)] dark:hover:shadow-[0_8px_32px_rgba(0,0,0,0.4)] hover:-translate-y-0.5 lg:col-span-2 grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
             <div>
               <div
                 class="w-[52px] h-[52px] bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-[14px] flex items-center justify-center text-green-700 dark:text-green-400 mb-4">
@@ -262,7 +262,7 @@
                   <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
                 </svg>
               </div>
-              <h3 class="lp-font text-[1.1rem] font-bold text-[#0a0e14] dark:text-zinc-50 mb-2 tracking-[-0.02em]">
+              <h3 class="lp-font text-[1.1rem] font-bold text-app-text dark:text-zinc-50 mb-2 tracking-[-0.02em]">
                 Otimização ATS inteligente
               </h3>
               <p class="text-[0.9rem] text-gray-500 dark:text-zinc-400 leading-relaxed font-light">
@@ -285,7 +285,7 @@
           </div>
 
           <div
-            class="bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-[20px] p-8 transition-all duration-200 hover:shadow-[0_8px_32px_rgba(0,0,0,0.08)] dark:hover:shadow-[0_8px_32px_rgba(0,0,0,0.4)] hover:-translate-y-0.5">
+            class="bg-app-surface border border-app-border rounded-[20px] p-8 transition-all duration-200 hover:shadow-[0_8px_32px_rgba(0,0,0,0.08)] dark:hover:shadow-[0_8px_32px_rgba(0,0,0,0.4)] hover:-translate-y-0.5">
             <div
               class="w-[52px] h-[52px] bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-[14px] flex items-center justify-center text-green-700 dark:text-green-400 mb-4">
               <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
@@ -293,7 +293,7 @@
                 <polyline points="12 6 12 12 16 14" />
               </svg>
             </div>
-            <h3 class="lp-font text-[1.1rem] font-bold text-[#0a0e14] dark:text-zinc-50 mb-2 tracking-[-0.02em]">Geração
+            <h3 class="lp-font text-[1.1rem] font-bold text-app-text dark:text-zinc-50 mb-2 tracking-[-0.02em]">Geração
               em segundos</h3>
             <p class="text-[0.9rem] text-gray-500 dark:text-zinc-400 leading-relaxed font-light">
               Sem perder tempo formatando manualmente. A IA gera seu currículo personalizado em instantes.
@@ -301,7 +301,7 @@
           </div>
 
           <div
-            class="bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-[20px] p-8 transition-all duration-200 hover:shadow-[0_8px_32px_rgba(0,0,0,0.08)] dark:hover:shadow-[0_8px_32px_rgba(0,0,0,0.4)] hover:-translate-y-0.5">
+            class="bg-app-surface border border-app-border rounded-[20px] p-8 transition-all duration-200 hover:shadow-[0_8px_32px_rgba(0,0,0,0.08)] dark:hover:shadow-[0_8px_32px_rgba(0,0,0,0.4)] hover:-translate-y-0.5">
             <div
               class="w-[52px] h-[52px] bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-[14px] flex items-center justify-center text-green-700 dark:text-green-400 mb-4">
               <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
@@ -313,7 +313,7 @@
                 <line x1="3" y1="18" x2="3.01" y2="18" />
               </svg>
             </div>
-            <h3 class="lp-font text-[1.1rem] font-bold text-[#0a0e14] dark:text-zinc-50 mb-2 tracking-[-0.02em]">
+            <h3 class="lp-font text-[1.1rem] font-bold text-app-text dark:text-zinc-50 mb-2 tracking-[-0.02em]">
               Perfil base centralizado
             </h3>
             <p class="text-[0.9rem] text-gray-500 dark:text-zinc-400 leading-relaxed font-light">
@@ -322,14 +322,14 @@
           </div>
 
           <div
-            class="bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-[20px] p-8 transition-all duration-200 hover:shadow-[0_8px_32px_rgba(0,0,0,0.08)] dark:hover:shadow-[0_8px_32px_rgba(0,0,0,0.4)] hover:-translate-y-0.5 lg:col-span-2">
+            class="bg-app-surface border border-app-border rounded-[20px] p-8 transition-all duration-200 hover:shadow-[0_8px_32px_rgba(0,0,0,0.08)] dark:hover:shadow-[0_8px_32px_rgba(0,0,0,0.4)] hover:-translate-y-0.5 lg:col-span-2">
             <div
               class="w-[52px] h-[52px] bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-[14px] flex items-center justify-center text-green-700 dark:text-green-400 mb-4">
               <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
                 <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
               </svg>
             </div>
-            <h3 class="lp-font text-[1.1rem] font-bold text-[#0a0e14] dark:text-zinc-50 mb-2 tracking-[-0.02em]">
+            <h3 class="lp-font text-[1.1rem] font-bold text-app-text dark:text-zinc-50 mb-2 tracking-[-0.02em]">
               Foco nos keywords da vaga
             </h3>
             <p class="text-[0.9rem] text-gray-500 dark:text-zinc-400 leading-relaxed font-light">
@@ -341,7 +341,7 @@
       </div>
     </section>
 
-    <section class="relative px-8 lg:px-24 py-28 text-center overflow-hidden bg-[#0a0e14] dark:bg-black">
+    <section class="relative px-8 lg:px-24 py-28 text-center overflow-hidden bg-zinc-950 dark:bg-black">
       <div class="absolute inset-0 z-0">
         <div
           class="absolute w-[600px] h-[400px] bg-green-500 rounded-full blur-[120px] opacity-[0.12] top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
@@ -355,7 +355,7 @@
           Cadastre seu perfil base hoje e gere currículos otimizados para cada oportunidade.
         </p>
         <BaseButton size="lg" as="router-link" :to="{ name: 'ResumeGenerate' }"
-          class="!inline-flex !items-center !gap-2 !bg-green-400 dark:!bg-green-500 !text-[#0a0e14] !border-0 !font-bold !tracking-[-0.01em] hover:!bg-green-700 hover:!text-white hover:!-translate-y-0.5 hover:!shadow-[0_12px_32px_rgba(34,197,94,0.25)] !transition-all !duration-200">
+          class="!inline-flex !items-center !gap-2 !bg-green-400 dark:!bg-green-500 !text-app-text !border-0 !font-bold !tracking-[-0.01em] hover:!bg-green-700 hover:!text-white hover:!-translate-y-0.5 hover:!shadow-[0_12px_32px_rgba(34,197,94,0.25)] !transition-all !duration-200">
           Começar gratuitamente
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
             <path d="M5 12h14M12 5l7 7-7 7" />

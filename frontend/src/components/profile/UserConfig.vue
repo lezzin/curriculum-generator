@@ -66,13 +66,13 @@ onMounted(loadUserConfig);
   <CardContainer class="space-y-6">
     <div class="space-y-2">
       <div class="flex justify-between items-center">
-        <h2 class="text-lg font-semibold text-zinc-900 dark:text-zinc-50">Informações Públicas</h2>
+        <h2 class="text-lg font-semibold text-app-text">Informações Públicas</h2>
 
-        <span class="text-xs bg-gray-200 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 px-2 py-1 rounded-full">
+        <span class="text-xs bg-app-surface-muted text-app-text-muted px-2 py-1 rounded-full">
           Perfil {{ completionPercentage }}% completo </span>
       </div>
 
-      <p class="text-sm text-gray-600 dark:text-gray-400">
+      <p class="text-sm text-app-text-muted">
         Esses dados serão utilizados na geração automática de currículos e propostas. Preencha apenas o que desejar
         exibir.
       </p>

@@ -14,12 +14,12 @@ const props = withDefaults(defineProps<Props>(), {
   size: 'md',
 });
 
-const baseClasses = 'rounded-lg shadow-sm border dark:border-zinc-800';
+const baseClasses = 'rounded-lg shadow-sm border border-app-border';
 
 const variantClasses = computed(() => {
   const variants: Record<Variant, string> = {
-    text: 'text-sm leading-relaxed bg-zinc-50 dark:bg-zinc-900 text-zinc-700 dark:text-zinc-300 border-zinc-200 dark:border-zinc-800 whitespace-pre-wrap',
-    default: 'bg-white dark:bg-zinc-900',
+    text: 'text-sm leading-relaxed bg-app-surface-muted text-app-text-muted border-app-border whitespace-pre-wrap',
+    default: 'bg-app-surface',
   };
 
   return variants[props.variant];

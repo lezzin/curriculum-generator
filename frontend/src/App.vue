@@ -85,9 +85,9 @@ onUnmounted(() => {
 <template>
   <AppHeader />
 
-  <main class="dark:bg-zinc-950 min-h-screen">
+  <main class="min-h-screen">
     <LoadContainer :loading="authStore.isAuthLoading">
-      <AppContainer :class="route.name !== 'Home' ? 'pt-[calc(68px_+_2rem)] space-y-8 pb-16' : 'max-w-full'">
+      <AppContainer :class="route.name !== 'Home' ? 'pt-24 space-y-8 pb-16 px-4 md:px-0' : 'max-w-full'">
         <router-view></router-view>
         <BaseToast />
       </AppContainer>

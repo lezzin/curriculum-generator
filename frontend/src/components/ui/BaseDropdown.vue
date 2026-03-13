@@ -38,7 +38,7 @@ onBeforeUnmount(() => {
     <slot name="trigger" :toggle="toggle" :isOpen="isOpen" />
 
     <transition name="dropdown">
-      <div v-if="isOpen" class="absolute mt-3 w-56 bg-white dark:bg-zinc-900 rounded-2xl shadow-xl border dark:border-zinc-800 py-2 z-50">
+      <div v-if="isOpen" class="absolute mt-3 w-56 bg-app-surface rounded-2xl shadow-xl border border-app-border py-2 z-50">
         <slot :close="close" />
       </div>
     </transition>

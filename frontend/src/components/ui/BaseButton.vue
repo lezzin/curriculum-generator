@@ -30,10 +30,10 @@ const baseClasses =
 
 const variantClasses = computed(() => {
   const variants: Record<Variant, string> = {
-    default: 'bg-gray-900 dark:bg-zinc-50 text-white dark:text-zinc-900 hover:bg-gray-800 dark:hover:bg-zinc-200',
+    default: 'bg-app-text text-app-surface hover:opacity-90',
     destructive: 'bg-red-600 text-white hover:bg-red-700',
-    ghost: 'bg-transparent hover:bg-gray-100 dark:hover:bg-zinc-800 text-gray-900 dark:text-zinc-50',
-    outline: 'border border-gray-300 dark:border-zinc-800 bg-white dark:bg-zinc-900 hover:bg-gray-100 dark:hover:bg-zinc-800 text-gray-900 dark:text-zinc-50',
+    ghost: 'bg-transparent hover:bg-app-surface-muted text-app-text',
+    outline: 'border border-app-border bg-app-surface hover:bg-app-surface-muted text-app-text',
   };
 
   return variants[props.variant];

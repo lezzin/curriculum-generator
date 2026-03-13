@@ -2,52 +2,74 @@
 @tailwind components;
 @tailwind utilities;
 
-html {
-  scroll-behavior: smooth;
-  @apply text-white;
+@layer base {
+  :root {
+    --app-bg: theme('colors.gray.50');
+    --app-surface: theme('colors.white');
+    --app-surface-muted: theme('colors.zinc.50');
+    --app-text: theme('colors.zinc.900');
+    --app-text-muted: theme('colors.zinc.600');
+    --app-border: theme('colors.zinc.200');
+  }
 
-  &.dark {
-    input[type="date"]::-webkit-calendar-picker-indicator {
-      filter: invert(1);
-      cursor: pointer;
+  .dark {
+    --app-bg: theme('colors.zinc.950');
+    --app-surface: theme('colors.zinc.900');
+    --app-surface-muted: theme('colors.zinc.800 / 0.5');
+    --app-text: theme('colors.zinc.50');
+    --app-text-muted: theme('colors.zinc.400');
+    --app-border: theme('colors.zinc.800');
+  }
+
+  html {
+    scroll-behavior: smooth;
+    @apply bg-app-bg text-app-text;
+
+    &.dark {
+      input[type="date"]::-webkit-calendar-picker-indicator {
+        filter: invert(1);
+        cursor: pointer;
+      }
     }
   }
 }
 
-.form-control {
-  @apply flex flex-col gap-1;
+@layer components {
+  .form-control {
+    @apply flex flex-col gap-1;
 
-  >label {
-    @apply text-sm font-medium text-zinc-700 dark:text-zinc-300;
-  }
-
-  select,
-  textarea,
-  input {
-    @apply w-full h-10 px-2 border border-gray-300 dark:border-zinc-800 rounded-lg bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-50 focus:outline-none focus:ring-2 focus:ring-offset-2 dark:focus:ring-offset-zinc-950 disabled:opacity-50;
-
-    &.error-field {
-      @apply border-red-500 focus:ring-red-500;
+    >label {
+      @apply text-sm font-medium text-app-text-muted;
     }
-  }
 
-  select {
-    @apply appearance-none;
-  }
+    select,
+    textarea,
+    input {
+      @apply w-full h-10 px-2 border border-gray-300 dark:border-zinc-800 rounded-lg bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-50 focus:outline-none focus:ring-2 focus:ring-offset-2 dark:focus:ring-offset-zinc-950 disabled:opacity-50;
 
-  textarea {
-    @apply resize-none h-auto py-2;
-  }
-
-  .has-button-helper {
-    @apply rounded-e-none border-r-0;
-
-    ~button {
-      @apply rounded-s-none;
+      &.error-field {
+        @apply border-red-500 focus:ring-red-500;
+      }
     }
-  }
 
-  .error-text {
-    @apply text-red-500 text-xs;
+    select {
+      @apply appearance-none;
+    }
+
+    textarea {
+      @apply resize-none h-auto py-2;
+    }
+
+    .has-button-helper {
+      @apply rounded-e-none border-r-0;
+
+      ~button {
+        @apply rounded-s-none;
+      }
+    }
+
+    .error-text {
+      @apply text-red-500 text-xs;
+    }
   }
 }

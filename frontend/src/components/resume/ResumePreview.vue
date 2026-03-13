@@ -109,6 +109,6 @@ const removeResume = async () => {
 
 <style scoped lang="postcss">
 .dropdown-item {
-  @apply w-full px-4 py-2 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-zinc-800 hover:text-black transition;
+  @apply w-full px-4 py-2 text-app-text-muted hover:bg-app-surface-muted hover:text-app-text transition;
 }
 </style>
