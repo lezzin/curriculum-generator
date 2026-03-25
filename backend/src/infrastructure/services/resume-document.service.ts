@@ -1,5 +1,5 @@
 import { Injectable, OnModuleInit, OnModuleDestroy, InternalServerErrorException } from '@nestjs/common';
-import * as puppeteer from 'puppeteer';
+import { Browser, chromium } from 'playwright';
 import * as Handlebars from 'handlebars';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -13,17 +13,15 @@ import { ResumeDocumentRepository } from 'src/domain/repositories/resume-documen
 
 @Injectable()
 export class ResumeDocumentService extends ResumeDocumentRepository implements OnModuleInit, OnModuleDestroy {
-  private browser: puppeteer.Browser;
+  private browser: Browser;
 
   private readonly PUPPETEER_TIMEOUT = 60000; // 60S
 
-  private readonly PUPPETEER_CONFIG: puppeteer.LaunchOptions = {
-    headless: true,
-    args: ['--no-sandbox', '--disable-setuid-sandbox'],
-  };
-
   async onModuleInit() {
-    this.browser = await puppeteer.launch(this.PUPPETEER_CONFIG);
+    this.browser = await chromium.launch({
+      headless: true,
+    });
+
     this.registerHandlebarsHelpers();
   }
 
@@ -101,19 +99,19 @@ export class ResumeDocumentService extends ResumeDocumentRepository implements O
     await this.ensureBrowser();
 
     const html = this.generateHtml(resume, user, userConfig, 'pdf');
-    const page = await this.browser.newPage();
+
+    const context = await this.browser.newContext();
+    const page = await context.newPage();
 
     try {
       await page.setContent(html, {
-        waitUntil: 'networkidle0',
+        waitUntil: 'networkidle',
         timeout: this.PUPPETEER_TIMEOUT,
       });
 
       const pdf = await page.pdf({
         format: 'A4',
         printBackground: true,
-        preferCSSPageSize: true,
-        timeout: this.PUPPETEER_TIMEOUT,
       });
 
       return Buffer.from(pdf);
@@ -122,6 +120,7 @@ export class ResumeDocumentService extends ResumeDocumentRepository implements O
       return null;
     } finally {
       await page.close();
+      await context.close();
     }
   }
 
@@ -157,8 +156,10 @@ export class ResumeDocumentService extends ResumeDocumentRepository implements O
   }
 
   private async ensureBrowser() {
-    if (!this.browser || !this.browser.connected) {
-      this.browser = await puppeteer.launch(this.PUPPETEER_CONFIG);
+    if (!this.browser) {
+      this.browser = await chromium.launch({
+        headless: true,
+      });
     }
   }
 }
