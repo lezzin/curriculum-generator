@@ -21,6 +21,7 @@ export class RedisSubscriberService implements OnModuleInit, OnModuleDestroy {
     this.subscriber = new Redis({
       host: configService.get('REDIS_HOST') || 'localhost',
       port: configService.get<number>('REDIS_PORT') || 6379,
+      password: configService.get<string>('REDIS_PASSWORD') || ''
     });
 
     this.channel = configService.getOrThrow('SSE_CHANNEL');

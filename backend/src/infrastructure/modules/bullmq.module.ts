@@ -11,9 +11,10 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
         connection: {
           host: configService.get('REDIS_HOST') || 'localhost',
           port: configService.get<number>('REDIS_PORT') || 6379,
+          password: configService.get<string>('REDIS_PASSWORD') || ''
         },
       }),
     }),
   ],
 })
-export class BullMQModule {}
+export class BullMQModule { }
