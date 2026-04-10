@@ -17,7 +17,7 @@ export class GeminiService {
     );
 
     this.model = generativeAI.getGenerativeModel({
-      model: 'gemini-2.5-flash',
+      model: this.configService.getOrThrow('GEMINI_MODEL'),
     });
   }
 
