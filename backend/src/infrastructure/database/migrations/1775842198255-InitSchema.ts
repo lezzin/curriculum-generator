@@ -8,7 +8,7 @@ export class InitSchema1775842198255 implements MigrationInterface {
         `);
 
         await queryRunner.query(`
-            CREATE TYPE user_role AS ENUM ('USER', 'ADMIN');
+            CREATE TYPE user_role AS ENUM ('user', 'admin');
         `);
 
         await queryRunner.query(`
@@ -31,7 +31,7 @@ export class InitSchema1775842198255 implements MigrationInterface {
                 picture VARCHAR NULL,
                 password TEXT NULL,
                 refresh_token TEXT NULL,
-                role user_role NOT NULL DEFAULT 'USER',
+                role user_role NOT NULL DEFAULT 'user',
                 created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
                 updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
             );
