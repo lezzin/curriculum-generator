@@ -38,8 +38,8 @@ const submit = handleSubmit(async (form) => {
   <CardContainer>
     <form @submit.prevent="submit" class="flex flex-col gap-4 h-full">
       <div>
-        <h2 class="text-xl font-semibold text-gray-800">Atualizar perfil</h2>
-        <p class="text-sm text-gray-500 mt-1">
+        <h2 class="text-xl font-semibold dark:text-white">Atualizar perfil</h2>
+        <p class="text-sm text-gray-600 dark:text-gray-300 mt-1">
           Atualize seus dados de cadastro através do formulário abaixo.
         </p>
       </div>

@@ -24,8 +24,8 @@ const submit = handleSubmit(async (form) => {
   <CardContainer>
     <form @submit.prevent="submit" class="flex flex-col gap-4 h-full">
       <div>
-        <h2 class="text-xl font-semibold text-gray-800">Definir senha</h2>
-        <p class="text-sm text-gray-500 mt-1">
+        <h2 class="text-xl font-semibold dark:text-white">Definir senha</h2>
+        <p class="text-sm text-gray-600 dark:text-gray-300 mt-1">
           Você entrou com login social. Defina uma senha para poder acessar também com e-mail.
         </p>
       </div>
