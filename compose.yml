@@ -14,6 +14,7 @@ services:
   frontend:
     environment:
       VITE_API_URL: http://localhost:3501/api
+      VITE_HMR_CLIENT_PORT: 3501
     build:
       context: ./frontend
       dockerfile: Dockerfile
