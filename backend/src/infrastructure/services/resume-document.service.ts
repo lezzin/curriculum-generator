@@ -13,15 +13,12 @@ import { ResumeDocumentRepository } from 'src/domain/repositories/resume-documen
 
 @Injectable()
 export class ResumeDocumentService extends ResumeDocumentRepository implements OnModuleInit, OnModuleDestroy {
-  private browser: Browser;
+  private browser!: Browser;
 
   private readonly PUPPETEER_TIMEOUT = 60000; // 60S
 
   async onModuleInit() {
-    this.browser = await chromium.launch({
-      headless: true,
-    });
-
+    this.browser = await this.launchBrowser();
     this.registerHandlebarsHelpers();
   }
 
@@ -157,9 +154,14 @@ export class ResumeDocumentService extends ResumeDocumentRepository implements O
 
   private async ensureBrowser() {
     if (!this.browser) {
-      this.browser = await chromium.launch({
-        headless: true,
-      });
+      this.browser = await this.launchBrowser();
     }
+  }
+
+  private async launchBrowser() {
+    return chromium.launch({
+      executablePath: process.env.CHROMIUM_PATH,
+      args: ['--no-sandbox', '--disable-setuid-sandbox'],
+    });
   }
 }
