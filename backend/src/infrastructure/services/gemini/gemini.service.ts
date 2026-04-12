@@ -4,6 +4,8 @@ import { ConfigService } from '@nestjs/config';
 import { DiscordService } from '../discord.service';
 import { GeminiPrompt } from './types/gemini.types';
 
+export const REQUEST_TIMEOUT = 300000;
+
 @Injectable()
 export class GeminiService {
   private model: GenerativeModel;
@@ -24,7 +26,9 @@ export class GeminiService {
   async generateContent(data: GeminiPrompt) {
     const { discordData, prompt } = data;
 
-    const result = await this.model.generateContent(prompt);
+    const result = await this.model.generateContent(prompt, {
+      timeout: REQUEST_TIMEOUT
+    });
     const response = await result.response;
 
     const { usageMetadata } = response;

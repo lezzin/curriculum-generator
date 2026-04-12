@@ -3,8 +3,9 @@ import { Job } from 'bullmq';
 import { Logger } from '@nestjs/common';
 import { GenerateResumeInput } from 'src/application/models/input/resume.input';
 import { ResumeGenerationUseCase } from 'src/application/use-cases/resume/resume-generation.use-case';
+import { WORKER_OPTIONS } from '../constants/queue-config.contants';
 
-@Processor('resume.queue')
+@Processor('resume.queue', WORKER_OPTIONS)
 export class ResumeProcessor extends WorkerHost {
   private readonly logger = new Logger(ResumeProcessor.name);
 

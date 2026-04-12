@@ -2,17 +2,15 @@ import { InjectQueue } from '@nestjs/bullmq';
 import { Queue } from 'bullmq';
 import { GenerateProposalInput } from 'src/application/models/input/freelance.input';
 import { ProposalQueue } from 'src/application/queues/proposal-queue';
+import { JOB_OPTIONS } from './constants/queue-config.contants';
 
 export class BullMQProposalQueue implements ProposalQueue {
   constructor(
     @InjectQueue('freelance.queue')
     private readonly queue: Queue,
-  ) {}
+  ) { }
 
   async addGenerateProposalJob(data: GenerateProposalInput): Promise<void> {
-    await this.queue.add('generate-proposal', data, {
-      attempts: 3,
-      backoff: { type: 'exponential', delay: 2000 },
-    });
+    await this.queue.add('generate-proposal', data, JOB_OPTIONS);
   }
 }
