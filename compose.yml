@@ -1,42 +1,15 @@
 services:
-  nginx:
-    image: nginx:alpine
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
     ports:
-      - "3501:80"
-    volumes:
-      - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf
-    depends_on:
-      - backend
-      - frontend
-    networks:
-      - shared-network
-
-  frontend:
-    environment:
-      VITE_API_URL: http://localhost:3501/api
-      VITE_HMR_CLIENT_PORT: 3501
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile
-    volumes:
-      - ./frontend:/app
-      - /app/node_modules      
-    networks:
-      - shared-network
-
-  backend:
-    build:
-      context: ./backend
-      dockerfile: Dockerfile
-    volumes:
-      - ./backend:/app
-      - /app/node_modules
+      - "3501:3501"
     env_file:
-      - ./backend/.env  
+      - ./backend/.env
     environment:
-      PORT: 3000
-      DATABASE_HOST: postgres    
-      REDIS_HOST: redis        
+      DATABASE_HOST: postgres
+      REDIS_HOST: redis
       CORS_ORIGIN: http://localhost:3501
       GITHUB_CALLBACK_URL: http://localhost:3501/api/auth/github/callback
       GOOGLE_CALLBACK_URL: http://localhost:3501/api/auth/google/callback

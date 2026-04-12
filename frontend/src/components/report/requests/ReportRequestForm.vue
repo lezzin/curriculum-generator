@@ -2,7 +2,6 @@
 import { useForm } from 'vee-validate';
 import { useReportRequest } from '../../../composables/useReportRequest';
 import BaseButton from '../../ui/BaseButton.vue';
-import { computed } from 'vue';
 
 interface Props {
   endpoint: string;
@@ -15,7 +14,7 @@ const emit = defineEmits(['saved']);
 
 const { submit, loading } = useReportRequest(props.endpoint);
 
-const { handleSubmit, errors } = useForm({
+const { handleSubmit } = useForm({
   validationSchema: props.schema,
   initialValues: props.initialValues,
 });
