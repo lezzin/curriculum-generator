@@ -7,9 +7,12 @@ import { RegisterUserUseCase } from 'src/application/use-cases/user/register-use
 import { GetUserUseCase } from 'src/application/use-cases/user/get-user.use-case';
 import { HashRepository } from 'src/domain/repositories/hash.repository';
 import { BcryptAdapter } from 'src/infrastructure/auth/bcrypt.service';
+import { UserController } from 'src/presentation/controllers/user/user.controller';
+import { UpdateUserUseCase } from 'src/application/use-cases/user/update-user.use-case';
 
 @Module({
   imports: [TypeOrmModule.forFeature([UserEntity])],
+  controllers: [UserController],
   providers: [
     {
       provide: UserRepository,
@@ -36,6 +39,13 @@ import { BcryptAdapter } from 'src/infrastructure/auth/bcrypt.service';
       },
       inject: [UserRepository],
     },
+    {
+      provide: UpdateUserUseCase,
+      useFactory: (userRepository: UserRepository) => {
+        return new UpdateUserUseCase(userRepository);
+      },
+      inject: [UserRepository],
+    },
   ],
   exports: [
     UserRepository,
@@ -44,4 +54,4 @@ import { BcryptAdapter } from 'src/infrastructure/auth/bcrypt.service';
     HashRepository,
   ],
 })
-export class UserModule {}
+export class UserModule { }

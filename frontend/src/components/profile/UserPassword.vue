@@ -22,7 +22,7 @@ const submit = handleSubmit(async (form) => {
 
 <template>
   <CardContainer>
-    <form @submit.prevent="submit" class="space-y-4">
+    <form @submit.prevent="submit" class="flex flex-col gap-4 h-full">
       <div>
         <h2 class="text-xl font-semibold text-gray-800">Definir senha</h2>
         <p class="text-sm text-gray-500 mt-1">
@@ -30,15 +30,10 @@ const submit = handleSubmit(async (form) => {
         </p>
       </div>
 
-      <InputField
-        name="password"
-        label="Nova senha"
-        type="password"
-        autocomplete="new-password"
-        placeholder="********"
-      />
+      <InputField name="password" label="Nova senha" type="password" autocomplete="new-password"
+        placeholder="********" />
 
-      <BaseButton type="submit" class="w-full" :disabled="loading">
+      <BaseButton type="submit" class="w-full mt-auto" :disabled="loading">
         <span v-if="!loading">Registrar senha</span>
         <span v-else>Salvando...</span>
       </BaseButton>
