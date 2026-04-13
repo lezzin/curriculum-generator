@@ -8,7 +8,7 @@ import { useForm } from 'vee-validate';
 import { freelanceSchema, MAX_LENGTH, type FreelanceForm } from '../../validation/schemas/freelance.schema';
 const { show } = useToast();
 
-const { handleSubmit } = useForm<FreelanceForm>({
+const { handleSubmit, resetForm } = useForm<FreelanceForm>({
   validationSchema: freelanceSchema,
   initialValues: {
     solicitationText: '',
@@ -22,26 +22,25 @@ const generateProposal = handleSubmit(async (form) => {
     solicitation: form.solicitationText,
   });
 
-  show(error ? { message: error, type: 'error' } : 'Solicitação enviada para processamento!');
+  if (error) {
+    show({ message: error, type: 'error' });
+    return;
+  }
+
+  show('Solicitação enviada para processamento!');
+  resetForm();
 });
 </script>
 
 <template>
-  <AppTitle
-    title="Gerar Proposta Personalizada"
-    subtitle="Crie uma proposta estratégica com base na solicitação recebida."
-  />
+  <AppTitle title="Gerar Proposta Personalizada"
+    subtitle="Crie uma proposta estratégica com base na solicitação recebida." />
 
   <form class="space-y-10" @submit.prevent="generateProposal">
     <div class="space-y-4">
-      <TextAreaField
-        name="solicitationText"
-        label="Descrição completa da solicitação"
-        :rows="10"
-        :max-length="MAX_LENGTH"
-        :show-length="true"
-        placeholder="Cole aqui todos os detalhes da solicitação. Quanto mais informações, mais personalizada será a proposta."
-      />
+      <TextAreaField name="solicitationText" label="Descrição completa da solicitação" :rows="10"
+        :max-length="MAX_LENGTH" :show-length="true"
+        placeholder="Cole aqui todos os detalhes da solicitação. Quanto mais informações, mais personalizada será a proposta." />
 
       <BaseButton type="submit" :disabled="isLoading" :loading="isLoading"> Gerar proposta personalizada </BaseButton>
     </div>
