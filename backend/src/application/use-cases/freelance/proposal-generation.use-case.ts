@@ -12,6 +12,8 @@ import {
 } from 'src/infrastructure/services/gemini/helpers/freelance-proposal.prompt';
 import { GeminiService } from 'src/infrastructure/services/gemini/gemini.service';
 import { SseRepository } from 'src/domain/repositories/sse.repository';
+import { toPromptString } from 'src/infrastructure/services/gemini/helpers/prompt-optimizer.helper';
+import { SchemaType } from '@google/generative-ai';
 
 export class ProposalGenerationUseCase {
   constructor(
@@ -20,7 +22,7 @@ export class ProposalGenerationUseCase {
     private readonly geminiService: GeminiService,
     private readonly sseRepository: SseRepository,
     private readonly cache: CacheRepository,
-  ) {}
+  ) { }
 
   async execute(body: GenerateProposalInput) {
     const { solicitation, userId } = body;
@@ -38,13 +40,24 @@ export class ProposalGenerationUseCase {
       return;
     }
 
+    const smartData = toPromptString(baseData.description as any);
+
     const proposal = await this.cache.rememberByHash(
       solicitation,
       900,
       async () =>
         await this.geminiService.generateJsonResponse<FreelanceProposalResponse>(
           {
-            prompt: buildFreelanceProposalPrompt(baseData, solicitation),
+            prompt: buildFreelanceProposalPrompt(smartData, solicitation),
+            schema: {
+              type: SchemaType.OBJECT,
+              properties: {
+                message: { type: SchemaType.STRING },
+                bidAmount: { type: SchemaType.NUMBER },
+                deliveryDays: { type: SchemaType.NUMBER },
+              },
+              required: ['message', 'bidAmount', 'deliveryDays'],
+            },
             discordData: [
               `**Tipo**: Proposta Freelance`,
               `**Usuário**: ${userId}`,

@@ -11,6 +11,8 @@ import { SelectedTemplate } from 'src/domain/enums/resume.enums';
 import { GeminiService } from 'src/infrastructure/services/gemini/gemini.service';
 import { buildResumePrompt } from 'src/infrastructure/services/gemini/helpers/resume-prompt.helper';
 import { SseRepository } from 'src/domain/repositories/sse.repository';
+import { toPromptString } from 'src/infrastructure/services/gemini/helpers/prompt-optimizer.helper';
+import { SchemaType } from '@google/generative-ai';
 
 export class ResumeGenerationUseCase {
   constructor(
@@ -48,12 +50,80 @@ export class ResumeGenerationUseCase {
       return;
     }
 
+    const smartData = toPromptString(baseData.description as any);
+
     const resume = await this.cache.rememberByHash(
       jobDescription,
       900,
       async () =>
         await this.geminiService.generateJsonResponse<Resume>({
-          prompt: buildResumePrompt(baseData, jobDescription, options),
+          prompt: buildResumePrompt(smartData, jobDescription, options),
+          schema: {
+            type: SchemaType.OBJECT,
+            properties: {
+              name: { type: SchemaType.STRING },
+              language: { type: SchemaType.STRING },
+              role: { type: SchemaType.STRING },
+              summary: { type: SchemaType.STRING },
+              skills: {
+                type: SchemaType.ARRAY,
+                items: { type: SchemaType.STRING },
+              },
+              experiences: {
+                type: SchemaType.ARRAY,
+                items: {
+                  type: SchemaType.OBJECT,
+                  properties: {
+                    title: { type: SchemaType.STRING },
+                    company: { type: SchemaType.STRING },
+                    period: { type: SchemaType.STRING },
+                    responsibilities: {
+                      type: SchemaType.ARRAY,
+                      items: { type: SchemaType.STRING },
+                    },
+                    technologies: {
+                      type: SchemaType.ARRAY,
+                      items: { type: SchemaType.STRING },
+                    },
+                  },
+                  required: [
+                    'title',
+                    'company',
+                    'period',
+                    'responsibilities',
+                    'technologies',
+                  ],
+                },
+              },
+              projects: {
+                type: SchemaType.ARRAY,
+                items: {
+                  type: SchemaType.OBJECT,
+                  properties: {
+                    name: { type: SchemaType.STRING },
+                    highlights: {
+                      type: SchemaType.ARRAY,
+                      items: { type: SchemaType.STRING },
+                    },
+                    technologies: {
+                      type: SchemaType.ARRAY,
+                      items: { type: SchemaType.STRING },
+                    },
+                  },
+                  required: ['name', 'highlights', 'technologies'],
+                },
+              },
+            },
+            required: [
+              'name',
+              'language',
+              'role',
+              'summary',
+              'skills',
+              'experiences',
+              'projects',
+            ],
+          },
           discordData: [`**Tipo**: Currículo`, `**Usuário**: ${userId}`],
         }),
     );

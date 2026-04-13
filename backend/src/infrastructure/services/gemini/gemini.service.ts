@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { GenerativeModel, GoogleGenerativeAI } from '@google/generative-ai';
+import { GenerativeModel, GoogleGenerativeAI, Schema } from '@google/generative-ai';
 import { ConfigService } from '@nestjs/config';
 import { DiscordService } from '../discord.service';
 import { GeminiPrompt } from './types/gemini.types';
@@ -26,8 +26,12 @@ export class GeminiService {
   async generateContent(data: GeminiPrompt) {
     const { discordData, prompt } = data;
 
-    const result = await this.model.generateContent(prompt, {
-      timeout: REQUEST_TIMEOUT
+    const result = await this.model.generateContent({
+      contents: [{ role: 'user', parts: [{ text: prompt }] }],
+      generationConfig: {
+        responseMimeType: 'application/json',
+        responseSchema: data.schema,
+      },
     });
     const response = await result.response;
 
@@ -53,12 +57,7 @@ export class GeminiService {
 
   async generateJsonResponse<T>(data: GeminiPrompt): Promise<T> {
     return this.generateContent(data).then((text) => {
-      const cleaned = text
-        .replace(/```json/g, '')
-        .replace(/```/g, '')
-        .trim();
-
-      return JSON.parse(cleaned) as T;
+      return JSON.parse(text) as T;
     });
   }
 }

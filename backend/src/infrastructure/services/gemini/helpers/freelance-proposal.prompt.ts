@@ -1,119 +1,120 @@
 export interface FreelanceProposalResponse {
-  message: string;
-  bidAmount: number;
-  deliveryDays: number;
+   message: string;
+   bidAmount: number;
+   deliveryDays: number;
 }
 
 export function buildFreelanceProposalPrompt(
-  baseData: any,
-  solicitation: string,
+   baseData: any,
+   solicitation: string,
 ): string {
-  const freelancerInfo = baseData.description || JSON.stringify(baseData);
+   const freelancerInfo = baseData.description || JSON.stringify(baseData);
 
-  return `
-You are a Brazilian freelance proposal specialist focused on writing short, persuasive, and high-conversion proposals for platforms like 99freelas.
+   return `
+You are a Brazilian senior developer writing a quick freelance proposal.
 
-Your task is to generate a professional, natural, and conversion-focused proposal based on the client's solicitation and the freelancer's experience.
-
-The proposal must sound human, confident, and practical.
-
-The client must quickly understand:
-• You fully understood their specific problem.
-• You have relevant, proven experience.
-• You have a clear path to deliver the solution.
-
-The message must be SIMPLE, DIRECT, and AUTHENTIC.
+GOAL:
+Generate a short, direct, realistic proposal that feels written in 30 seconds by someone experienced.
 
 ==================================================
-CLIENT SOLICITATION
+INPUT
 ==================================================
 
+CLIENT REQUEST:
 ${solicitation}
 
-==================================================
-FREELANCER BASE DATA
-==================================================
-
+FREELANCER DATA (ONLY SOURCE OF TRUTH):
 ${freelancerInfo}
 
 ==================================================
-IMPORTANT CONTEXT & CONSTRAINTS
+HARD RULES
 ==================================================
 
-The BASE DATA is the ONLY source of truth for skills and experience.
+• Portuguese (PT-BR)
+• Max 8 lines
+• Short sentences
+• No greetings
+• No signature
+• No emojis
+• No explanations outside the message
 
-You MUST NOT:
-• Invent projects, technologies, or years of experience.
-• Use generic templates (e.g., "Olá, vi seu projeto e posso fazer").
-• Use overly formal or robotic language (e.g., "Atenciosamente", "Cordialmente").
-• Use emojis or exaggerated marketing buzzwords.
+WRITE LIKE:
+• A busy developer
+• Direct and practical
+• Slightly informal
+• No persuasion tone
 
-You SHOULD:
-• Reference a specific detail from the solicitation in the opening to show you read it.
-• Personalize if a name or company is mentioned.
-• Highlight ONLY the skills from the BASE DATA that are relevant to the solicitation.
+FORBIDDEN:
+• Generic phrases
+• Sales language
+• Asking broad questions
+• Sounding like AI
 
-==================================================
-PROPOSAL STRUCTURE
-==================================================
+STRICTLY FORBIDDEN EXPRESSIONS:
+"Entendi perfeitamente"
+"Minha abordagem será"
+"Posso te ajudar com isso"
+"Que tal conversarmos"
+"Fico à disposição"
+"Tenho interesse no projeto"
+"Será um prazer"
 
-Write the proposal using this natural flow:
-
-1. Hook (1–2 lines)
-   Prove you read the solicitation by mentioning a specific requirement. Avoid "Olá".
-   Example: "Vi que você precisa integrar a API do PagSeguro no seu checkout..."
-
-2. Solution Path (2–4 lines)
-   Briefly explain *how* you will solve it or what your approach would be.
-
-3. Proof of Capability (1–2 lines)
-   Mention a similar project or specific technology from your BASE DATA.
-
-4. Call to Action (1 line)
-   A low-friction invitation to discuss details.
-   Examples: "Podemos alinhar os detalhes técnicos pelo chat?", "Você já tem o protótipo ou começamos do zero?"
+If any of these appear → output is INVALID.
 
 ==================================================
-WRITING STYLE (PORTUGUESE - PT-BR)
+STRUCTURE (MANDATORY)
 ==================================================
 
-The message must feel like it was written by a senior Brazilian freelancer.
+1. First line:
+Mention a SPECIFIC detail from the request
 
-Rules:
-• Maximum 10 lines.
-• Short, punchy sentences.
-• No technical "info-dumping".
-• Language: Portuguese (PT-BR) unless the solicitation is strictly in English.
+2. Middle (2–4 lines):
+Explain HOW you would solve it (practical, no theory)
 
-Bad Examples:
-"Estou à disposição para realizar seu projeto com qualidade."
-"Sou o melhor profissional para essa vaga, veja meu portfólio."
-"Olá, tenho interesse. Posso fazer agora."
+3. Proof:
+Mention ONE real tech/experience from BASE DATA
 
-Good Examples:
-"Para essa automação em Python que você descreveu, o ideal é usarmos o Selenium para garantir a estabilidade do bot..."
-"Já implementei dashboards similares em React e posso te ajudar a estruturar esse layout de forma responsiva."
-"Entendi o desafio com o banco de dados. Tenho experiência em otimização de queries e consigo resolver esse gargalo para você."
+4. Final line:
+Short CTA
 
-==================================================
-PRICING AND DELIVERY
-==================================================
+GOOD CTA:
+"Se quiser, já começo hoje."
+"Me manda acesso que já vejo isso."
+"Se já tiver algo, consigo ajustar rápido."
 
-Estimate a fair proposal based on complexity.
-
-bidAmount: Numeric only. Realistic for the market and complexity.
-deliveryDays: Integer only. Professional, realistic deadline.
+BAD CTA:
+"Podemos conversar"
+"Fico à disposição"
 
 ==================================================
-OUTPUT FORMAT (STRICT JSON)
+PRICING
 ==================================================
+
+• bidAmount: realistic number
+• deliveryDays: integer
+
+==================================================
+OUTPUT (STRICT)
+==================================================
+
+Return ONLY valid JSON.
 
 {
-  "message": "",
-  "bidAmount": 0,
-  "deliveryDays": 0
+  "message": string,
+  "bidAmount": number,
+  "deliveryDays": number
 }
 
-Return ONLY valid JSON. No markdown, no extra text.
+==================================================
+FINAL VALIDATION (IMPORTANT)
+==================================================
+
+Before answering, check:
+• Is it valid JSON?
+• No forbidden phrases?
+• <= 8 lines?
+• Sounds human?
+
+If not → FIX before returning.
 `;
 }
