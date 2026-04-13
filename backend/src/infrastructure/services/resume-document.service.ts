@@ -1,8 +1,8 @@
-import { Injectable, OnModuleInit, OnModuleDestroy, InternalServerErrorException } from '@nestjs/common';
-import { Browser, chromium } from 'playwright';
+import { Injectable, OnModuleInit } from '@nestjs/common';
 import * as Handlebars from 'handlebars';
 import * as fs from 'fs';
 import * as path from 'path';
+import * as pdf from 'html-pdf-node';
 
 import { SECTION_LABELS } from './constants/resume-labels.constants';
 import { Resume } from 'src/domain/entities/resume.entity';
@@ -12,20 +12,9 @@ import { Language, SelectedTemplate } from 'src/domain/enums/resume.enums';
 import { ResumeDocumentRepository } from 'src/domain/repositories/resume-document.repository';
 
 @Injectable()
-export class ResumeDocumentService extends ResumeDocumentRepository implements OnModuleInit, OnModuleDestroy {
-  private browser!: Browser;
-
-  private readonly PUPPETEER_TIMEOUT = 60000; // 60S
-
+export class ResumeDocumentService extends ResumeDocumentRepository implements OnModuleInit {
   async onModuleInit() {
-    this.browser = await this.launchBrowser();
     this.registerHandlebarsHelpers();
-  }
-
-  async onModuleDestroy() {
-    if (this.browser) {
-      await this.browser.close();
-    }
   }
 
   private registerHandlebarsHelpers() {
@@ -93,32 +82,18 @@ export class ResumeDocumentService extends ResumeDocumentRepository implements O
     user: User,
     userConfig: UserConfig | null,
   ): Promise<Buffer | null> {
-    await this.ensureBrowser();
-
     const html = this.generateHtml(resume, user, userConfig, 'pdf');
 
-    const context = await this.browser.newContext();
-    const page = await context.newPage();
+    const file = { content: html };
 
-    try {
-      await page.setContent(html, {
-        waitUntil: 'networkidle',
-        timeout: this.PUPPETEER_TIMEOUT,
-      });
+    const options = {
+      format: 'A4',
+      printBackground: true,
+    };
 
-      const pdf = await page.pdf({
-        format: 'A4',
-        printBackground: true,
-      });
+    const pdfBuffer = await pdf.generatePdf(file, options);
 
-      return Buffer.from(pdf);
-    } catch (error) {
-      console.error('Error generating PDF:', error);
-      return null;
-    } finally {
-      await page.close();
-      await context.close();
-    }
+    return pdfBuffer;
   }
 
   private loadTemplate(
@@ -135,12 +110,8 @@ export class ResumeDocumentService extends ResumeDocumentRepository implements O
       `${file}.hbs`,
     );
 
-    try {
-      const content = fs.readFileSync(templatePath, 'utf-8');
-      return Handlebars.compile(content);
-    } catch (error) {
-      throw new InternalServerErrorException(`Template ${file} not found in ${folder}`);
-    }
+    const compiled = fs.readFileSync(templatePath, 'utf-8');
+    return Handlebars.compile(compiled);
   }
 
   private getInitials(name: string): string {
@@ -150,18 +121,5 @@ export class ResumeDocumentService extends ResumeDocumentRepository implements O
       .join('')
       .toUpperCase()
       .substring(0, 2);
-  }
-
-  private async ensureBrowser() {
-    if (!this.browser) {
-      this.browser = await this.launchBrowser();
-    }
-  }
-
-  private async launchBrowser() {
-    return chromium.launch({
-      executablePath: process.env.CHROMIUM_PATH,
-      args: ['--no-sandbox', '--disable-setuid-sandbox'],
-    });
   }
 }

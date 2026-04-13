@@ -32,12 +32,6 @@ WORKDIR /app
 
 RUN apk add --no-cache \
     nginx \
-    chromium \
-    nss \
-    freetype \
-    harfbuzz \
-    ca-certificates \
-    ttf-freefont \
     supervisor
 
 COPY --from=frontend-builder /app/frontend/dist /usr/share/nginx/html
