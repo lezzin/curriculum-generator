@@ -89,6 +89,8 @@ export class ResumeDocumentService extends ResumeDocumentRepository implements O
     const options = {
       format: 'A4',
       printBackground: true,
+      args: ['--no-sandbox', '--disable-setuid-sandbox'],
+      executablePath: process.env.PUPPETEER_EXECUTABLE_PATH,
     };
 
     const pdfBuffer = await pdf.generatePdf(file, options);

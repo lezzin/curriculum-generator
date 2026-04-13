@@ -1,10 +1,8 @@
 services:
-  app:
+  backend:
     build:
-      context: .
+      context: ./backend
       dockerfile: Dockerfile
-    ports:
-      - "3501:3501"
     env_file:
       - ./backend/.env
     environment:
@@ -14,10 +12,22 @@ services:
       GITHUB_CALLBACK_URL: http://localhost:3501/api/auth/github/callback
       GOOGLE_CALLBACK_URL: http://localhost:3501/api/auth/google/callback
       FRONTEND_URL: http://localhost:3501
+      PORT: 3000
+    networks:
+      - shared-network
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3501:80"
+    depends_on:
+      - backend
     networks:
       - shared-network
 
 networks:
   shared-network:
-    external: true  
+    external: true
     name: shared-network
