@@ -8,6 +8,10 @@
       {
         "include": "templates/**/*",
         "outDir": "dist"
+      },
+      {
+        "include": "infrastructure/http/views/**/*",
+        "outDir": "dist"
       }
     ],
     "watchAssets": true

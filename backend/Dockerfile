@@ -11,7 +11,6 @@ RUN npm prune --production
 
 FROM node:20-alpine
 
-# Install puppeteer dependencies and chromium
 RUN apk add --no-cache \
     chromium \
     nss \
@@ -27,7 +26,6 @@ COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/package.json ./package.json
 
-# Copy templates if they are not in dist
 COPY --from=builder /app/src/templates ./dist/templates
 
 EXPOSE 3000

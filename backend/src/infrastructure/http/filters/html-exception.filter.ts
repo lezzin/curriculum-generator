@@ -25,7 +25,7 @@ export class HtmlExceptionFilter implements ExceptionFilter {
     const response = ctx.getResponse<Response>();
     const request = ctx.getRequest<Request>();
 
-    const acceptsHtml = request.headers.accept?.includes('text/html');
+    const acceptsHtml = request.accepts('html');
 
     if (!acceptsHtml) {
       if (exception instanceof HttpException) {
@@ -52,8 +52,6 @@ export class HtmlExceptionFilter implements ExceptionFilter {
     let message = 'Ocorreu um erro inesperado.';
     let description: string | undefined;
 
-    console.log(exception);
-
     if (exception instanceof HttpException) {
       status = exception.getStatus();
 
@@ -73,8 +71,8 @@ export class HtmlExceptionFilter implements ExceptionFilter {
 
     try {
       const templatePath = path.join(
-        process.cwd(),
-        'src/infrastructure/http/views/error.hbs',
+        __dirname,
+        '../views/error.hbs',
       );
 
       const templateSource = fs.readFileSync(templatePath, 'utf8');

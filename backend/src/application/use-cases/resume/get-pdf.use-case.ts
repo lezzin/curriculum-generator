@@ -1,8 +1,9 @@
-import { NotFoundException } from 'src/domain/exceptions';
+import { BadRequestException, NotFoundException } from 'src/domain/exceptions';
 import { ResumeDocumentRepository } from 'src/domain/repositories/resume-document.repository';
 import { ResumeRepository } from 'src/domain/repositories/resume.repository';
 import { UserConfigRepository } from 'src/domain/repositories/user-config.repository';
 import { UserRepository } from 'src/domain/repositories/user.repository';
+import { validate as isUUID } from 'uuid';
 
 export class GetPdfUseCase {
   constructor(
@@ -13,6 +14,10 @@ export class GetPdfUseCase {
   ) { }
 
   async execute(id: string) {
+    if (!isUUID(id)) {
+      throw new BadRequestException('UUID inválido!');
+    }
+
     const resume = await this.resumeRepository.findById(id);
 
     if (!resume) {
