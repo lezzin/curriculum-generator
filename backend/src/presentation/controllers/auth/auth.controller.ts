@@ -32,7 +32,7 @@ export class AuthController {
     private readonly socialLoginUseCase: SocialLoginUseCase,
     private readonly getUserUseCase: GetUserUseCase,
     private readonly setPasswordUseCase: SetPasswordUseCase,
-  ) {}
+  ) { }
 
   @Post('login')
   @HttpCode(HttpStatus.NO_CONTENT)
@@ -107,17 +107,17 @@ export class AuthController {
 
   @Post('set-password')
   @UseGuards(JwtAuthGuard)
-  @HttpCode(HttpStatus.NO_CONTENT)
+  @HttpCode(HttpStatus.OK)
   async setPassword(
     @Body() body: SetPasswordDto,
     @CurrentUser('id') userId: string,
   ) {
-    await this.setPasswordUseCase.execute({ userId, password: body.password });
+    return this.setPasswordUseCase.execute({ userId, password: body.password });
   }
 
   @Get('google')
   @UseGuards(AuthGuard('google'))
-  googleAuth() {}
+  googleAuth() { }
 
   @Get('google/callback')
   @UseGuards(AuthGuard('google'))
@@ -127,7 +127,7 @@ export class AuthController {
 
   @Get('github')
   @UseGuards(AuthGuard('github'))
-  githubAuth() {}
+  githubAuth() { }
 
   @Get('github/callback')
   @UseGuards(AuthGuard('github'))

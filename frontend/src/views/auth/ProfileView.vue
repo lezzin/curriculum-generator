@@ -4,11 +4,7 @@ import UserConfig from '../../components/profile/UserConfig.vue';
 import UserBaseData from '../../components/profile/UserBaseData.vue';
 import UserProfileHeader from '../../components/profile/UserProfileHeader.vue';
 import UserPassword from '../../components/profile/UserPassword.vue';
-import { useAuthStore } from '../../stores/auth';
-import { storeToRefs } from 'pinia';
 import UsernameForm from '../../components/profile/UsernameForm.vue';
-
-const { user } = storeToRefs(useAuthStore());
 </script>
 
 <template>
@@ -19,7 +15,7 @@ const { user } = storeToRefs(useAuthStore());
 
   <div class="grid md:grid-cols-2 gap-4">
     <UsernameForm class="h-full flex flex-col" />
-    <UserPassword v-if="user?.onlyProvider" class="h-full flex flex-col" />
+    <UserPassword class="h-full flex flex-col" />
   </div>
 
   <UserBaseData />

@@ -6,9 +6,9 @@ import { TypeOrmUserRepository } from 'src/infrastructure/database/repositories/
 import { RegisterUserUseCase } from 'src/application/use-cases/user/register-user.use-case';
 import { GetUserUseCase } from 'src/application/use-cases/user/get-user.use-case';
 import { HashRepository } from 'src/domain/repositories/hash.repository';
-import { BcryptAdapter } from 'src/infrastructure/auth/bcrypt.service';
 import { UserController } from 'src/presentation/controllers/user/user.controller';
 import { UpdateUserUseCase } from 'src/application/use-cases/user/update-user.use-case';
+import { Argon2Adapter } from 'src/infrastructure/auth/argon2.service';
 
 @Module({
   imports: [TypeOrmModule.forFeature([UserEntity])],
@@ -20,7 +20,7 @@ import { UpdateUserUseCase } from 'src/application/use-cases/user/update-user.us
     },
     {
       provide: HashRepository,
-      useClass: BcryptAdapter,
+      useClass: Argon2Adapter,
     },
     {
       provide: RegisterUserUseCase,
